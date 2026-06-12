@@ -3,17 +3,106 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Puu-Puu</title>
+<title>Register | Puu-Puu</title>
+
 <link rel="stylesheet" href="css/style.css">
+
+<style>
+input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 10px;
+  border: 2px solid #5E5585;
+  background: #332F54;
+  color: white;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background: #EEC291;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+p { color: white; }
+a { color: #EEC291; }
+</style>
+
 </head>
 <body>
 
 <div class="main-container">
-<h1>Puu-Puu</h1>
-<p>Page ready for development</p>
+
+  <h2 style="color:white;margin:20px;">Register</h2>
+
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Password">
+  <input type="text" id="username" placeholder="Username">
+
+  <button onclick="register()">Daftar</button>
+
+  <p id="msg"></p>
+
+  <p>
+    Sudah punya akun? <a href="login.html">Login</a>
+  </p>
+
 </div>
 
 <script src="js/supabase.js"></script>
+
+<script>
+async function register() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  const username = document.getElementById("username").value;
+  const msg = document.getElementById("msg");
+
+  msg.innerText = "";
+
+  if (!email || !password || !username) {
+    msg.innerText = "Semua field wajib diisi";
+    return;
+  }
+
+  // 1. create auth user
+  const { data, error } = await client.auth.signUp({
+    email,
+    password
+  });
+
+  if (error) {
+    msg.innerText = error.message;
+    return;
+  }
+
+  const user = data.user;
+
+  // 2. simpan profile
+  const { error: profileError } = await client
+    .from("profiles")
+    .insert({
+      id: user.id,
+      username: username,
+      avatar: null,
+      status: "online"
+    });
+
+  if (profileError) {
+    msg.innerText = profileError.message;
+    return;
+  }
+
+  // 3. simpan session lokal
+  localStorage.setItem("user", JSON.stringify(user));
+
+  // 4. arahkan ke chat
+  location.href = "chat.html";
+}
+</script>
 
 </body>
 </html>
