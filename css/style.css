@@ -1,0 +1,155 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;400;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    width: 100%;
+    min-height: 100vh;
+    background: #332F54;
+    color: #E2D3F4;
+}
+
+/* ===== DISCORD CORE LAYOUT ===== */
+.discord-container {
+    display: flex;
+    height: 100vh;
+}
+
+/* SERVER BAR */
+.server-bar {
+    width: 70px;
+    background: #49426E;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 0;
+    gap: 15px;
+    overflow-y: auto;
+}
+
+.server {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: #EEC291;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #332F54;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* CHANNEL BAR */
+.channel-bar {
+    width: 250px;
+    background: #3f3b62;
+    padding: 15px;
+    overflow-y: auto;
+}
+
+.channel-item {
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-bottom: 8px;
+    background: #49426E;
+    transition: 0.3s;
+}
+
+.channel-item:hover {
+    background: #EEC291;
+    color: #332F54;
+}
+
+/* CHAT AREA */
+.chat-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* MESSAGES */
+.messages {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+}
+
+.message {
+    max-width: 60%;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border-radius: 15px;
+    background: #49426E;
+}
+
+.my-message {
+    margin-left: auto;
+    background: #EEC291;
+    color: #332F54;
+}
+
+/* INPUT */
+.chat-input {
+    display: flex;
+    padding: 10px;
+    gap: 10px;
+    background: #2c2748;
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    background: #49426E;
+    color: white;
+    border: none;
+    outline: none;
+}
+
+.chat-input button {
+    background: #EEC291;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+/* TRANSLATE */
+.translate-btn {
+    background: #49426E;
+    border: none;
+    color: #EEC291;
+    padding: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* ===== FACEBOOK STATUS DOT ===== */
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    border: 2px solid #332F54;
+}
+
+.online {
+    background: #7CFC00;
+}
+
+.offline {
+    background: gray;
+}
+
+.idle {
+    background: gold;
+}
