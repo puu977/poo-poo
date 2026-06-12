@@ -3,17 +3,139 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Puu-Puu</title>
+<title>Profile Settings | Puu-Puu</title>
+
 <link rel="stylesheet" href="css/style.css">
+
+<style>
+body {
+    background: #332F54;
+    color: #E2D3F4;
+}
+
+.form-box {
+    width: 100%;
+    max-width: 420px;
+    margin: auto;
+    padding: 30px;
+    background: #49426E;
+    border-radius: 20px;
+    box-shadow: 0 0 20px #00000030;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #EEC291;
+}
+
+.input-box {
+    margin-bottom: 15px;
+}
+
+input {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: 2px solid #5E5585;
+    background: #332F54;
+    color: #E2D3F4;
+    outline: none;
+}
+
+input:focus {
+    border-color: #EEC291;
+}
+
+button {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    background: #EEC291;
+    color: #332F54;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    margin-top: 10px;
+}
+
+.avatar-preview {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.avatar-preview img {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    border: 3px solid #EEC291;
+}
+</style>
+
 </head>
 <body>
 
-<div class="main-container">
-<h1>Puu-Puu</h1>
-<p>Page ready for development</p>
+<div class="form-box">
+
+<h2>Lengkapi Profil</h2>
+
+<div class="avatar-preview">
+    <img id="avatarPreview" src="https://i.imgur.com/0y0y0y0.png">
+</div>
+
+<input type="text" id="username" placeholder="Username">
+<input type="text" id="bio" placeholder="Bio (opsional)">
+<input type="text" id="avatar" placeholder="URL Avatar">
+
+<button onclick="saveProfile()">Simpan Profil</button>
+
+<p id="msg" style="text-align:center;color:red;"></p>
+
 </div>
 
 <script src="js/supabase.js"></script>
+
+<script>
+const user = JSON.parse(localStorage.getItem("user"));
+
+if (!user) {
+  location.href = "login.html";
+}
+
+// preview avatar
+document.getElementById("avatar").addEventListener("input", (e) => {
+  document.getElementById("avatarPreview").src = e.target.value;
+});
+
+async function saveProfile() {
+  const username = document.getElementById("username").value;
+  const bio = document.getElementById("bio").value;
+  const avatar = document.getElementById("avatar").value;
+  const msg = document.getElementById("msg");
+
+  if (!username) {
+    msg.innerText = "Username wajib diisi";
+    return;
+  }
+
+  const { error } = await client
+    .from("profiles")
+    .update({
+      username,
+      bio,
+      avatar
+    })
+    .eq("id", user.id);
+
+  if (error) {
+    msg.innerText = error.message;
+    return;
+  }
+
+  location.href = "chat.html";
+}
+</script>
 
 </body>
 </html>
