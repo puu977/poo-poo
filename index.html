@@ -3,17 +3,104 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Puu-Puu</title>
+<title>Login | Puu-Puu</title>
+
 <link rel="stylesheet" href="css/style.css">
+
+<style>
+input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 10px;
+  border: 2px solid #5E5585;
+  background: #332F54;
+  color: #fff;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background: #EEC291;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+}
+</style>
+
 </head>
 <body>
 
 <div class="main-container">
-<h1>Puu-Puu</h1>
-<p>Page ready for development</p>
+
+  <h2 style="color:white;margin:20px;">Login</h2>
+
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Password">
+
+  <button onclick="login()">Login</button>
+
+  <p style="color:white;margin-top:15px;">
+    <a href="register.html" style="color:#EEC291;">Daftar</a> |
+    <a href="reset-password.html" style="color:#EEC291;">Lupa Password</a>
+  </p>
+
+  <p id="msg" style="color:red;"></p>
+
 </div>
 
 <script src="js/supabase.js"></script>
+
+<script>
+async function login() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  const msg = document.getElementById("msg");
+
+  msg.innerText = "";
+
+  if (!email || !password) {
+    msg.innerText = "Email dan password wajib diisi";
+    return;
+  }
+
+  const { data, error } = await client.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) {
+    msg.innerText = "Login gagal: " + error.message;
+    return;
+  }
+
+  // simpan session
+  localStorage.setItem("user", JSON.stringify(data.user));
+
+  // cek profile
+  const { data: profile } = await client
+    .from("profiles")
+    .select("*")
+    .eq("id", data.user.id)
+    .single();
+
+  // kalau belum ada username → ke profile settings
+  if (!profile || !profile.username) {
+    location.href = "profile-settings.html";
+  } else {
+    location.href = "chat.html";
+  }
+}
+
+// auto redirect kalau sudah login
+(async () => {
+  const { data } = await client.auth.getSession();
+
+  if (data.session) {
+    location.href = "chat.html";
+  }
+})();
+</script>
 
 </body>
 </html>
