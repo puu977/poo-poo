@@ -1,106 +1,155 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login | Puu-Puu</title>
-
-<link rel="stylesheet" href="css/style.css">
-
-<style>
-input {
-  width: 100%;
-  padding: 12px;
-  margin: 10px 0;
-  border-radius: 10px;
-  border: 2px solid #5E5585;
-  background: #332F54;
-  color: #fff;
-}
-
-button {
-  width: 100%;
-  padding: 12px;
-  background: #EEC291;
-  border-radius: 10px;
-  font-weight: bold;
-  cursor: pointer;
-}
-</style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="main-container">
+    <div class="main-container landing-page">
 
-  <h2 style="color:white;margin:20px;">Login</h2>
+        <nav class="navbar">
+            <img src="logo.png" alt="Logo" class="main-logo">
 
-  <input type="email" id="email" placeholder="Email">
-  <input type="password" id="password" placeholder="Password">
+            <div class="nav-right">
+                <a href="login.html" class="btn-login">Login</a>
+                <a href="register.html" class="btn-register">Register</a>
+            </div>
+        </nav>
 
-  <button onclick="login()">Login</button>
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1>Connect With Everyone Instantly</h1>
 
-  <p style="color:white;margin-top:15px;">
-    <a href="register.html" style="color:#EEC291;">Daftar</a> |
-    <a href="reset-password.html" style="color:#EEC291;">Lupa Password</a>
-  </p>
+                <p>
+                    Nikmati pengalaman chatting yang cepat,
+                    aman, dan modern untuk terhubung dengan
+                    teman, keluarga, maupun tim kerja Anda.
+                </p>
 
-  <p id="msg" style="color:red;"></p>
+                <div class="hero-buttons">
+                    <a href="register.html" class="btn-primary">
+                        Get Started
+                    </a>
 
-</div>
+                    <a href="login.html" class="btn-secondary">
+                        Sign In
+                    </a>
+                </div>
+            </div>
 
-<script src="js/supabase.js"></script>
+            <div class="hero-image">
+                <img src="chat-illustration.png" alt="Chat">
+            </div>
+        </section>
 
-<script>
-async function login() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  const msg = document.getElementById("msg");
+        <section class="features">
+            <div class="feature-card">
+                <h3>💬 Real Time Chat</h3>
+                <p>Pesan terkirim secara langsung.</p>
+            </div>
 
-  msg.innerText = "";
+            <div class="feature-card">
+                <h3>🔒 Secure</h3>
+                <p>Privasi percakapan tetap aman.</p>
+            </div>
 
-  if (!email || !password) {
-    msg.innerText = "Email dan password wajib diisi";
-    return;
-  }
+            <div class="feature-card">
+                <h3>⚡ Fast</h3>
+                <p>Performa ringan dan responsif.</p>
+            </div>
+        </section>
 
-  const { data, error } = await client.auth.signInWithPassword({
-    email,
-    password
-  });
-
-  if (error) {
-    msg.innerText = "Login gagal: " + error.message;
-    return;
-  }
-
-  // simpan session
-  localStorage.setItem("user", JSON.stringify(data.user));
-
-  // cek profile
-  const { data: profile } = await client
-    .from("profiles")
-    .select("*")
-    .eq("id", data.user.id)
-    .single();
-
-  // kalau belum ada username → ke profile settings
-  if (!profile || !profile.username) {
-    location.href = "profile-settings.html";
-  } else {
-    location.href = "chat.html";
-  }
-}
-
-// auto redirect kalau sudah login
-(async () => {
-  const { data } = await client.auth.getSession();
-
-  if (data.session) {
-    location.href = "chat.html";
-  }
-})();
-</script>
+    </div>
 
 </body>
 </html>
+
+.landing-page {
+    padding-bottom: 40px;
+}
+
+.hero-section {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 30px 6%;
+    gap: 40px;
+}
+
+.hero-content {
+    flex: 1;
+}
+
+.hero-content h1 {
+    color: #E2D3F4;
+    font-size: 55px;
+    line-height: 1.2;
+    margin-bottom: 20px;
+}
+
+.hero-content p {
+    color: #DDD9D0;
+    font-size: 18px;
+    margin-bottom: 35px;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-login,
+.btn-register {
+    padding: 12px 25px;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: .3s;
+}
+
+.btn-primary,
+.btn-register {
+    background: #EEC291;
+    color: #332F54;
+}
+
+.btn-secondary,
+.btn-login {
+    border: 2px solid #E2D3F4;
+    color: #E2D3F4;
+}
+
+.hero-image img {
+    width: 100%;
+    max-width: 450px;
+}
+
+.features {
+    width: 100%;
+    display: flex;
+    gap: 20px;
+    padding: 0 6%;
+}
+
+.feature-card {
+    flex: 1;
+    background: #332F54;
+    padding: 25px;
+    border-radius: 15px;
+    text-align: center;
+}
+
+.feature-card h3 {
+    color: #EEC291;
+    margin-bottom: 10px;
+}
+
+.feature-card p {
+    color: #DDD9D0;
+}
