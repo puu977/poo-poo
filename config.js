@@ -1,2 +1,0 @@
-const SUPABASE_URL = "https://faflrcekwonjawuozgpw.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhZmxyY2Vrd29uamF3dW96Z3B3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0MjgxNzcsImV4cCI6MjA5NjAwNDE3N30.aBqkCKzCEk-U7enf0w0PmIxTwEISR1TUs_p0iJbS-KA";
