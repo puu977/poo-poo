@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="main-container landing-page">
+
+        <!-- Navbar -->
+        <nav class="navbar">
+            <img src="logo.png" alt="Logo" class="main-logo">
+
+            <div class="nav-right">
+                <a href="login.html" class="btn-login">Login</a>
+                <a href="register.html" class="btn-register">Register</a>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1>Connect With Everyone Instantly</h1>
+                <p>
+                    Nikmati pengalaman chatting yang cepat,
+                    aman, dan modern untuk terhubung dengan
+                    teman, keluarga, maupun tim kerja Anda.
+                </p>
+
+                <div class="hero-buttons">
+                    <a href="register.html" class="btn-primary">
+                        Get Started
+                    </a>
+
+                    <a href="login.html" class="btn-secondary">
+                        Sign In
+                    </a>
+                </div>
+            </div>
+
+            <div class="hero-image">
+                <img src="chat-illustration.png" alt="Chat Illustration">
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="features">
+            <div class="feature-card">
+                <h3>💬 Real Time Chat</h3>
+                <p>Pesan terkirim dan diterima secara langsung.</p>
+            </div>
+
+            <div class="feature-card">
+                <h3>🔒 Secure</h3>
+                <p>Privasi dan keamanan percakapan terjaga.</p>
+            </div>
+
+            <div class="feature-card">
+                <h3>⚡ Fast</h3>
+                <p>Performa ringan dan responsif di semua perangkat.</p>
+            </div>
+        </section>
+
+    </div>
+
+</body>
+</html>
+/* LANDING PAGE */
+
+.landing-page {
+    padding-bottom: 40px;
+}
+
+.hero-section {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 30px 6%;
+    gap: 40px;
+}
+
+.hero-content {
+    flex: 1;
+}
+
+.hero-content h1 {
+    color: #E2D3F4;
+    font-size: 55px;
+    line-height: 1.2;
+    margin-bottom: 20px;
+}
+
+.hero-content p {
+    color: #DDD9D0;
+    font-size: 18px;
+    margin-bottom: 35px;
+    max-width: 550px;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-login,
+.btn-register {
+    padding: 12px 25px;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: .3s;
+}
+
+.btn-primary,
+.btn-register {
+    background: #EEC291;
+    color: #332F54;
+}
+
+.btn-primary:hover,
+.btn-register:hover {
+    transform: translateY(-3px);
+}
+
+.btn-secondary,
+.btn-login {
+    border: 2px solid #E2D3F4;
+    color: #E2D3F4;
+}
+
+.btn-secondary:hover,
+.btn-login:hover {
+    background: #E2D3F4;
+    color: #332F54;
+}
+
+.hero-image {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.hero-image img {
+    width: 100%;
+    max-width: 450px;
+}
+
+.features {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 0 6%;
+}
+
+.feature-card {
+    flex: 1;
+    background: #332F54;
+    padding: 25px;
+    border-radius: 15px;
+    text-align: center;
+}
+
+.feature-card h3 {
+    color: #EEC291;
+    margin-bottom: 10px;
+}
+
+.feature-card p {
+    color: #DDD9D0;
+    font-size: 15px;
+}
+
+/* Responsive */
+
+@media(max-width:800px){
+
+    .hero-section{
+        flex-direction: column-reverse;
+        text-align: center;
+    }
+
+    .hero-content h1{
+        font-size: 38px;
+    }
+
+    .hero-content p{
+        font-size: 16px;
+        margin: 0 auto 25px;
+    }
+
+    .hero-buttons{
+        justify-content: center;
+    }
+
+    .features{
+        flex-direction: column;
+    }
+}
+
+@media(max-width:500px){
+
+    .hero-content h1{
+        font-size: 30px;
+    }
+
+    .btn-primary,
+    .btn-secondary{
+        padding: 10px 18px;
+        font-size: 14px;
+    }
+}
