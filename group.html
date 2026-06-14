@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grup – Puu Chat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/puu.css">
+<style>
+/* Grup – pakai layout chat yang sama dengan pesan.html */
+.chat-layout{display:flex;height:calc(100vh - 68px)}
+.chat-left{width:340px;background:rgba(46,37,70,.55);border-right:1px solid var(--border);display:flex;flex-direction:column}
+.chat-left-top{padding:14px;border-bottom:1px solid var(--border);display:flex;gap:8px}
+.btn-sm{padding:8px 12px;font-size:12.5px;border-radius:10px}
+.contact-list{overflow-y:auto;flex:1}
+.group-item{display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer;border-left:3px solid transparent}
+.group-item:hover{background:rgba(255,255,.03)}
+.group-item.active{background:rgba(238,194,145,.07);border-left-color:var(--accent)}
+.group-item img{width:44px;height:44px;border-radius:12px;object-fit:cover}
+.g-name{font-weight:600;font-size:14px}
+.g-meta{font-size:12px;color:#a991c3}
+.chat-right{flex:1;display:flex;flex-direction:column;min-width:0}
+.chat-header{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--border);background:rgba(51,42,78,.55)}
+.chat-header img{width:42px;height:42px;border-radius:12px}
+.chat-header-name{font-weight:700}
+.chat-header-status{font-size:12px;color:#a991c3}
+.chat-messages{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:10px}
+.msg-row{display:flex}
+.msg-row.me{justify-content:flex-end}
+.msg-bubble{max-width:min(62%,520px);padding:11px 14px;border-radius:16px;background:#433764;border:1px solid var(--border);font-size:14px;line-height:1.55}
+.msg-row.me.msg-bubble{background:#5a3f2e;border-color:rgba(238,194,145,.22)}
+.msg-time{font-size:11px;color:#9b87b6;margin-top:4px}
+.msg-from{font-size:11.5px;color:#b99ecf;margin-bottom:3px}
+.chat-composer{border-top:1px solid var(--border);padding:12px;background:rgba(46,37,70,.5)}
+.composer-inner{display:flex;align-items:center;gap:8px;background:#3a315d;border:1px solid var(--border);border-radius:14px;padding:8px 10px}
+.composer-input{flex:1;background:none;border:none;color:var(--text-main);outline:none;font-size:14px}
+.send-btn{background:var(--accent);color:#3a2817;border:none;border-radius:10px;padding:9px 16px;font-weight:700;cursor:pointer}
+.send-btn:disabled{opacity:.6}
+.empty-chat{color:#a991c3;text-align:center;margin:auto;font-size:13.5px}
+/* modal buat grup – pakai style dari puu.css */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:90}
+.modal-backdrop.open{display:flex}
+.modal{background:#3b345b;border:1px solid var(--border);border-radius:20px;padding:20px;width:min(420px,92vw);box-shadow:var(--shadow)}
+.modal h4{margin-bottom:12px}
+.modal-foot{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+.input{width:100%;background:#3a315d;border:1px solid var(--border);color:var(--text-main);border-radius:13px;padding:12px 14px;outline:none;font-size:14px}
+@media(max-width:900px){.chat-layout{flex-direction:column;height:auto}.chat-left{width:100%;border-right:none;border-bottom:1px solid var(--border)}.contact-list{max-height:260px}.chat-messages{min-height:380px}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <button class="hamburger icon-btn" id="hamburger" aria-label="Menu">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+  <div class="logo-wrap"><div class="logo-mark">P</div><div class="logo-text">Puu <span>Chat</span></div></div>
+  <div class="global-search"><svg width="18" height="18" viewBox="0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input id="globalSearchInput" placeholder="Cari grup…"></div>
+  <div class="topbar-right"><button class="icon-btn" onclick="location.href='pengaturan.html'" title="Pengaturan">⚙️</button><div class="top-user"><div style="text-align:right"><div class="nu" id="topName">Kamu</div><div class="st">Online</div></div><img id="topAvatar" src="https://i.pravatar.cc/100?img=12" alt=""></div></div>
+</header>
+
+<div class="app-body">
+  <aside class="sidebar" id="sidebar">
+    <a class="nav-item" href="home.html">🏠 Home</a>
+    <a class="nav-item" href="pesan.html">💬 Pesan</a>
+    <a class="nav-item active" href="grup.html">👥 Grup</a>
+    <a class="nav-item" href="#" onclick="showToast('Server – next');return false">🗂️ Server</a>
+    <a class="nav-item" href="#" onclick="showToast('Pengaturan – next');return false">⚙️ Pengaturan</a>
+    <div class="sidebar-footer"><div style="font-weight:700;margin-bottom:4px">Puu Chat v2</div><div class="tiny">Grup real-time via Supabase</div></div>
+  </aside>
+
+  <main class="main" id="main" style="padding:0">
+    <div class="chat-layout">
+      <div class="chat-left">
+        <div class="chat-left-top">
+          <button class="btn btn-accent btn-sm" id="btnBuatGrup" style="flex:1">+ Buat Grup</button>
+          <button class="btn btn-sm" id="btnRefresh">⟳</button>
+        </div>
+        <div class="contact-list" id="groupList"><div class="empty-chat" style="padding:20px">Memuat grup…</div></div>
+      </div>
+      <div class="chat-right">
+        <div class="chat-header">
+          <img id="grpAvatar" src="https://picsum.photos/seed/puu/100" alt="">
+          <div><div class="chat-header-name" id="grpName">Pilih grup</div><div class="chat-header-status" id="grpStatus">-</div></div>
+          <div style="margin-left:auto"><button class="btn btn-sm" onclick="showToast('Undang anggota – segera')">Undang</button></div>
+        </div>
+        <div class="chat-messages" id="grpMessages"><div class="empty-chat">Pilih grup di kiri untuk mulai ngobrol</div></div>
+        <div class="chat-composer">
+          <div class="composer-inner">
+            <input class="composer-input" id="grpInput" placeholder="Kirim ke grup…" disabled>
+            <button class="send-btn" id="grpSend" disabled>Kirim</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal Buat Grup -->
+<div class="modal-backdrop" id="modalBuatGrup">
+  <div class="modal">
+    <h4>Buat Grup Baru</h4>
+    <div style="margin-bottom:12px"><label style="font-size:12.5px;color:#b99ecf">Nama grup</label><input class="input" id="newGroupName" placeholder="Mis. Tim Nongkrong"></div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeModal('modalBuatGrup')">Batal</button>
+      <button class="btn btn-accent" id="confirmBuatGrup">Buat</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/supa.js"></script>
+<script src="assets/js/auth.js"></script>
+<script>
+// Grup – Supabase realtime
+let me = null;
+let currentGroup = null;
+let grpSub = null;
+
+async function init(){
+  const user = await requireAuth();
+  if(!user) return;
+  me = user;
+  document.getElementById('topName').textContent = user.email.split('@')[0];
+  await loadGroups();
+  document.getElementById('btnBuatGrup').onclick = ()=> openModal('modalBuatGrup');
+  document.getElementById('btnRefresh').onclick = loadGroups;
+  document.getElementById('confirmBuatGrup').onclick = createGroup;
+  document.getElementById('grpSend').onclick = sendGroupMsg;
+  document.getElementById('grpInput').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); sendGroupMsg() }});
+  // hamburger
+  document.getElementById('hamburger')?.addEventListener('click', ()=> document.getElementById('sidebar').classList.toggle('open'));
+}
+async function loadGroups(){
+  const el = document.getElementById('groupList');
+  el.innerHTML = '<div class="empty-chat" style="padding:20px">Memuat…</div>';
+  // ambil grup yang user jadi member, kalau belum ada tampilkan semua
+  let { data, error } = await sb.from('groups').select('id, name, owner_id, created_at').order('created_at', {ascending:false}).limit(20);
+  if(error){ el.innerHTML = `<div class="empty-chat" style="padding:20px">Error: ${error.message}<br><br>Buat tabel groups / group_members / group_messages dulu, lihat SQL di bawah file ini.</div>`; return }
+  if(!data || data.length===0){
+    el.innerHTML = `<div class="empty-chat" style="padding:20px">Belum ada grup.<br>Klik "Buat Grup" di atas.</div>`;
+    return;
+  }
+  el.innerHTML = data.map((g,i)=>`
+    <div class="group-item ${i===0?'active':''}" data-gid="${g.id}" data-name="${g.name}">
+      <img src="https://picsum.photos/seed/${g.id}/120" alt="">
+      <div><div class="g-name">${g.name}</div><div class="g-meta">Klik untuk buka</div></div>
+    </div>
+  `).join('');
+  el.querySelectorAll('.group-item').forEach(n=>{
+    n.onclick = ()=> openGroup(n.dataset.gid, n.dataset.name, n);
+  });
+  // auto open first
+  if(data[0]) openGroup(data[0].id, data[0].name, el.querySelector('.group-item'));
+}
+async function openGroup(id, name, el){
+  currentGroup = id;
+  document.querySelectorAll('.group-item').forEach(c=>c.classList.remove('active'));
+  el?.classList.add('active');
+  document.getElementById('grpName').textContent = name;
+  document.getElementById('grpStatus').textContent = 'anggota grup';
+  document.getElementById('grpAvatar').src = 'https://picsum.photos/seed/'+id+'/100';
+  document.getElementById('grpInput').disabled = false;
+  document.getElementById('grpSend').disabled = false;
+  await loadGroupMessages();
+  subscribeGroup();
+}
+async function loadGroupMessages(){
+  const box = document.getElementById('grpMessages');
+  const { data, error } = await sb.from('group_messages')
+   .select('*, sender:profiles!group_messages_sender_id_fkey(display_name)')
+   .eq('group_id', currentGroup)
+   .order('created_at', {ascending:true})
+   .limit(200);
+  if(error){ box.innerHTML = `<div class="empty-chat">Error: ${error.message}</div>`; return }
+  if(!data || data.length===0){ box.innerHTML = '<div class="empty-chat">Belum ada pesan. Jadilah yang pertama!</div>'; return }
+  box.innerHTML = data.map(m=>{
+    const mine = m.sender_id === me.id;
+    const from = m.sender?.display_name || 'User';
+    const time = new Date(m.created_at).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+    return `<div class="msg-row ${mine?'me':''}"><div>
+      ${!mine?`<div class="msg-from">${from}</div>`:''}
+      <div class="msg-bubble">${m.body}</div>
+      <div class="msg-time">${time}</div>
+    </div></div>`;
+  }).join('');
+  box.scrollTop = box.scrollHeight;
+}
+function subscribeGroup(){
+  if(grpSub) sb.removeChannel(grpSub);
+  grpSub = sb.channel('grp-'+currentGroup)
+   .on('postgres_changes',{event:'INSERT',schema:'public',table:'group_messages',filter:'group_id=eq.'+currentGroup},()=>loadGroupMessages())
+   .subscribe();
+}
+async function sendGroupMsg(){
+  const input = document.getElementById('grpInput');
+  const text = input.value.trim();
+  if(!text ||!currentGroup) return;
+  input.value = '';
+  const { error } = await sb.from('group_messages').insert({ group_id: currentGroup, sender_id: me.id, body: text });
+  if(error){ showToast('Gagal kirim: '+error.message); input.value = text; return }
+  loadGroupMessages();
+}
+async function createGroup(){
+  const name = document.getElementById('newGroupName').value.trim();
+  if(!name){ showToast('Isi nama grup dulu'); return }
+  const btn = document.getElementById('confirmBuatGrup');
+  setLoading(btn, true, 'Membuat…');
+  const { data, error } = await sb.from('groups').insert({ name, owner_id: me.id }).select().single();
+  setLoading(btn, false);
+  if(error){ showToast(authError(error)); return }
+  // auto join creator
+  await sb.from('group_members').insert({ group_id: data.id, user_id: me.id });
+  closeModal('modalBuatGrup');
+  document.getElementById('newGroupName').value = '';
+  showToast('Grup "'+name+'" dibuat');
+  loadGroups();
+}
+function openModal(id){ document.getElementById(id)?.classList.add('open') }
+function closeModal(id){ document.getElementById(id)?.classList.remove('open') }
+document.querySelectorAll('.modal-backdrop').forEach(m=> m.addEventListener('click', e=>{ if(e.target===m) m.classList.remove('open') }));
+
+init();
+
+/*
+SQL Supabase untuk Grup – jalankan sekali di SQL Editor
+(jika sudah jalanin SQL Pesan kemarin, tinggal tambah yang groups)
+
+create table if not exists groups (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  owner_id uuid references auth.users(id),
+  created_at timestamptz default now()
+);
+alter table groups enable row level security;
+create policy "groups_read_all" on groups for select using (true);
+create policy "groups_insert_auth" on groups for insert with check (auth.uid() = owner_id);
+
+create table if not exists group_members (
+  group_id uuid references groups(id) on delete cascade,
+  user_id uuid references auth.users(id) on delete cascade,
+  primary key (group_id, user_id)
+);
+alter table group_members enable row level security;
+create policy "gm_read_all" on group_members for select using (true);
+create policy "gm_insert_own" on group_members for insert with check (auth.uid() = user_id);
+
+create table if not exists group_messages (
+  id bigserial primary key,
+  group_id uuid references groups(id) on delete cascade,
+  sender_id uuid references auth.users(id),
+  body text not null,
+  created_at timestamptz default now()
+);
+alter table group_messages enable row level security;
+create policy "gmsg_read_member" on group_messages for select using (
+  exists (select 1 from group_members where group_id = group_messages.group_id and user_id = auth.uid())
+  or true
+);
+create policy "gmsg_insert_member" on group_messages for insert with check (auth.uid() = sender_id);
+
+alter publication supabase_realtime add table group_messages;
+*/
+</script>
+</body>
+  </html>
