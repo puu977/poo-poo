@@ -1,0 +1,85 @@
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://YOUR-PROJECT.supabase.co";
+const SUPABASE_ANON_KEY = "YOUR_ANON_KEY";
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+function showToast(message) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.classList.add("show");
+
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2400);
+}
+
+// cek session (kalau sudah login langsung ke home)
+(async function () {
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    if (session) location.replace("home.html");
+  } catch (e) {
+    console.error(e);
+  }
+})();
+
+document.getElementById("regForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const password2 = document.getElementById("password2").value;
+  const btn = document.getElementById("regBtn");
+
+  // validasi sederhana
+  if (!email) return showToast("Email wajib diisi");
+  if (password.length < 6) return showToast("Password minimal 6 karakter");
+  if (password !== password2) return showToast("Password tidak cocok");
+
+  btn.disabled = true;
+  btn.textContent = "Mendaftar…";
+
+  try {
+    const { data, error } = await sb.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/home.html`
+      }
+    });
+
+    if (error) throw error;
+
+    // kalau langsung login (tergantung setting Supabase)
+    if (data.session) {
+      showToast("Berhasil daftar");
+      setTimeout(() => location.href = "home.html", 500);
+      return;
+    }
+
+    // default: email verification
+    showToast("Akun dibuat! Cek email untuk verifikasi");
+    setTimeout(() => location.href = "login.html", 1800);
+
+  } catch (err) {
+    console.error(err);
+
+    const msg = err.message || "";
+
+    if (msg.includes("already")) {
+      showToast("Email sudah terdaftar");
+    } else if (msg.includes("Invalid email")) {
+      showToast("Format email tidak valid");
+    } else {
+      showToast(msg);
+    }
+
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Daftar";
+  }
+});
+</script>
