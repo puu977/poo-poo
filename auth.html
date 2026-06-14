@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>puu — Masuk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-page: #DDD9D0;
+  --bg-card: #49426E;
+  --bg-input: #332F54;
+  --text-main: #E2D3F4;
+  --text-soft: #c5b5d9;
+  --text-muted: #9386a2;
+  --accent: #EEC291;
+  --accent-ink: #332F54;
+  --border-card: #E2D3F4;
+  --shadow-card: 0 0 25px rgba(158,143,175,0.57);
+  --radius-card: 25px;
+  --radius-input: 14px;
+  --radius-btn: 12px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
+
+html, body { height: 100%; }
+
+body{
+  font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+  background: var(--bg-page);
+  color: var(--text-main);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Page frame */
+.page-shell{
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 18px 52px;
+  position: relative;
+}
+
+.top-bar{
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 18px 22px 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: #6c6079;
+  z-index: 40;
+}
+.top-bar .brand-mini{
+  font-weight: 700;
+  font-size: 17px;
+  color: #53476b;
+  letter-spacing: -0.01em;
+}
+.top-bar .skip-link{
+  color: #736687;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color .18s;
+}
+.top-bar .skip-link:hover{ color: #49426E; }
+
+.view{
+  display: none;
+  width: 100%;
+  animation: viewIn .34s cubic-bezier(.2,.8,.2,1);
+}
+.view.active{ display: block; }
+
+@keyframes viewIn{
+  from { opacity:0; transform: translateY(10px); }
+  to { opacity:1; transform: translateY(0); }
+}
+
+/* Puu Card - matches chat.html style */
+.puu-card{
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  background: var(--bg-card);
+  border: 5px solid var(--border-card);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  padding: 34px 30px;
+  position: relative;
+}
+
+.puu-card.wide{ max-width: 480px; }
+
+.card-logo{
+  text-align: center;
+  margin-bottom: 22px;
+}
+.puu-wordmark{
+  font-weight: 700;
+  font-size: 36px;
+  letter-spacing: -0.03em;
+  color: var(--text-main);
+  line-height: 1;
+}
+.puu-wordmark .dot{
+  color: var(--accent);
+}
+
+/* Auth Tabs */
+.auth-tabs{
+  display: flex;
+  background: var(--bg-input);
+  border-radius: 14px;
+  padding: 4px;
+  margin-bottom: 26px;
+  position: relative;
+}
+.auth-tab{
+  flex:1;
+  text-align: center;
+  padding: 11px 10px;
+  border-radius: 11px;
+  font-weight: 600;
+  font-size: 14.5px;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all .2s ease;
+  position: relative;
+  z-index: 2;
+}
+.auth-tab.active{
+  color: var(--accent-ink);
+}
+.auth-tabs .tab-indicator{
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: calc(50% - 4px);
+  height: calc(100% - 8px);
+  background: var(--accent);
+  border-radius: 10px;
+  transition: transform .28s cubic-bezier(.4,0,.2,1);
+  z-index: 1;
+}
+.auth-tabs[data-active="daftar"] .tab-indicator{
+  transform: translateX(100%);
+}
+
+/* Form */
+.form-stack{ display: flex; flex-direction: column; gap: 14px; }
+
+.field{ display: flex; flex-direction: column; gap: 7px; }
+.field-label{
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-soft);
+  padding-left: 3px;
+}
+.input-wrap{ position: relative; }
+.puu-input{
+  width: 100%;
+  background: var(--bg-input);
+  border: 1.5px solid rgba(226,211,244,0.13);
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 15px;
+  padding: 14px 16px;
+  border-radius: var(--radius-input);
+  outline: none;
+  transition: border-color .18s, box-shadow .18s;
+}
+.puu-input::placeholder{ color: var(--text-muted); }
+.puu-input:focus{
+  border-color: rgba(238,194,145,0.55);
+  box-shadow: 0 0 0 3px rgba(238,194,145,0.11);
+}
+.puu-input.invalid{ border-color: #e68a8a; }
+
+.pw-toggle{
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 12.5px;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 4px 6px;
+  border-radius: 6px;
+}
+.pw-toggle:hover{ color: var(--text-main); }
+
+.field-hint{
+  font-size: 12px;
+  color: var(--text-muted);
+  padding-left: 3px;
+  min-height: 16px;
+}
+.field-hint.err{ color: #f2b48b; }
+
+.btn-primary{
+  width: 100%;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: none;
+  border-radius: var(--radius-btn);
+  padding: 15px 18px;
+  font-family: inherit;
+  font-size: 15.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform .08s ease, filter .15s, opacity .15s;
+  margin-top: 6px;
+}
+.btn-primary:hover{ filter: brightness(1.04); }
+.btn-primary:active{ transform: translateY(1px) scale(.992); }
+.btn-primary:disabled{ opacity: .6; cursor: not-allowed; }
+
+.btn-secondary{
+  width: 100%;
+  background: transparent;
+  color: var(--text-main);
+  border: 1.5px solid rgba(226,211,244,0.28);
+  border-radius: var(--radius-btn);
+  padding: 13px 18px;
+  font-family: inherit;
+  font-size: 14.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s;
+}
+.btn-secondary:hover{ background: rgba(51,47,84,0.55); }
+
+.auth-meta{
+  text-align: center;
+  font-size: 12.7px;
+  color: var(--text-muted);
+  margin-top: 18px;
+  line-height: 1.6;
+}
+.auth-meta a{ color: #e6c699; text-decoration: none; }
+.auth-meta a:hover{ text-decoration: underline; }
+
+.auth-panel{ display: none; }
+.auth-panel.active{ display: block; animation: fadeUp .25s ease; }
+@keyframes fadeUp{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+/* OTP */
+.otp-head{ text-align: center; margin-bottom: 22px; }
+.otp-head h1{
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 7px;
+}
+.otp-head p{
+  font-size: 13.5px;
+  color: var(--text-soft);
+  line-height: 1.55;
+}
+.otp-email{
+  color: var(--accent);
+  font-weight: 600;
+  word-break: break-all;
+}
+
+.otp-boxes{
+  display: flex;
+  gap: 9px;
+  justify-content: center;
+  margin: 20px 0 8px;
+}
+.otp-box{
+  width: 50px;
+  height: 56px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 600;
+  background: var(--bg-input);
+  border: 1.5px solid rgba(226,211,244,0.18);
+  color: var(--text-main);
+  border-radius: 13px;
+  outline: none;
+  font-family: inherit;
+  transition: border-color .15s, box-shadow .15s;
+}
+.otp-box:focus{
+  border-color: rgba(238,194,145,0.72);
+  box-shadow: 0 0 0 3px rgba(238,194,145,0.13);
+}
+.otp-box.filled{ border-color: rgba(226,211,244,0.38); }
+
+.otp-actions{
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 14px 0 6px;
+}
+.otp-actions button{
+  background: none;
+  border: none;
+  color: #e6c699;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.otp-actions button:disabled{
+  color: var(--text-muted);
+  cursor: default;
+}
+.otp-hint{ text-align:center; font-size:12px; color: var(--text-muted); margin-bottom:8px; }
+
+.back-link{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  color: var(--text-soft);
+  text-decoration: none;
+  font-size: 13.2px;
+  font-weight: 500;
+  margin-bottom: 16px;
+  opacity: .92;
+}
+.back-link:hover{ color: var(--text-main); }
+
+/* Setting / Profile */
+.setting-head{ margin-bottom: 16px; }
+.setting-head h1{ font-size: 23px; font-weight: 700; }
+.setting-head p{ font-size: 13.2px; color: var(--text-soft); margin-top: 4px; }
+
+.profile-scroll{
+  max-height: 54vh;
+  overflow-y: auto;
+  padding-right: 6px;
+  margin-right: -6px;
+}
+.profile-scroll::-webkit-scrollbar{ width:7px; }
+.profile-scroll::-webkit-scrollbar-thumb{ background: rgba(226,211,244,0.18); border-radius: 20px; }
+
+.banner-upload{
+  width: 100%;
+  height: 96px;
+  background: #3b3562 linear-gradient(135deg, #3f396b 0%, #564c7d 100%);
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1.5px dashed rgba(226,211,244,0.28);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color: var(--text-soft);
+  font-size: 12.8px;
+  transition: border-color .18s;
+  margin-bottom: 14px;
+}
+.banner-upload:hover{ border-color: rgba(238,194,145,0.5); }
+.banner-upload img{
+  position: absolute; inset:0; width:100%; height:100%; object-fit: cover;
+}
+.banner-upload span{ position: relative; z-index:2; background: rgba(51,47,84,0.62); padding: 5px 10px; border-radius: 8px;}
+
+.avatar-row{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-bottom: 18px;
+}
+.avatar-preview{
+  width: 76px; height:76px; border-radius: 50%;
+  background: #332F54;
+  border: 3px solid rgba(226,211,244,0.55);
+  overflow:hidden;
+  flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer;
+  position:relative;
+}
+.avatar-preview img{ width:100%; height:100%; object-fit:cover; }
+.avatar-preview .avatar-placeholder{
+  font-size: 27px; font-weight:700; color: #a897bd;
+}
+.avatar-actions{ font-size:13px; color: var(--text-soft); }
+.avatar-actions button{
+  background:none; border:none; color: #e6c699; font-family:inherit; font-weight:600; cursor:pointer; padding:0; font-size:13px;
+}
+.avatar-actions .sub{ display:block; margin-top: 3px; color: var(--text-muted); font-size:12px;}
+
+.grid-2{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.select-wrap{ position:relative; }
+.puu-select{
+  width:100%;
+  appearance: none;
+  background: var(--bg-input);
+  border: 1.5px solid rgba(226,211,244,0.13);
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 15px;
+  padding: 14px 38px 14px 16px;
+  border-radius: var(--radius-input);
+  outline: none;
+}
+.puu-select:focus{ border-color: rgba(238,194,145,0.55); box-shadow: 0 0 0 3px rgba(238,194,145,0.11);}
+.select-wrap::after{
+  content:"▾";
+  position:absolute; right:14px; top:50%; transform:translateY(-50%);
+  color: var(--text-muted); pointer-events:none;
+}
+
+.phone-row{
+  display:flex; gap:8px;
+}
+.phone-row .puu-input{ flex:1; }
+.btn-phone{
+  background: rgba(226,211,244,0.1);
+  color: var(--text-main);
+  border: 1.5px solid rgba(226,211,244,0.22);
+  border-radius: 12px;
+  padding: 0 15px;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 13.3px;
+  cursor:pointer;
+  white-space:nowrap;
+  transition: all .15s;
+}
+.btn-phone:hover{ background: rgba(226,211,244,0.16); }
+.btn-phone.verified{ color: #b8e4b8; border-color: rgba(160,214,160,0.35); }
+.btn-phone:disabled{ opacity:.6; cursor: default;}
+
+.phone-status{ font-size:12px; color: var(--text-muted); margin-top:4px; min-height:16px; }
+.phone-status.ok{ color: #b7dcb7; }
+
+/* Chat placeholder */
+.chat-placeholder{
+  text-align: center;
+  padding: 22px 10px 10px;
+}
+.chat-placeholder .puu-illustration{
+  width: 84px; height: 84px;
+  margin: 0 auto 18px;
+  background: var(--bg-input);
+  border-radius: 22px;
+  display:flex; align-items:center; justify-content:center;
+  font-size: 32px;
+}
+.chat-placeholder h2{ font-size: 22px; margin-bottom: 8px;}
+.chat-placeholder p{ color: var(--text-soft); font-size: 13.8px; line-height: 1.6; }
+.chat-meta{
+  background: rgba(51,47,84,0.75);
+  border: 1px solid rgba(226,211,244,0.14);
+  border-radius: 14px;
+  padding: 14px 16px;
+  font-size: 13px;
+  color: var(--text-soft);
+  margin: 18px 0 18px;
+  text-align: left;
+}
+.chat-meta strong{ color: var(--text-main); }
+
+/* Toast */
+.toast-stack{
+  position: fixed;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  pointer-events: none;
+  width: calc(100% - 32px);
+  max-width: 420px;
+}
+.toast{
+  background: #2b2646f2;
+  color: var(--text-main);
+  border: 1px solid rgba(226,211,244,0.22);
+  box-shadow: 0 12px 36px rgba(33,26,56,0.31);
+  padding: 12px 16px;
+  border-radius: 14px;
+  font-size: 13.4px;
+  font-weight: 500;
+  animation: toastIn .28s ease;
+  backdrop-filter: blur(8px);
+  text-align: center;
+  pointer-events: auto;
+}
+.toast.success{ border-color: rgba(184,228,184,0.34); }
+@keyframes toastIn{ from{ opacity:0; transform: translateY(8px);} to{opacity:1; transform:translateY(0);} }
+
+/* Footer small */
+.card-footnote{
+  text-align:center;
+  font-size: 11.8px;
+  color: #7b6b8d;
+  margin-top: 18px;
+}
+
+/* Responsive */
+@media (max-width: 520px){
+  .puu-card{ padding: 28px 20px 24px; border-width: 4px; border-radius: 22px;}
+  .puu-wordmark{ font-size: 32px;}
+  .otp-box{ width: 44px; height: 52px; font-size: 20px;}
+  .grid-2{ grid-template-columns: 1fr; }
+  .page-shell{ padding-top: 52px;}
+}
+
+@media (max-width: 380px){
+  .otp-boxes{ gap:6px; }
+  .otp-box{ width: 41px; height: 50px;}
+}
+
+/* Utility */
+.hidden{display:none !important;}
+.sr-only{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;}
+.spacer-8{ height:8px; }
+.spacer-14{ height:14px; }
+</style>
+</head>
+<body>
+  <div class="page-shell">
+    <div class="top-bar">
+      <div class="brand-mini">puu</div>
+      <a href="chat.html" class="skip-link">Lewati → chat.html</a>
+    </div>
+
+    <!-- VIEW: AUTH -->
+    <section class="view active" id="view-auth" aria-labelledby="auth-heading">
+      <div class="puu-card">
+        <div class="card-logo">
+          <div class="puu-wordmark">puu<span class="dot">.</span></div>
+        </div>
+
+        <div class="auth-tabs" id="authTabs" data-active="masuk" role="tablist">
+          <div class="tab-indicator" aria-hidden="true"></div>
+          <button class="auth-tab active" id="tab-masuk" data-tab="masuk" role="tab" aria-selected="true">Masuk</button>
+          <button class="auth-tab" id="tab-daftar" data-tab="daftar" role="tab" aria-selected="false">Daftar</button>
+        </div>
+
+        <!-- Masuk -->
+        <div class="auth-panel active" id="panel-masuk" role="tabpanel" aria-labelledby="tab-masuk">
+          <form id="form-masuk" class="form-stack" novalidate>
+            <div class="field">
+              <label class="field-label" for="login-email">Email</label>
+              <input class="puu-input" type="email" id="login-email" placeholder="nama@email.com" autocomplete="email" required />
+              <div class="field-hint" id="login-email-hint"></div>
+            </div>
+            <div class="field">
+              <label class="field-label" for="login-password">Kata sandi</label>
+              <div class="input-wrap">
+                <input class="puu-input" type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" required minlength="6" />
+                <button type="button" class="pw-toggle" data-for="login-password">Lihat</button>
+              </div>
+              <div class="field-hint" id="login-password-hint"></div>
+            </div>
+            <button class="btn-primary" type="submit">Masuk</button>
+            <div class="auth-meta">
+              Lupa kata sandi? <a href="#" id="forgotLink">Pulihkan</a>
+            </div>
+          </form>
+        </div>
+
+        <!-- Daftar -->
+        <div class="auth-panel" id="panel-daftar" role="tabpanel" aria-labelledby="tab-daftar">
+          <form id="form-daftar" class="form-stack" novalidate>
+            <div class="field">
+              <label class="field-label" for="reg-email">Email</label>
+              <input class="puu-input" type="email" id="reg-email" placeholder="nama@email.com" autocomplete="email" required />
+              <div class="field-hint" id="reg-email-hint"></div>
+            </div>
+            <div class="field">
+              <label class="field-label" for="reg-password">Buat kata sandi</label>
+              <div class="input-wrap">
+                <input class="puu-input" type="password" id="reg-password" placeholder="Minimal 6 karakter" autocomplete="new-password" required minlength="6" />
+                                <button type="button" class="pw-toggle" data-for="reg-password">Lihat</button>
+              </div>
+              <div class="field-hint">Gunakan minimal 6 karakter.</div>
+            </div>
+            <button class="btn-primary" type="submit">Daftar</button>
+            <div class="auth-meta">
+              Dengan mendaftar, kamu setuju dengan <a href="#">Ketentuan</a> & <a href="#">Privasi</a> puu.
+            </div>
+          </form>
+        </div>
+      <div class="card-footnote">© 2026 puu · aman & sederhana</div>
+    </section>
+
+    <!-- VIEW: OTP -->
+    <section class="view" id="view-otp">
+      <div class="puu-card">
+        <a href="#" class="back-link" data-nav="auth">← Kembali</a>
+        <div class="otp-head">
+          <h1>Konfirmasi OTP</h1>
+          <p>Kami mengirimkan kode 6 digit ke<br><span class="otp-email" id="otpEmailDisplay">email@contoh.com</span></p>
+        </div>
+
+        <div class="otp-boxes" id="otpBoxes">
+          <input class="otp-box" inputmode="numeric" maxlength="1" aria-label="Digit 1" />
+          <input class="otp-box" inputmode="numeric" maxlength="1" aria-label="Digit 2" />
+          <input class="otp-box" inputmode="numeric" maxlength="1" aria-label="Digit 3" />
+          <input class="otp-box" inputmode="numeric" maxlength="1" aria-label="Digit 4" />
+          <input class="otp-box" inputmode="numeric" maxlength="1" aria-label="Digit 5" />
+          <input class="otp-box" inputmode="numeric" maxlength="1" aria-label="Digit 6" />
+        </div>
+        <div class="otp-hint" id="otpHint">Masukkan kode apa saja — ini hanya mock.</div>
+        <div class="spacer-8"></div>
+        <button class="btn-primary" id="verifyOtpBtn">Verifikasi</button>
+        <div class="otp-actions">
+          Tidak menerima kode? <button id="resendOtpBtn">Kirim ulang</button> <span id="resendTimer" style="color:#a993bf;"></span>
+        </div>
+      <div class="card-footnote">Kode berlaku 5 menit</div>
+    </section>
+
+    <!-- VIEW: SETTING / LENGKAPI PROFIL -->
+    <section class="view" id="view-setting">
+      <div class="puu-card">
+        <div class="setting-head">
+          <h1>Lengkapi Profil</h1>
+          <p>Isi profilmu supaya teman-teman mudah mengenali kamu di puu.</p>
+        </div>
+
+        <div class="profile-scroll">
+          <div class="banner-upload" id="bannerUpload" title="Klik untuk ganti banner">
+            <span id="bannerLabel">Unggah banner</span>
+            <img id="bannerPreview" class="hidden" alt="Banner preview" />
+            <input type="file" id="bannerInput" accept="image/*" class="sr-only" />
+          </div>
+
+          <div class="avatar-row">
+            <div class="avatar-preview" id="avatarBox" title="Klik untuk ganti foto">
+              <div class="avatar-placeholder" id="avatarPlaceholder">:)</div>
+              <img id="avatarPreview" class="hidden" alt="Avatar" />
+              <input type="file" id="avatarInput" accept="image/*" class="sr-only" />
+            </div>
+            <div class="avatar-actions">
+              <button type="button" id="avatarChangeBtn">Ganti foto profil</button>
+              <span class="sub">JPG/PNG, maks 2MB</span>
+            </div>
+          </div>
+
+          <form id="form-profile" class="form-stack" novalidate>
+            <div class="field">
+              <label class="field-label" for="displayName">Nama tampilan</label>
+              <input class="puu-input" type="text" id="displayName" placeholder="Nama kamu di puu" maxlength="32" />
+            </div>
+
+            <div class="grid-2">
+              <div class="field">
+                <label class="field-label" for="birthDate">Tanggal lahir</label>
+                <input class="puu-input" type="date" id="birthDate" />
+              </div>
+              <div class="field">
+                <label class="field-label" for="country">Negara asal</label>
+                <div class="select-wrap">
+                  <select class="puu-select" id="country">
+                    <option value="ID">Indonesia</option>
+                    <option value="MY">Malaysia</option>
+                    <option value="SG">Singapura</option>
+                    <option value="TH">Thailand</option>
+                    <option value="VN">Vietnam</option>
+                    <option value="PH">Filipina</option>
+                    <option value="JP">Jepang</option>
+                    <option value="KR">Korea Selatan</option>
+                    <option value="US">Amerika Serikat</option>
+                    <option value="GB">Inggris</option>
+                    <option value="AU">Australia</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field-label" for="phoneNumber">No. Telp</label>
+              <div class="phone-row">
+                <input class="puu-input" type="tel" id="phoneNumber" placeholder="+62 812 3456 7890" />
+                <button type="button" class="btn-phone" id="phoneVerifyBtn">Konfirmasi</button>
+              </div>
+              <div class="phone-status" id="phoneStatus"></div>
+            </div>
+          </form>
+        </div>
+
+        <div class="spacer-14"></div>
+        <button class="btn-primary" id="saveProfileBtn" type="button">Simpan & Lanjut</button>
+        <div class="auth-meta" style="margin-top:14px;">
+          Bisa diubah nanti di Pengaturan.
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW: CHAT PLACEHOLDER -->
+    <section class="view" id="view-chat">
+      <div class="puu-card">
+        <div class="chat-placeholder">
+          <div class="puu-illustration">💬</div>
+          <h2>Siap ngobrol di puu</h2>
+          <p>Ini adalah placeholder untuk tampilan Chat.<br>Di app asli, kamu akan langsung masuk ke ruang obrolan.</p>
+
+          <div class="chat-meta" id="chatMeta">
+            <div><strong>Email:</strong> <span id="chatEmail">-</span></div>
+            <div style="margin-top:6px;"><strong>Nama:</strong> <span id="chatName">-</span></div>
+            <div style="margin-top:6px; font-size:12.5px; color:#a595b9;">Data disimpan di localStorage (mock).</div>
+          </div>
+
+          <a href="chat.html" class="btn-primary" style="display:block; text-align:center; text-decoration:none;">Buka chat.html</a>
+          <div style="height:10px"></div>
+          <button class="btn-secondary" id="backToAuthBtn">Kembali ke Auth</button>
+        </div>
+      <div class="card-footnote">puu chat · build auth-v1</div>
+    </section>
+
+  </div>
+
+  <div class="toast-stack" id="toastStack" aria-live="polite"></div>
+
+<script>
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+
+const LS = {
+  get(k, fallback=null){ try{ return JSON.parse(localStorage.getItem(k))?? fallback }catch{ return fallback } },
+  set(k,v){ localStorage.setItem(k, JSON.stringify(v)); },
+  rawGet(k){ return localStorage.getItem(k) }
+};
+
+function showToast(message, type='default', duration=2600){
+  const stack = $('#toastStack');
+  const t = document.createElement('div');
+  t.className = 'toast' + (type==='success'? ' success' : '');
+  t.textContent = message;
+  stack.appendChild(t);
+  setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translateY(6px)'; t.style.transition='all.22s'; }, duration-220);
+  setTimeout(()=> t.remove(), duration);
+}
+
+// View router
+const views = {
+  auth: $('#view-auth'),
+  otp: $('#view-otp'),
+  setting: $('#view-setting'),
+  chat: $('#view-chat')
+};
+
+function go(viewName){
+  Object.values(views).forEach(v => v.classList.remove('active'));
+  views[viewName].classList.add('active');
+  window.scrollTo(0,0);
+  document.title = 'puu — ' + ({auth:'Masuk', otp:'OTP', setting:'Profil', chat:'Chat'}[viewName] || 'puu');
+  if(viewName === 'otp'){
+    setTimeout(()=> {
+      const first = $('#otpBoxes.otp-box');
+      if(first) first.focus();
+    }, 80);
+  }
+  if(viewName === 'chat'){
+    renderChatMeta();
+  }
+}
+
+// Auth tabs
+const tabsEl = $('#authTabs');
+$$('.auth-tab', tabsEl).forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const tab = btn.dataset.tab;
+    tabsEl.dataset.active = tab;
+    $$('.auth-tab', tabsEl).forEach(b=>{ b.classList.toggle('active', b.dataset.tab===tab); b.setAttribute('aria-selected', b.dataset.tab===tab? 'true':'false'); });
+    $('#panel-masuk').classList.toggle('active', tab==='masuk');
+    $('#panel-daftar').classList.toggle('active', tab==='daftar');
+  });
+});
+
+// Password toggles
+$$('.pw-toggle').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    const input = document.getElementById(b.dataset.for);
+    const isPw = input.type === 'password';
+    input.type = isPw? 'text' : 'password';
+    b.textContent = isPw? 'Sembunyi' : 'Lihat';
+  });
+});
+
+// Email validate simple
+function validEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+
+// Forms: Masuk / Daftar -> OTP
+$('#form-masuk').addEventListener('submit', e=>{
+  e.preventDefault();
+  const email = $('#login-email').value.trim();
+  const pw = $('#login-password').value.trim();
+  let ok = true;
+  $('#login-email').classList.toggle('invalid',!validEmail(email));
+  $('#login-email-hint').textContent = validEmail(email)? '' : 'Email tidak valid.';
+  $('#login-password').classList.toggle('invalid', pw.length < 6);
+  $('#login-password-hint').textContent = pw.length < 6? 'Minimal 6 karakter.' : '';
+  ok = validEmail(email) && pw.length >= 6;
+  if(!ok) return;
+  LS.set('puu_auth_email', email);
+  LS.set('puu_auth_flow', 'login');
+  startOtp(email);
+});
+
+$('#form-daftar').addEventListener('submit', e=>{
+  e.preventDefault();
+  const email = $('#reg-email').value.trim();
+  const pw = $('#reg-password').value.trim();
+  let ok = true;
+  $('#reg-email').classList.toggle('invalid',!validEmail(email));
+  $('#reg-email-hint').textContent = validEmail(email)? '' : 'Email tidak valid.';
+  if(pw.length < 6){ showToast('Kata sandi minimal 6 karakter'); ok=false; }
+  if(!ok) return;
+  LS.set('puu_auth_email', email);
+  LS.set('puu_auth_flow', 'register');
+  startOtp(email);
+});
+
+function startOtp(email){
+  $('#otpEmailDisplay').textContent = email;
+  clearOtp();
+  startResendCooldown(28);
+  go('otp');
+}
+
+// OTP input behavior
+const otpInputs = $$('#otpBoxes.otp-box');
+function clearOtp(){
+  otpInputs.forEach(i=>{ i.value=''; i.classList.remove('filled'); });
+}
+otpInputs.forEach((input, idx)=>{
+  input.addEventListener('input', ()=>{
+    input.value = input.value.replace(/\D/g,'').slice(0,1);
+    input.classList.toggle('filled',!!input.value);
+    if(input.value && idx < otpInputs.length -1){
+      otpInputs[idx+1].focus();
+    }
+  });
+  input.addEventListener('keydown', e=>{
+    if(e.key === 'Backspace' &&!input.value && idx>0){
+      otpInputs[idx-1].focus();
+    }
+    if(e.key === 'ArrowLeft' && idx>0) otpInputs[idx-1].focus();
+    if(e.key === 'ArrowRight' && idx < otpInputs.length-1) otpInputs[idx+1].focus();
+  });
+  input.addEventListener('paste', e=>{
+    e.preventDefault();
+    const txt = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g,'').slice(0,6);
+    txt.split('').forEach((c,i)=>{ if(otpInputs[i]){ otpInputs[i].value=c; otpInputs[i].classList.add('filled'); }});
+    if(txt.length) otpInputs[Math.min(txt.length,5)].focus();
+  });
+});
+
+function getOtpValue(){ return otpInputs.map(i=>i.value).join(''); }
+
+$('#verifyOtpBtn').addEventListener('click', ()=>{
+  const code = getOtpValue();
+  if(code.length < 6){
+    showToast('Masukkan 6 digit OTP');
+    return;
+  }
+  // Any 6 digits work (mock)
+  const flow = LS.get('puu_auth_flow', 'login');
+  const email = LS.rawGet('puu_auth_email')? JSON.parse(LS.rawGet('puu_auth_flow')) : '';
+  LS.set('puu_verified', true);
+  showToast('OTP terverifikasi', 'success');
+  setTimeout(()=>{
+    if(flow === 'register'){
+      go('setting');
+    } else {
+      // Simulate redirect to chat.html
+      go('chat');
+    }
+  }, 420);
+});
+  // Resend OTP
+let resendInterval = null;
+function startResendCooldown(sec){
+  const btn = document.querySelector('#resendOtpBtn');
+  const timer = document.querySelector('#resendTimer');
+  let left = sec;
+  btn.disabled = true;
+  timer.textContent = `(${left}s)`;
+  clearInterval(resendInterval);
+  resendInterval = setInterval(()=>{
+    left--;
+    timer.textContent = left>0? `(${left}s)` : '';
+    if(left<=0){
+      clearInterval(resendInterval);
+      btn.disabled = false;
+      timer.textContent = '';
+    }
+  }, 1000);
+}
+document.querySelector('#resendOtpBtn').addEventListener('click', ()=>{
+  if(document.querySelector('#resendOtpBtn').disabled) return;
+  showToast('Kode OTP dikirim ulang', 'success');
+  clearOtp();
+  startResendCooldown(30);
+  document.querySelectorAll('#otpBoxes.otp-box')[0].focus();
+});
+
+// Back links
+document.querySelectorAll('[data-nav="auth"]').forEach(a=>{
+  a.addEventListener('click', e=>{ e.preventDefault(); go('auth'); });
+});
+
+// Profile uploads
+function bindImageUpload(inputEl, previewImgEl, placeholderEl, labelEl){
+  inputEl.addEventListener('change', ()=>{
+    const file = inputEl.files[0];
+    if(!file) return;
+    if(file.size > 2 * 1024 * 1024){
+      showToast('Ukuran file maksimal 2MB');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = e=>{
+      previewImgEl.src = e.target.result;
+      previewImgEl.classList.remove('hidden');
+      if(placeholderEl) placeholderEl.classList.add('hidden');
+      if(labelEl) labelEl.classList.add('hidden');
+    };
+    reader.readAsDataURL(file);
+  });
+}
+bindImageUpload(document.querySelector('#avatarInput'), document.querySelector('#avatarPreview'), document.querySelector('#avatarPlaceholder'), null);
+bindImageUpload(document.querySelector('#bannerInput'), document.querySelector('#bannerPreview'), null, document.querySelector('#bannerLabel'));
+
+document.querySelector('#avatarBox').addEventListener('click', ()=> document.querySelector('#avatarInput').click());
+document.querySelector('#avatarChangeBtn').addEventListener('click', ()=> document.querySelector('#avatarInput').click());
+document.querySelector('#bannerUpload').addEventListener('click', ()=> document.querySelector('#bannerInput').click());
+
+// Phone verify mock
+let phoneVerified = false;
+document.querySelector('#phoneVerifyBtn').addEventListener('click', ()=>{
+  const btn = document.querySelector('#phoneVerifyBtn');
+  const status = document.querySelector('#phoneStatus');
+  const phone = document.querySelector('#phoneNumber').value.trim();
+  if(!phone){
+    showToast('Masukkan nomor telepon dulu');
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = 'Mengirim...';
+  status.textContent = 'Terkirim, menunggu verifikasi...';
+  status.className = 'phone-status';
+  setTimeout(()=>{
+    phoneVerified = true;
+    btn.textContent = 'Terverifikasi ✓';
+    btn.classList.add('verified');
+    status.textContent = 'Nomor telepon terverifikasi.';
+    status.className = 'phone-status ok';
+  }, 1600);
+});
+
+// Save profile
+document.querySelector('#saveProfileBtn').addEventListener('click', ()=>{
+  const name = document.querySelector('#displayName').value.trim();
+  if(!name){
+    showToast('Isi nama tampilan dulu ya');
+    document.querySelector('#displayName').focus();
+    return;
+  }
+  const profile = {
+    name,
+    birthDate: document.querySelector('#birthDate').value,
+    country: document.querySelector('#country').value,
+    phone: document.querySelector('#phoneNumber').value,
+    phoneVerified,
+    avatar: document.querySelector('#avatarPreview').src || null,
+    banner: document.querySelector('#bannerPreview').src || null,
+    email: JSON.parse(localStorage.getItem('puu_auth_email') || '""'),
+    updatedAt: new Date().toISOString()
+  };
+  localStorage.setItem('puu_profile', JSON.stringify(profile));
+  showToast('Profil disimpan, masuk ke puu…', 'success');
+  setTimeout(()=>{
+    // window.location.href = 'home.html';
+    go('chat');
+  }, 1200);
+});
+
+// Chat meta render
+function renderChatMeta(){
+  const email = JSON.parse(localStorage.getItem('puu_auth_email') || '"—"');
+  const profile = JSON.parse(localStorage.getItem('puu_profile') || 'null');
+  document.querySelector('#chatEmail').textContent = email || '—';
+  document.querySelector('#chatName').textContent = profile?.name || '(belum diatur)';
+}
+
+// Back to auth from chat placeholder
+document.querySelector('#backToAuthBtn').addEventListener('click', ()=> go('auth'));
+
+// Forgot password mock
+document.querySelector('#forgotLink').addEventListener('click', e=>{
+  e.preventDefault();
+  showToast('Link pemulihan dikirim ke email (mock)');
+});
+
+// Prefill if we have stored data
+(function init(){
+  const savedEmail = JSON.parse(localStorage.getItem('puu_auth_email') || '""');
+  if(savedEmail){
+    document.querySelector('#login-email').value = savedEmail;
+    document.querySelector('#reg-email').value = savedEmail;
+  }
+  const profile = JSON.parse(localStorage.getItem('puu_profile') || 'null');
+  if(profile){
+    document.querySelector('#displayName').value = profile.name || '';
+    document.querySelector('#birthDate').value = profile.birthDate || '';
+    document.querySelector('#country').value = profile.country || 'ID';
+    document.querySelector('#phoneNumber').value = profile.phone || '';
+    if(profile.avatar && profile.avatar.startsWith('data:')){
+      document.querySelector('#avatarPreview').src = profile.avatar;
+      document.querySelector('#avatarPreview').classList.remove('hidden');
+      document.querySelector('#avatarPlaceholder').classList.add('hidden');
+    }
+    if(profile.banner && profile.banner.startsWith('data:')){
+      document.querySelector('#bannerPreview').src = profile.banner;
+      document.querySelector('#bannerPreview').classList.remove('hidden');
+      document.querySelector('#bannerLabel').classList.add('hidden');
+    }
+  }
+})();
+
+// Simple view switch via hash
+const hashMap = { '#auth':'auth', '#otp':'otp', '#setting':'setting', '#chat':'chat' };
+if(location.hash && hashMap[location.hash]) go(hashMap[location.hash].replace('#',''));
+window.addEventListener('hashchange', ()=>{
+  const v = hashMap[location.hash];
+  if(v) go(v);
+});
+</script>
+</body>
+</html>
