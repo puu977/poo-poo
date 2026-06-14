@@ -1,85 +1,72 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daftar – Puu Chat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/puu.css">
+</head>
+<body class="auth-body">
+  <div class="auth-card">
+    <div class="auth-logo">Puu <span>Chat</span></div>
+    <div class="auth-title">Buat akun</div>
+    <div class="auth-sub">Gratis, cuma butuh email</div>
+    <form id="regForm">
+      <div class="auth-field"><label>Email</label>
+        <input class="auth-input" type="email" id="email" placeholder="kamu@email.com" required autocomplete="email"></div>
+      <div class="auth-field"><label>Password</label>
+        <input class="auth-input" type="password" id="password" placeholder="Minimal 6 karakter" required autocomplete="new-password">
+        <div style="font-size:11.5px;color:#9b87b9;margin-top:4px">Minimal 6 karakter</div>
+      </div>
+      <div class="auth-field"><label>Ulangi password</label>
+        <input class="auth-input" type="password" id="password2" placeholder="Ulangi password" required autocomplete="new-password">
+      </div>
+      <button class="btn-auth" id="regBtn" type="submit">Daftar</button>
+    </form>
+    <div class="auth-foot">Sudah punya akun? <a href="login.html">Masuk</a></div>
+  </div>
+  <div class="toast" id="toast"></div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SUPABASE_URL = "https://YOUR-PROJECT.supabase.co";
-const SUPABASE_ANON_KEY = "YOUR_ANON_KEY";
-
+// --- isi dengan project kamu ---
+const SUPABASE_URL = "https://gttedpjwqgiyszmrcnoe.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0dGVkcGp3cWdpeXN6bXJjbm9lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzNjk3MjIsImV4cCI6MjA5Njk0NTcyMn0.GzouEkyd6pRvT_IQuNR7LTyN6ewPiCTj2Xqu8l9yEcY...";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-function showToast(message) {
-  const toast = document.getElementById("toast");
-  toast.textContent = message;
-  toast.classList.add("show");
+function showToast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(window._tt); window._tt=setTimeout(()=>t.classList.remove('show'),2400) }
 
-  clearTimeout(window._toastTimer);
-  window._toastTimer = setTimeout(() => {
-    toast.classList.remove("show");
-  }, 2400);
-}
-
-// cek session (kalau sudah login langsung ke home)
-(async function () {
-  try {
-    const { data: { session } } = await sb.auth.getSession();
-    if (session) location.replace("home.html");
-  } catch (e) {
-    console.error(e);
-  }
+(async ()=>{
+  const { data:{session} } = await sb.auth.getSession();
+  if(session) location.replace('home.html');
 })();
 
-document.getElementById("regForm").addEventListener("submit", async (e) => {
+document.getElementById('regForm').addEventListener('submit', async e=>{
   e.preventDefault();
-
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-  const password2 = document.getElementById("password2").value;
-  const btn = document.getElementById("regBtn");
-
-  // validasi sederhana
-  if (!email) return showToast("Email wajib diisi");
-  if (password.length < 6) return showToast("Password minimal 6 karakter");
-  if (password !== password2) return showToast("Password tidak cocok");
-
-  btn.disabled = true;
-  btn.textContent = "Mendaftar…";
-
-  try {
-    const { data, error } = await sb.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/home.html`
-      }
-    });
-
-    if (error) throw error;
-
-    // kalau langsung login (tergantung setting Supabase)
-    if (data.session) {
-      showToast("Berhasil daftar");
-      setTimeout(() => location.href = "home.html", 500);
-      return;
-    }
-
-    // default: email verification
-    showToast("Akun dibuat! Cek email untuk verifikasi");
-    setTimeout(() => location.href = "login.html", 1800);
-
-  } catch (err) {
-    console.error(err);
-
-    const msg = err.message || "";
-
-    if (msg.includes("already")) {
-      showToast("Email sudah terdaftar");
-    } else if (msg.includes("Invalid email")) {
-      showToast("Format email tidak valid");
-    } else {
-      showToast(msg);
-    }
-
-  } finally {
-    btn.disabled = false;
-    btn.textContent = "Daftar";
+  const email = document.getElementById('email').value.trim();
+  const pw = document.getElementById('password').value;
+  const pw2 = document.getElementById('password2').value;
+  if(pw.length < 6){ showToast('Password minimal 6 karakter'); return }
+  if(pw !== pw2){ showToast('Password tidak cocok'); return }
+  const btn = document.getElementById('regBtn');
+  btn.disabled = true; btn.textContent = 'Mendaftar…';
+  const { data, error } = await sb.auth.signUp({
+    email, password: pw,
+    options: { emailRedirectTo: window.location.origin + '/home.html' }
+  });
+  btn.disabled = false; btn.textContent = 'Daftar';
+  if(error){ showToast(error.message.includes('already') ? 'Email sudah terdaftar' : error.message); return }
+  if(!data.session){
+    showToast('Akun dibuat! Cek email untuk verifikasi');
+    setTimeout(()=> location.href = 'login.html', 1800);
+  }else{
+    showToast('Berhasil daftar');
+    setTimeout(()=> location.href = 'home.html', 400);
   }
 });
 </script>
+</body>
+</html>
