@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pengaturan Grup – Puu Chat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+body{background:#49426E;color:#E2D3F4;font-family:'Poppins',sans-serif}
+.wrap{max-width:720px;margin:0 auto;padding:16px}
+.card{background:#332F54;border-radius:16px;padding:16px;margin-bottom:14px}
+.card h3{margin:0 0 10px 0;color:#EEC291;font-size:15px}
+label{font-size:12.5px;color:#b9a9d3;display:block;margin:8px 0 4px}
+input,textarea,select{width:100%;box-sizing:border-box;background:#49426E;border:1px solid #544F7E;border-radius:10px;padding:10px 12px;color:#E2D3F4;font-family:'Poppins',sans-serif}
+textarea{min-height:80px;resize:vertical}
+.banner-prev{width:100%;height:120px;border-radius:12px;background:linear-gradient(135deg,#332F54,#49426E);object-fit:cover;cursor:pointer;margin-bottom:8px}
+.avatar-prev{width:72px;height:72px;border-radius:50%;border:3px solid #EEC291;object-fit:cover;background:#3F3b62;cursor:pointer;margin-bottom:8px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.btn{background:#EEC291;color:#332F54;border:none;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer}
+.btn-ghost{background:#49426E;color:#E2D3F4;border:1px solid #544F7E;border-radius:10px;padding:10px 16px;cursor:pointer}
+.btn-danger{background:#5a2d2d;color:#ffb3b3;border:1px solid #7a3a3a;border-radius:10px;padding:10px 16px;cursor:pointer}
+.member{display:flex;align-items:center;gap:10px;padding:8px;background:#49426E;border-radius:10px;margin-bottom:6px}
+.member img{width:36px;height:36px;border-radius:50%;border:2px solid #544F7E;background:#3F3b62}
+.mini{background:#332F54;border:1px solid #544F7E;color:#E2D3F4;border-radius:7px;padding:4px 8px;font-size:11px;cursor:pointer}
+.switch{display:flex;align-items:center;gap:8px;font-size:13px;color:#b9a9d3}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+    <button class="btn-ghost" onclick="history.back()">← Kembali</button>
+    <h2 style="margin:0;color:#E2D3F4">Pengaturan Grup</h2>
+  </div>
+
+  <!-- Profil Grup -->
+  <div class="card">
+    <h3>Profil Grup</h3>
+    <img id="bannerPrev" class="banner-prev" src="data:image/svg+xml;base64,PHN2Zz48L3N2Zz4=" alt="banner">
+    <input type="file" id="bannerFile" accept="image/*" hidden>
+    <img id="avatarPrev" class="avatar-prev" src="" alt="avatar">
+    <input type="file" id="avatarFile" accept="image/*" hidden>
+    <div style="font-size:11.5px;color:#9b87b9;margin-bottom:8px">Tap banner / foto untuk ganti. Kosong = blank.</div>
+
+    <label>Nama grup</label>
+    <input id="gName" type="text" maxlength="40">
+    <label>Deskripsi grup</label>
+    <textarea id="gDesc" placeholder="Tentang grup ini…"></textarea>
+  </div>
+
+  <!-- Privasi -->
+  <div class="card">
+    <h3>Privasi Grup</h3>
+    <select id="gPrivacy">
+      <option value="publik">🌎 Publik – bisa dicari semua orang</option>
+      <option value="privat">🔒 Privat – hanya via undangan</option>
+      <option value="rahasia">👁️ Rahasia – tidak muncul di pencarian</option>
+    </select>
+  </div>
+
+  <!-- Sematan -->
+  <div class="card">
+    <h3>Sematan Grup</h3>
+    <label>Sematan teks / pengumuman (tampil di atas chat)</label>
+    <textarea id="gPinned" placeholder="Tulis pengumuman yang disematkan…"></textarea>
+    <div style="font-size:11.5px;color:#9b87b9">Kosongkan untuk menghapus sematan.</div>
+  </div>
+
+  <!-- Peran -->
+  <div class="card">
+    <h3>Admin & Moderator</h3>
+    <div id="roleList"></div>
+    <div style="font-size:11.5px;color:#9b87b9;margin-top:6px">Tap +Mod / -Mod untuk promosi / demosi moderator. Admin tidak bisa diubah dari sini.</div>
+  </div>
+
+  <!-- Anggota -->
+  <div class="card">
+    <h3>Anggota</h3>
+    <div style="display:flex;gap:8px;margin-bottom:8px">
+      <input id="addUser" placeholder="+ tambah anggota – username" style="flex:1">
+      <button class="btn" id="addBtn" style="padding:8px 12px">Tambah</button>
+    </div>
+    <div id="memberList"></div>
+  </div>
+
+  <!-- Translate -->
+  <div class="card">
+    <h3>Translate Otomatis</h3>
+    <label class="switch"><input type="checkbox" id="translateToggle"> Aktifkan translate otomatis 🔄 di grup ini</label>
+    <div style="font-size:11.5px;color:#9b87b9">Disimpan lokal per-perangkat.</div>
+  </div>
+
+  <!-- Bahaya -->
+  <div class="card">
+    <h3>Zona Bahaya</h3>
+    <div class="row">
+      <button class="btn-ghost" id="leaveBtn">Keluar Grup</button>
+      <button class="btn-danger" id="deleteBtn">Hapus Grup</button>
+      <button class="btn" id="saveBtn" style="margin-left:auto">Simpan Perubahan</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" style="position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#332F54;color:#E2D3F4;padding:10px 14px;border-radius:10px;display:none;z-index:99"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "";
+const SUPABASE_ANON_KEY = "";
+const sb = (SUPABASE_URL && SUPABASE_ANON_KEY)? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+const BLANK_AVATAR = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSI0MCIgY3k9IjQwIiByPSI0MCIgZmlsbD0iIzNGM2I2MiIvPjxjaXJjbGUgY3g9IjQwIiBjeT0iMzIiIHI9IjEyIiBmaWxsPSIjNTQ0RjdFIi8+PHBhdGggZD0iTTIwIDYyQzIwIDUwIDI4IDQ4IDQwIDQ4UzYwIDUwIDYwIDYyIiBmaWxsPSIjNTQ0RjdFIi8+PC9zdmc+';
+function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.style.display='block'; clearTimeout(window._tt); window._tt=setTimeout(()=>t.style.display='none',2000) }
+
+let group = JSON.parse(localStorage.getItem('puu_edit_group') || 'null') || {id:'demo', name:'Grup Baru', description:'', privacy:'publik', avatar_url:null, banner_url:null, pinned:'', members:[{id:'admin', username:'admin', role:'admin'}, {id:'u1', username:'user', role:'member'}]};
+
+document.getElementById('avatarPrev').src = group.avatar_url || BLANK_AVATAR;
+document.getElementById('gName').value = group.name || '';
+document.getElementById('gDesc').value = group.description || '';
+document.getElementById('gPrivacy').value = group.privacy || 'publik';
+document.getElementById('gPinned').value = group.pinned || '';
+document.getElementById('translateToggle').checked = localStorage.getItem('puu_translate')==='1';
+
+document.getElementById('avatarPrev').onclick = ()=> document.getElementById('avatarFile').click();
+document.getElementById('bannerPrev').onclick = ()=> document.getElementById('bannerFile').click();
+document.getElementById('avatarFile').onchange = e=>{ const f=e.target.files[0]; if(f) document.getElementById('avatarPrev').src = URL.createObjectURL(f) };
+document.getElementById('bannerFile').onchange = e=>{ const f=e.target.files[0]; if(f) document.getElementById('bannerPrev').src = URL.createObjectURL(f) };
+
+function renderMembers(){
+  const box = document.getElementById('memberList');
+  const roleBox = document.getElementById('roleList');
+  box.innerHTML = ''; roleBox.innerHTML = '';
+  group.members.forEach(m=>{
+    const row = document.createElement('div');
+    row.className='member';
+    row.innerHTML = `<img src="${BLANK_AVATAR}"><div style="flex:1"><b>${m.username}</b> <span style="color:#9b87b9;font-size:11px">${m.role}</span></div>
+      <button class="mini" onclick="toggleMod('${m.id}')">${m.role==='moderator'? '- Mod' : '+ Mod'}</button>
+      <button class="mini" style="color:#ffb3b3" onclick="kickMember('${m.id}')">Keluarkan</button>`;
+    if(m.role==='admin' || m.role==='moderator'){
+      roleBox.appendChild(row.cloneNode(true));
+    } else {
+      box.appendChild(row);
+    }
+  });
+  if(!roleBox.innerHTML) roleBox.innerHTML = '<div style="color:#9b87b9;font-size:12.5px">Belum ada moderator.</div>';
+  if(!box.innerHTML) box.innerHTML = '<div style="color:#9b87b9;font-size:12.5px">Belum ada anggota biasa.</div>';
+}
+renderMembers();
+
+window.toggleMod = function(id){
+  const m = group.members.find(x=>x.id===id); if(!m || m.role==='admin') return;
+  m.role = m.role==='moderator'? 'member' : 'moderator';
+  toast(m.role==='moderator'? 'Dijadikan moderator' : 'Moderator dicabut');
+  renderMembers();
+}
+window.kickMember = function(id){
+  const m = group.members.find(x=>x.id===id); if(m && m.role==='admin'){ toast('Admin tidak bisa dikeluarkan'); return }
+  group.members = group.members.filter(x=>x.id!==id);
+  toast('Anggota dikeluarkan');
+  renderMembers();
+}
+
+document.getElementById('addBtn').onclick = ()=>{
+  const v = document.getElementById('addUser').value.trim();
+  if(!v) return;
+  group.members.push({id:'u'+Date.now(), username:v, role:'member'});
+  document.getElementById('addUser').value='';
+  renderMembers(); toast('Anggota ditambahkan');
+};
+
+document.getElementById('translateToggle').onchange = e=>{
+  localStorage.setItem('puu_translate', e.target.checked? '1':'0');
+  toast(e.target.checked? 'Translate otomatis ON' : 'Translate OFF');
+};
+
+document.getElementById('saveBtn').onclick = async ()=>{
+  group.name = document.getElementById('gName').value.trim() || group.name;
+  group.description = document.getElementById('gDesc').value.trim();
+  group.privacy = document.getElementById('gPrivacy').value;
+  group.pinned = document.getElementById('gPinned').value.trim();
+  // upload avatar/banner kalau ada – skip kalau Supabase belum diisi
+  localStorage.setItem('puu_edit_group', JSON.stringify(group));
+  // update di daftar grup lokal
+  let groups = JSON.parse(localStorage.getItem('puu_groups')||'[]');
+  const i = groups.findIndex(x=>x.id===group.id);
+  if(i>=0){ groups[i] = {...groups[i],...{name:group.name, privacy:group.privacy, description:group.description}}; localStorage.setItem('puu_groups', JSON.stringify(groups)); }
+  toast('Pengaturan grup disimpan');
+  setTimeout(()=> location.href='grup.html', 600);
+};
+
+document.getElementById('leaveBtn').onclick = ()=>{
+  if(confirm('Keluar dari grup "'+group.name+'"?')){
+    let groups = JSON.parse(localStorage.getItem('puu_groups')||'[]');
+    groups = groups.filter(x=>x.id!== group.id);
+    localStorage.setItem('puu_groups', JSON.stringify(groups));
+    toast('Keluar grup'); setTimeout(()=> location.href='grup.html', 500);
+  }
+};
+document.getElementById('deleteBtn').onclick = ()=>{
+  if(confirm('Hapus grup "'+group.name+'" permanen?')){
+    let groups = JSON.parse(localStorage.getItem('puu_groups')||'[]');
+    groups = groups.filter(x=>x.id!== group.id);
+    localStorage.setItem('puu_groups', JSON.stringify(groups));
+    toast('Grup dihapus'); setTimeout(()=> location.href='grup.html', 500);
+  }
+};
+</script>
+</body>
+</html>
