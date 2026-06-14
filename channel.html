@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Channel – Puu Chat</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+body{background:#49426E;color:#E2D3F4;font-family:'Poppins',sans-serif;margin:0}
+.top{display:flex;align-items:center;gap:10px;padding:12px 14px;background:#332F54;border-bottom:1px solid #49426E}
+.top b{font-size:15px}
+.top span{color:#9b87b9;font-size:12px}
+.btn{background:#49426E;border:1px solid #544F7E;color:#E2D3F4;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer}
+.wrap{max-width:820px;margin:0 auto;display:flex;flex-direction:column;height:100vh}
+.msgs{flex:1;overflow-y:auto;padding:14px}
+.msg{display:flex;gap:10px;margin-bottom:12px}
+.msg img{width:32px;height:32px;border-radius:50%;border:2px solid #544F7E;background:#3F3b62}
+.msg-b{max-width:70%;background:#332F54;border-radius:12px;padding:8px 12px}
+.msg-b h4{margin:0 0 2px 0;font-size:12px;color:#EEC291}
+.msg-b p{margin:0;color:#DDD9D0;font-size:13.5px}
+.composer{display:flex;gap:8px;padding:12px;background:#332F54;border-top:1px solid #49426E}
+.composer input{flex:1;background:#49426E;border:1px solid #544F7E;border-radius:999px;padding:10px 14px;color:#E2D3F4;font-family:'Poppins',sans-serif}
+.composer button{background:#EEC291;color:#332F54;border:none;border-radius:999px;padding:9px 16px;font-weight:700;cursor:pointer}
+.pinned{background:#332F54;border:1px solid #544F7E;border-radius:12px;padding:10px 12px;margin-bottom:10px;font-size:13px;color:#DDD9D0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <button class="btn" onclick="history.back()">←</button>
+    <div><b># <span id="chName">general</span></b><br><span id="chTopic">Obrolan umum</span></div>
+    <div style="margin-left:auto;display:flex;gap:6px">
+      <button class="btn" id="trBtn">🔄</button>
+      <button class="btn" id="cfgBtn">⚙️</button>
+    </div>
+  </div>
+  <div class="msgs" id="msgs">
+    <div class="pinned" id="pinBox" style="display:none"><b>📌 Sematan</b><div id="pinText"></div></div>
+    <div id="msgList" style="color:#9b87b9">Belum ada pesan.</div>
+  </div>
+  <div class="composer">
+    <input id="inp" placeholder="Kirim pesan…">
+    <button id="send">Kirim</button>
+  </div>
+</div>
+<script>
+const BLANK='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSI0MCIgY3k9IjQwIiByPSI0MCIgZmlsbD0iIzNGM2I2MiIvPjxjaXJjbGUgY3g9IjQwIiBjeT0iMzIiIHI9IjEyIiBmaWxsPSIjNTQ0RjdFIi8+PHBhdGggZD0iTTIwIDYyQzIwIDUwIDI4IDQ4IDQwIDQ4UzYwIDUwIDYwIDYyIiBmaWxsPSIjNTQ0RjdFIi8+PC9zdmc+';
+let translateOn = localStorage.getItem('puu_translate')==='1';
+function syncTr(){ document.getElementById('trBtn').style.opacity = translateOn? '1' : '.5' } syncTr();
+document.getElementById('trBtn').onclick = ()=>{ translateOn=!translateOn; localStorage.setItem('puu_translate', translateOn?'1':'0'); syncTr() };
+const params = new URLSearchParams(location.search);
+const ch = JSON.parse(localStorage.getItem('puu_edit_channel')||'null') || {name: params.get('id')||'general', topic:'Obrolan umum', pinned:''};
+document.getElementById('chName').textContent = ch.name;
+document.getElementById('chTopic').textContent = ch.topic || '';
+if(ch.pinned){ document.getElementById('pinBox').style.display='block'; document.getElementById('pinText').textContent = ch.pinned }
+document.getElementById('cfgBtn').onclick = ()=> location.href='channel-settings.html?id='+encodeURIComponent(ch.name);
+function addMsg(t){
+  const list=document.getElementById('msgList');
+  if(list.textContent.includes('Belum ada')) list.innerHTML='';
+  const out = translateOn? '[ID] ' + t : t;
+  const d=document.createElement('div'); d.className='msg';
+  d.innerHTML = `<img src="${BLANK}"><div class="msg-b"><h4>user</h4><p>${out.replace(/</g,'&lt;')}</p></div>`;
+  list.appendChild(d); document.getElementById('msgs').scrollTop = 1e9;
+}
+document.getElementById('send').onclick = ()=>{
+  const i=document.getElementById('inp'); const v=i.value.trim(); if(!v) return; i.value=''; addMsg(v);
+};
+document.getElementById('inp').addEventListener('keydown', e=>{ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); document.getElementById('send').click() }});
+</script>
+</body>
+</html>
