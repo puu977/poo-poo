@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pengaturan – Puu Chat</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+body{background:#49426E;color:#E2D3F4;font-family:'Poppins',sans-serif;margin:0}
+.navbar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#332F54;border-bottom:1px solid #49426E;position:sticky;top:0;z-index:10}
+.nav-back{color:#E2D3F4;text-decoration:none;font-weight:600}
+.nav-back:hover{color:#EEC291}
+.wrap{max-width:720px;margin:0 auto;padding:16px}
+.card{background:#332F54;border-radius:16px;padding:16px;margin-bottom:14px}
+.card h3{margin:0 0 10px;color:#EEC291;font-size:15px}
+label{font-size:12.5px;color:#b9a9d3;display:block;margin:8px 0 4px}
+input,select{width:100%;box-sizing:border-box;background:#49426E;border:1px solid #544F7E;border-radius:10px;padding:10px 12px;color:#E2D3F4;font-family:'Poppins',sans-serif}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.row input{flex:1;min-width:160px}
+.row select{width:auto;min-width:140px}
+.btn{background:#EEC291;color:#332F54;border:none;border-radius:10px;padding:9px 14px;font-weight:700;cursor:pointer}
+.btn-ghost{background:#49426E;color:#E2D3F4;border:1px solid #544F7E;border-radius:10px;padding:9px 14px;cursor:pointer}
+.btn-danger{background:#5a2d2d;color:#ffb3b3;border:1px solid #7a3a3a;border-radius:10px;padding:9px 14px;cursor:pointer}
+.muted{color:#9b87b9;font-size:12.5px}
+.switch{display:flex;align-items:center;gap:8px;font-size:13.5px}
+hr{border:none;border-top:1px solid #49426E;margin:12px 0}
+/* otp modal */
+.modal-back{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:99}
+.modal-back.show{display:flex}
+.modal{background:#332F54;border-radius:16px;padding:18px;width:90%;max-width:340px;color:#E2D3F4}
+.modal input{text-align:center;letter-spacing:6px;font-size:18px}
+</style>
+</head>
+<body>
+<div class="navbar">
+  <a href="profil.html" class="nav-back">← Kembali</a>
+  <div style="display:flex;align-items:center;gap:10px">
+    <span style="color:#b9a9d3;font-size:13px">Pengaturan</span>
+    <img id="navAvatar" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSI0MCIgY3k9IjQwIiByPSI0MCIgZmlsbD0iIzNGM2I2MiIvPjxjaXJjbGUgY3g9IjQwIiBjeT0iMzIiIHI9IjEyIiBmaWxsPSIjNTQ0RjdFIi8+PHBhdGggZD0iTTIwIDYyQzIwIDUwIDI4IDQ4IDQwIDQ4UzYwIDUwIDYwIDYyIiBmaWxsPSIjNTQ0RjdFIi8+PC9zdmc+" style="width:32px;height:32px;border-radius:50%;border:2px solid #EEC291" alt="">
+  </div>
+</div>
+
+<div class="wrap">
+  <!-- 1. PRIVASI -->
+  <div class="card" id="privasi">
+    <h3>1. Privasi</h3>
+
+    <label>Email</label>
+    <div class="row">
+      <input id="emailVal" type="email" placeholder="email@contoh.com">
+      <select id="emailPrivacy">
+        <option value="diri_sendiri">🔒 Hanya saya</option>
+        <option value="teman">👥 Teman</option>
+        <option value="publik">🌎 Publik</option>
+      </select>
+      <button class="btn-ghost" id="verifyEmailBtn">Konfirmasi OTP</button>
+    </div>
+    <div class="muted">Email dipakai untuk login. Ubah email perlu OTP.</div>
+
+    <hr>
+    <label>No. Telepon</label>
+    <div id="phoneBox">
+      <!-- diisi JS: kalau belum ada nomor, tampil tombol + Tambah -->
+    </div>
+    <div class="muted">Daftar dengan email. Tambahkan nomor telepon untuk recovery & 2FA.</div>
+  </div>
+
+  <!-- 2. APLIKASI -->
+  <div class="card" id="aplikasi">
+    <h3>2. Aplikasi</h3>
+    <label>Bahasa aplikasi</label>
+    <select id="appLang">
+      <option value="id">Indonesia</option>
+      <option value="en">English</option>
+      <option value="ja">日本語</option>
+      <option value="ko">한국어</option>
+      <option value="ar">العربية</option>
+      <option value="es">Español</option>
+    </select>
+    <label style="margin-top:10px" class="switch">
+      <input type="checkbox" id="followDeviceLang">
+      Terjemahan mengikuti bahasa perangkat (all negara)
+    </label>
+    <div class="muted">Jika aktif, auto-translate 🔄 akan pakai bahasa sistem HP kamu.</div>
+  </div>
+
+  <!-- 3. AKUN -->
+  <div class="card" id="akun">
+    <h3>3. Akun</h3>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <button class="btn-ghost" id="newAccountBtn">+ Buat akun baru</button>
+      <button class="btn-danger" id="deleteAccountBtn">Hapus akun – konfirmasi OTP</button>
+      <button class="btn" id="logoutBtn" style="background:#49426E;color:#E2D3F4">Logout</button>
+    </div>
+    <div class="muted" style="margin-top:8px">Hapus akun bersifat permanen dan perlu OTP email/no HP.</div>
+  </div>
+</div>
+
+<!-- OTP Modal -->
+<div class="modal-back" id="otpModal">
+  <div class="modal">
+    <h3 style="color:#EEC291;margin:0 0 8px" id="otpTitle">Konfirmasi OTP</h3>
+    <div class="muted" id="otpHint" style="margin-bottom:8px">Kode 6 digit dikirim ke …</div>
+    <input id="otpInput" maxlength="6" placeholder="------">
+    <div style="text-align:right;margin-top:10px;display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn-ghost" id="otpCancel">Batal</button>
+      <button class="btn" id="otpConfirm">Verifikasi</button>
+    </div>
+    <div id="otpInfo" class="muted" style="margin-top:6px"></div>
+  </div>
+</div>
+
+<div id="toast" style="position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#332F54;color:#E2D3F4;padding:8px 14px;border-radius:10px;display:none;z-index:100"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL="https://gttedpjwqgiyszmrcnoe.supabase.co"; const SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0dGVkcGp3cWdpeXN6bXJjbm9lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzNjk3MjIsImV4cCI6MjA5Njk0NTcyMn0.GzouEkyd6pRvT_IQuNR7LTyN6ewPiCTj2Xqu8l9yEcY";
+const sb = (SUPABASE_URL && SUPABASE_ANON_KEY)? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(window._tt);window._tt=setTimeout(()=>t.style.display='none',2000)}
+
+let userEmail = localStorage.getItem('puu_email') || '';
+let userPhone = localStorage.getItem('puu_phone') || '';
+let emailPrivacy = localStorage.getItem('puu_email_privacy') || 'diri_sendiri';
+let phonePrivacy = localStorage.getItem('puu_phone_privacy') || 'diri_sendiri';
+
+async function init(){
+  if(sb){
+    const {data:{session}} = await sb.auth.getSession();
+    if(session && session.user.email){ userEmail = session.user.email }
+  }
+  document.getElementById('emailVal').value = userEmail;
+  document.getElementById('emailPrivacy').value = emailPrivacy;
+  renderPhoneBox();
+  // app settings
+  document.getElementById('appLang').value = localStorage.getItem('puu_app_lang') || 'id';
+  document.getElementById('followDeviceLang').checked = localStorage.getItem('puu_follow_device') === '1';
+}
+init();
+
+function renderPhoneBox(){
+  const box = document.getElementById('phoneBox');
+  if(!userPhone){
+    box.innerHTML = `<button class="btn-ghost" id="addPhoneBtn">+ Tambah nomor telepon</button>`;
+    document.getElementById('addPhoneBtn').onclick = startAddPhone;
+  } else {
+    box.innerHTML = `
+      <div class="row">
+        <input id="phoneVal" type="tel" value="${userPhone}" placeholder="+62 …">
+        <select id="phonePrivacy">
+          <option value="diri_sendiri">🔒 Hanya saya</option>
+          <option value="teman">👥 Teman</option>
+          <option value="publik">🌎 Publik</option>
+        </select>
+        <button class="btn-ghost" id="verifyPhoneBtn">Konfirmasi OTP</button>
+      </div>`;
+    document.getElementById('phonePrivacy').value = phonePrivacy;
+    document.getElementById('phonePrivacy').onchange = e=>{ phonePrivacy = e.target.value; localStorage.setItem('puu_phone_privacy', phonePrivacy); toast('Privasi No. HP disimpan') };
+    document.getElementById('verifyPhoneBtn').onclick = ()=> startOtp('phone', document.getElementById('phoneVal').value);
+  }
+}
+
+// --- OTP flow (mock, siap Supabase) ---
+let otpContext = null, otpCode = '';
+function openOtp(context, target){
+  otpContext = context;
+  otpCode = String(Math.floor(100000 + Math.random()*900000));
+  document.getElementById('otpTitle').textContent = 'Konfirmasi OTP – ' + context;
+  document.getElementById('otpHint').textContent = 'Kode dikirim ke: ' + target + ' (demo: ' + otpCode + ')';
+  document.getElementById('otpInput').value = '';
+  document.getElementById('otpInfo').textContent = '';
+  document.getElementById('otpModal').classList.add('show');
+  toast('OTP terkirim (demo: '+otpCode+')');
+}
+function closeOtp(){ document.getElementById('otpModal').classList.remove('show') }
+document.getElementById('otpCancel').onclick = closeOtp;
+document.getElementById('otpConfirm').onclick = ()=>{
+  const v = document.getElementById('otpInput').value.trim();
+  if(v!== otpCode){ document.getElementById('otpInfo').textContent = 'Kode salah.'; return }
+  // success
+  if(otpContext === 'email'){
+    userEmail = document.getElementById('emailVal').value.trim();
+    localStorage.setItem('puu_email', userEmail);
+    toast('Email terverifikasi');
+  } else if(otpContext === 'phone_add'){
+    userPhone = document.getElementById('tmpPhone')?.value || document.getElementById('phoneVal')?.value || '';
+    localStorage.setItem('puu_phone', userPhone);
+    renderPhoneBox();
+    toast('No. HP terverifikasi');
+  } else if(otpContext === 'phone'){
+    toast('No. HP terverifikasi');
+  } else if(otpContext === 'delete_account'){
+    localStorage.clear();
+    toast('Akun dihapus');
+    setTimeout(()=> location.href='register.html', 800);
+    return;
+  }
+  closeOtp();
+};
+
+function startOtp(context, target){ openOtp(context, target) }
+
+// Email verify
+document.getElementById('verifyEmailBtn').onclick = ()=>{
+  const email = document.getElementById('emailVal').value.trim();
+  if(!email.includes('@')){ toast('Email tidak valid'); return }
+  localStorage.setItem('puu_email_privacy', document.getElementById('emailPrivacy').value);
+  startOtp('email', email);
+};
+document.getElementById('emailPrivacy').onchange = e=>{
+  localStorage.setItem('puu_email_privacy', e.target.value);
+  toast('Privasi email disimpan');
+};
+
+// Add phone flow
+function startAddPhone(){
+  const box = document.getElementById('phoneBox');
+  box.innerHTML = `
+    <div class="row">
+      <input id="tmpPhone" type="tel" placeholder="+62 8xx xxxx xxxx">
+      <select id="tmpPhonePrivacy">
+        <option value="diri_sendiri">🔒 Hanya saya</option>
+        <option value="teman">👥 Teman</option>
+        <option value="publik">🌎 Publik</option>
+      </select>
+      <button class="btn" id="sendPhoneOtp">Kirim OTP</button>
+    </div>`;
+  document.getElementById('sendPhoneOtp').onclick = ()=>{
+    const p = document.getElementById('tmpPhone').value.trim();
+    if(p.length < 8){ toast('Nomor tidak valid'); return }
+    phonePrivacy = document.getElementById('tmpPhonePrivacy').value;
+    localStorage.setItem('puu_phone_privacy', phonePrivacy);
+    startOtp('phone_add', p);
+  };
+}
+
+// App settings
+document.getElementById('appLang').onchange = e=>{
+  localStorage.setItem('puu_app_lang', e.target.value);
+  toast('Bahasa: ' + e.target.options[e.target.selectedIndex].text);
+};
+document.getElementById('followDeviceLang').onchange = e=>{
+  localStorage.setItem('puu_follow_device', e.target.checked? '1' : '0');
+  toast(e.target.checked? 'Translate ikut perangkat ON' : 'Translate ikut perangkat OFF');
+};
+
+// Account actions
+document.getElementById('newAccountBtn').onclick = ()=> location.href='register.html';
+document.getElementById('deleteAccountBtn').onclick = ()=>{
+  const target = userPhone || userEmail || 'akun ini';
+  if(confirm('Hapus akun permanen? Perlu OTP.')) startOtp('delete_account', target);
+};
+document.getElementById('logoutBtn').onclick = async ()=>{
+  if(sb) await sb.auth.signOut();
+  localStorage.removeItem('puu_profile');
+  toast('Logout…'); setTimeout(()=> location.href='login.html', 600);
+};
+
+// deep link #privasi / #aplikasi / #akun
+if(location.hash){ const el=document.querySelector(location.hash); if(el) el.scrollIntoView({behavior:'smooth'}) }
+</script>
+</body>
+      </html>
