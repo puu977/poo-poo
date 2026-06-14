@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pengaturan Server – Puu Chat</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+body{background:#49426E;color:#E2D3F4;font-family:'Poppins',sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:16px}
+.card{background:#332F54;border-radius:16px;padding:16px;margin-bottom:14px}
+.card h3{margin:0 0 10px;color:#EEC291;font-size:15px}
+input,textarea,select{width:100%;box-sizing:border-box;background:#49426E;border:1px solid #544F7E;border-radius:10px;padding:10px 12px;color:#E2D3F4;font-family:'Poppins',sans-serif;margin-bottom:8px}
+label{font-size:12.5px;color:#b9a9d3}
+.btn{background:#EEC291;color:#332F54;border:none;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer}
+.btn-ghost{background:#49426E;color:#E2D3F4;border:1px solid #544F7E;border-radius:10px;padding:10px 16px;cursor:pointer}
+.btn-danger{background:#5a2d2d;color:#ffb3b3;border:1px solid #7a3a3a;border-radius:10px;padding:10px 16px;cursor:pointer}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.item{display:flex;align-items:center;gap:10px;padding:8px;background:#49426E;border-radius:10px;margin-bottom:6px}
+.item img{width:34px;height:34px;border-radius:50%;background:#3F3b62}
+.mini{background:#332F54;border:1px solid #544F7E;color:#E2D3F4;border-radius:7px;padding:4px 8px;font-size:11px;cursor:pointer}
+.banner-prev{width:100%;height:110px;border-radius:12px;background:linear-gradient(135deg,#332F54,#49426E);object-fit:cover;cursor:pointer;margin-bottom:8px}
+.avatar-prev{width:72px;height:72px;border-radius:50%;border:3px solid #EEC291;background:#3F3b62;object-fit:cover;cursor:pointer;margin-bottom:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+    <button class="btn-ghost" onclick="history.back()">← Kembali</button>
+    <h2 style="margin:0">Pengaturan Server</h2>
+  </div>
+
+  <div class="card">
+    <h3>Overview Server</h3>
+    <img id="bannerPrev" class="banner-prev" src="data:image/svg+xml;base64,PHN2Zz48L3N2Zz4=">
+    <input type="file" id="bannerFile" accept="image/*" hidden>
+    <img id="iconPrev" class="avatar-prev" src="">
+    <input type="file" id="iconFile" accept="image/*" hidden>
+    <div style="font-size:11.5px;color:#9b87b9;margin-bottom:8px">Tap banner / icon untuk ganti. Kosong = blank.</div>
+    <label>Nama Server</label>
+    <input id="sName" type="text">
+    <label>Deskripsi</label>
+    <textarea id="sDesc" placeholder="Tentang server ini…"></textarea>
+    <label>Privasi</label>
+    <select id="sPrivacy"><option value="publik">🌎 Publik</option><option value="privat">🔒 Privat</option><option value="rahasia">👁️ Rahasia</option></select>
+  </div>
+
+  <div class="card">
+    <h3>Roles – Admin & Moderator</h3>
+    <div id="roleList"></div>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <input id="addRoleUser" placeholder="username untuk jadi moderator" style="flex:1">
+      <button class="btn" id="addModBtn" style="padding:8px 12px">+ Mod</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Integrasi – Bot & Webhook</h3>
+    <label>Bot</label>
+    <div id="botList" style="margin-bottom:8px;color:#b9a9d3;font-size:13px">Belum ada bot.</div>
+    <div style="display:flex;gap:8px">
+      <input id="botName" placeholder="Nama bot" style="flex:1">
+      <input id="botToken" placeholder="Token (mock)" style="flex:1">
+      <button class="btn" id="addBotBtn" style="padding:8px 12px">+ Bot</button>
+    </div>
+    <label style="margin-top:10px;display:block">Webhook</label>
+    <div id="webhookList" style="color:#b9a9d3;font-size:13px;margin-bottom:6px">Belum ada webhook.</div>
+    <button class="btn-ghost" id="createWebhookBtn">+ Buat Webhook</button>
+    <div style="font-size:11.5px;color:#9b87b9;margin-top:6px">Webhook URL bisa dipakai untuk kirim pesan otomatis ke channel.</div>
+  </div>
+
+  <div class="card">
+    <h3>Terjemahan Otomatis 🔄</h3>
+    <label><input type="checkbox" id="translateToggle"> Aktifkan auto-translate untuk semua channel di server ini</label>
+    <div style="font-size:11.5px;color:#9b87b9">Disimpan lokal. Di chat, pesan akan ditandai [ID].</div>
+  </div>
+
+  <div class="card">
+    <h3>Zona Bahaya</h3>
+    <div class="row">
+      <button class="btn-ghost" id="leaveBtn">Keluar Server</button>
+      <button class="btn-danger" id="deleteBtn">Hapus Server</button>
+      <button class="btn" id="saveBtn" style="margin-left:auto">Simpan Perubahan</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" style="position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#332F54;color:#E2D3F4;padding:8px 14px;border-radius:10px;display:none"></div>
+<script>
+const BLANK='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSI0MCIgY3k9IjQwIiByPSI0MCIgZmlsbD0iIzNGM2I2MiIvPjxjaXJjbGUgY3g9IjQwIiBjeT0iMzIiIHI9IjEyIiBmaWxsPSIjNTQ0RjdFIi8+PHBhdGggZD0iTTIwIDYyQzIwIDUwIDI4IDQ4IDQwIDQ4UzYwIDUwIDYwIDYyIiBmaWxsPSIjNTQ0RjdFIi8+PC9zdmc+';
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(window._tt);window._tt=setTimeout(()=>t.style.display='none',1800)}
+let server = JSON.parse(localStorage.getItem('puu_edit_server')||'null') || {id:'srv_demo', name:'Server Baru', description:'', privacy:'publik', icon:null, banner:null, members:[{id:'a',username:'admin',role:'admin'},{id:'b',username:'user',role:'member'}], bots:[], webhooks:[]};
+
+document.getElementById('iconPrev').src = server.icon || BLANK;
+document.getElementById('sName').value = server.name || '';
+document.getElementById('sDesc').value = server.description || '';
+document.getElementById('sPrivacy').value = server.privacy || 'publik';
+document.getElementById('translateToggle').checked = localStorage.getItem('puu_translate')==='1';
+
+document.getElementById('iconPrev').onclick = ()=> document.getElementById('iconFile').click();
+document.getElementById('bannerPrev').onclick = ()=> document.getElementById('bannerFile').click();
+document.getElementById('iconFile').onchange = e=>{ const f=e.target.files[0]; if(f) document.getElementById('iconPrev').src = URL.createObjectURL(f) };
+document.getElementById('bannerFile').onchange = e=>{ const f=e.target.files[0]; if(f) document.getElementById('bannerPrev').src = URL.createObjectURL(f) };
+
+function renderRoles(){
+  const box=document.getElementById('roleList'); box.innerHTML='';
+  server.members.forEach(m=>{
+    const d=document.createElement('div'); d.className='item';
+    d.innerHTML=`<img src="${BLANK}"><div style="flex:1"><b>${m.username}</b> <span style="color:#9b87b9;font-size:11px">${m.role}</span></div>
+    ${m.role!=='admin'?`<button class="mini" onclick="toggleMod('${m.id}')">${m.role==='moderator'?'- Mod':'+ Mod'}</button>
+    <button class="mini" style="color:#ffb3b3" onclick="kick('${m.id}')">Kick</button>`:''}`;
+    box.appendChild(d);
+  });
+}
+renderRoles();
+window.toggleMod = id=>{ const m=server.members.find(x=>x.id===id); if(!m||m.role==='admin')return; m.role=m.role==='moderator'?'member':'moderator'; renderRoles(); toast('Role diupdate') };
+window.kick = id=>{ server.members = server.members.filter(x=>x.id!==id || x.role==='admin'); renderMembers(); renderRoles(); toast('Anggota dikeluarkan') };
+
+document.getElementById('addModBtn').onclick = ()=>{
+  const v=document.getElementById('addRoleUser').value.trim(); if(!v) return;
+  server.members.push({id:'u'+Date.now(), username:v, role:'moderator'});
+  document.getElementById('addRoleUser').value=''; renderRoles(); toast('Moderator ditambahkan');
+};
+
+// bots
+function renderBots(){
+  const box=document.getElementById('botList');
+  if(!server.bots.length){ box.textContent='Belum ada bot.'; return }
+  box.innerHTML = server.bots.map(b=>`🤖 ${b.name} <code style="color:#9b87b9">${b.token.slice(0,8)}…</code>`).join('<br>');
+}
+renderBots();
+document.getElementById('addBotBtn').onclick = ()=>{
+  const name=document.getElementById('botName').value.trim();
+  const token=document.getElementById('botToken').value.trim()||'mock_'+Math.random().toString(36).slice(2);
+  if(!name){toast('Isi nama bot');return}
+  server.bots = server.bots || []; server.bots.push({name, token});
+  document.getElementById('botName').value=''; document.getElementById('botToken').value='';
+  renderBots(); toast('Bot ditambahkan');
+};
+
+// webhooks
+function renderWebhooks(){
+  const box=document.getElementById('webhookList');
+  if(!server.webhooks?.length){ box.textContent='Belum ada webhook.'; return }
+  box.innerHTML = server.webhooks.map(w=>`<code>${w.url}</code> – ${w.channel||'general'} <button class="mini" onclick="navigator.clipboard.writeText('${w.url}');toast('Disalin')">Copy</button>`).join('<br>');
+}
+renderWebhooks();
+document.getElementById('createWebhookBtn').onclick = ()=>{
+  server.webhooks = server.webhooks || [];
+  const url = 'https://puu.chat/api/webhooks/' + Math.random().toString(36).slice(2,14);
+  server.webhooks.push({url, channel:'general'});
+  renderWebhooks(); toast('Webhook dibuat');
+};
+
+document.getElementById('translateToggle').onchange = e=>{
+  localStorage.setItem('puu_translate', e.target.checked?'1':'0');
+  toast(e.target.checked?'Translate ON 🔄':'Translate OFF');
+};
+
+document.getElementById('saveBtn').onclick = ()=>{
+  server.name = document.getElementById('sName').value.trim() || server.name;
+  server.description = document.getElementById('sDesc').value.trim();
+  server.privacy = document.getElementById('sPrivacy').value;
+  // update di daftar server
+  let servers = JSON.parse(localStorage.getItem('puu_servers')||'[]');
+  const i = servers.findIndex(x=>x.id===server.id);
+  if(i>=0){ servers[i] = {...servers[i], name:server.name, privacy:server.privacy}; localStorage.setItem('puu_servers', JSON.stringify(servers)); }
+  localStorage.setItem('puu_edit_server', JSON.stringify(server));
+  toast('Pengaturan server disimpan'); setTimeout(()=> location.href='server.html', 600);
+};
+document.getElementById('leaveBtn').onclick = ()=>{
+  if(confirm('Keluar dari server "'+server.name+'"?')){
+    let servers = JSON.parse(localStorage.getItem('puu_servers')||'[]');
+    servers = servers.filter(x=>x.id!==server.id);
+    localStorage.setItem('puu_servers', JSON.stringify(servers));
+    toast('Keluar server'); setTimeout(()=> location.href='server.html', 500);
+  }
+};
+document.getElementById('deleteBtn').onclick = ()=>{
+  if(confirm('Hapus server "'+server.name+'" permanen?')){
+    let servers = JSON.parse(localStorage.getItem('puu_servers')||'[]');
+    servers = servers.filter(x=>x.id!==server.id);
+    localStorage.setItem('puu_servers', JSON.stringify(servers));
+    toast('Server dihapus'); setTimeout(()=> location.href='server.html', 500);
+  }
+};
+</script>
+</body>
+</html>
