@@ -9,7 +9,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
 <style>
-/* Feed addon – Puu classic palette */
 .feed-wrap{flex-grow:1;height:100%;overflow-y:auto;padding:0 2px 20px 2px}
 .feed-wrap::-webkit-scrollbar{display:none}
 .story-row{display:flex;gap:10px;overflow-x:auto;padding:14px 4% 6px 4%;scroll-snap-type:x mandatory}
@@ -23,15 +22,16 @@
 .feed-col{padding:10px 4%}
 .post-composer{background:#332F54;border-radius:18px;padding:14px 16px;margin-bottom:14px}
 .post-composer-top{display:flex;gap:10px;align-items:center}
-.post-composer-top img{width:40px;height:40px;border-radius:50%;border:2px solid #EEC291}
+.post-composer-top img{width:40px;height:40px;border-radius:50%;border:2px solid #EEC291;object-fit:cover;background:#3F3b62}
 .post-composer-top input{flex:1;background:#49426E;border:1px solid #544F7E;border-radius:999px;padding:10px 16px;color:#E2D3F4;font-size:14px}
 .post-composer-top input::placeholder{color:#9b87b9}
-.post-composer-actions{display:flex;gap:18px;margin-top:10px;padding-top:10px;border-top:1px solid #49426E;font-size:13px;color:#b9a9d3}
+.post-composer-actions{display:flex;gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid #49426E;font-size:13px;color:#b9a9d3;align-items:center;flex-wrap:wrap}
 .post-composer-actions button{background:none;border:none;color:#b9a9d3;font-size:13px;cursor:pointer}
 .post-composer-actions.send-post{margin-left:auto;color:#332F54;background:#EEC291;padding:6px 16px;border-radius:999px;font-weight:700}
+.privacy-select{background:#49426E;border:1px solid #544F7E;color:#E2D3F4;border-radius:8px;padding:6px 10px;font-size:12.5px}
 .post-card{background:#332F54;border-radius:18px;padding:14px 16px;margin-bottom:14px}
 .post-head{display:flex;gap:10px;align-items:center;margin-bottom:10px}
-.post-head img{width:40px;height:40px;border-radius:50%;border:2px solid #EEC291}
+.post-head img{width:40px;height:40px;border-radius:50%;border:2px solid #EEC291;object-fit:cover;background:#3F3b62}
 .post-head b{color:#E2D3F4;font-size:14px}
 .post-head span{display:block;color:#9b87b9;font-size:11.5px}
 .post-text{color:#DDD9D0;font-size:14.5px;line-height:1.55;white-space:pre-wrap;margin-bottom:10px}
@@ -42,18 +42,13 @@
 .post-actions button:hover{background:#49426E}
 .post-actions button.liked{color:#EEC291}
 .right-col{width:260px;flex-shrink:0;display:none}
-@media(min-width:1050px){.right-col{display:block} }
+@media(min-width:1050px){.right-col{display:block}}
 .right-card{background:#332F54;border-radius:18px;padding:14px 16px;margin-bottom:12px;color:#b9a9d3;font-size:13px}
 .right-card b{color:#E2D3F4}
 .feed-layout{display:flex;gap:18px;align-items:flex-start;height:100%;overflow:hidden}
 .feed-main{flex:1;min-width:0;height:100%;overflow-y:auto}
 .feed-main::-webkit-scrollbar{display:none}
-@media(max-width:800px){
- .story-card{min-width:88px;height:138px}
- .post-composer,.post-card{border-radius:16px}
- .feed-col{padding:10px 3%}
- .story-row{padding:12px 3% 4px 3%}
-}
+@media(max-width:800px){.story-card{min-width:88px;height:138px}.post-composer,.post-card{border-radius:16px}.feed-col{padding:10px 3%}.story-row{padding:12px 3% 4px 3%}}
 input[type=file]{display:none}
 </style>
 </head>
@@ -67,12 +62,11 @@ input[type=file]{display:none}
     <div class="nav-right">
       <div class="search-bar"><img src="https://img.icons8.com/ios-glyphs/30/332F54/search--v1.png" alt=""><input type="text" placeholder="Cari di Puu…"></div>
       <a href="pengaturan.html"><img src="https://img.icons8.com/ios-glyphs/30/E2D3F4/settings.png" class="setting" alt=""></a>
-      <div class="user" id="userBtn" title="Keluar"><img id="userAvatar" src="https://i.pravatar.cc/80" alt=""></div>
+      <div class="user" id="userBtn" title="Keluar"><img id="userAvatar" src="" alt=""></div>
     </div>
   </div>
 
   <div class="bottom-sec" style="padding-top:0">
-    <!-- side menu kiri – pakai style.css kamu -->
     <div class="side-menu" id="sideMenu">
       <div class="search-bar"><img src="https://img.icons8.com/ios-glyphs/30/332F54/search--v1.png" alt=""><input type="text" placeholder="Cari…"></div>
       <ul>
@@ -85,10 +79,8 @@ input[type=file]{display:none}
       </ul>
     </div>
 
-    <!-- FEED TENGAH -->
     <div class="feed-layout" style="flex:1;min-width:0;width:100%">
       <div class="feed-main">
-        <!-- Stories -->
         <div class="story-row" id="storyRow">
           <div class="story-card add" id="addStoryBtn">
             <div style="text-align:center;color:#b9a9d3;font-size:12px">
@@ -99,29 +91,30 @@ input[type=file]{display:none}
         </div>
 
         <div class="feed-col">
-          <!-- Composer -->
           <div class="post-composer">
             <div class="post-composer-top">
-              <img id="composerAvatar" src="https://i.pravatar.cc/80" alt="">
+              <img id="composerAvatar" src="" alt="">
               <input type="text" id="postText" placeholder="Apa yang kamu pikirkan?">
             </div>
             <div class="post-composer-actions">
               <button id="pickImgBtn">📷 Foto</button>
               <input type="file" id="postImg" accept="image/*">
-              <span id="imgName" style="color:#9b87b9;font-size:12px"></span>
+              <span id="imgName" style="color:#9b87b9;font-size:12px;flex:1"></span>
+              <select id="postPrivacy" class="privacy-select">
+                <option value="publik">🌎 Publik</option>
+                <option value="teman">👥 Teman</option>
+                <option value="diri_sendiri">🔒 Hanya saya</option>
+              </select>
               <button class="send-post" id="sendPostBtn">Kirim</button>
             </div>
           </div>
-
-          <!-- Feed -->
           <div id="feed"></div>
         </div>
       </div>
 
-      <!-- Kolom kanan – desktop only -->
       <div class="right-col">
         <div class="right-card"><b>Kontak</b><br><br><span style="color:#9b87b9">Teman online akan muncul di sini</span></div>
-        <div class="right-card"><b>Puu Chat</b><br>Feed status + story, warna classic #49426E</div>
+        <div class="right-card"><b>Puu Chat</b><br>Feed status + story, classic #49426E</div>
       </div>
     </div>
   </div>
@@ -132,43 +125,77 @@ input[type=file]{display:none}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+// <-- ISI KEY KAMU DI SINI
 const SUPABASE_URL = "https://gttedpjwqgiyszmrcnoe.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0dGVkcGp3cWdpeXN6bXJjbm9lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzNjk3MjIsImV4cCI6MjA5Njk0NTcyMn0.GzouEkyd6pRvT_IQuNR7LTyN6ewPiCTj2Xqu8l9yEcY";
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const BLANK_AVATAR = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSI0MCIgY3k9IjQwIiByPSI0MCIgZmlsbD0iIzNGM2I2MiIvPjxjaXJjbGUgY3g9IjQwIiBjeT0iMzIiIHI9IjEyIiBmaWxsPSIjNTQ0RjdFIi8+PHBhdGggZD0iTTIwIDYyQzIwIDUwIDI4IDQ4IDQwIDQ4UzYwIDUwIDYwIDYyIiBmaWxsPSIjNTQ0RjdFIi8+PC9zdmc+';
 
 function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(window._tt); window._tt=setTimeout(()=>t.classList.remove('show'),2200) }
 function esc(s){ const d=document.createElement('div'); d.textContent=s||''; return d.innerHTML }
-function timeAgo(iso){ const d = (Date.now()-new Date(iso))/1000; if(d<60) return 'baru saja'; if(d<3600) return Math.floor(d/60)+'m'; if(d<86400) return Math.floor(d/3600)+'j'; return Math.floor(d/86400)+'h' }
+function timeAgo(iso){ if(!iso) return ''; const d = (Date.now()-new Date(iso))/1000; if(d<60) return 'baru saja'; if(d<3600) return Math.floor(d/60)+'m'; if(d<86400) return Math.floor(d/3600)+'j'; return Math.floor(d/86400)+'h' }
 
-let user=null;
+function safeProfile(p){
+  const isBlocked =!p || p.is_blocked ||!p.user_id;
+  if(isBlocked) return { name: 'user', avatar: BLANK_AVATAR, banner: '' };
+  return {
+    name: p.username || p.display_name || 'user',
+    avatar: p.avatar_url || (p.user_id? `https://i.pravatar.cc/60?u=${p.user_id}` : BLANK_AVATAR),
+    banner: p.banner_url || ''
+  };
+}
 
-(async ()=>{
-  const { data:{session} } = await sb.auth.getSession();
-  if(!session){ location.replace('login.html'); return }
-  user = session.user;
-  const av = `https://i.pravatar.cc/80?u=${user.id}`;
-  document.getElementById('userAvatar').src = av;
-  document.getElementById('composerAvatar').src = av;
-  loadStories(); loadPosts();
-  sb.channel('posts-feed').on('postgres_changes',{event:'INSERT',schema:'public',table:'posts'}, p=>{
-    prependPost(p.new, true)
-  }).subscribe();
-})();
+let user=null, sb=null;
+const defaultPrivacy = localStorage.getItem('puu_default_privacy') || 'publik';
+document.addEventListener('DOMContentLoaded', ()=>{ document.getElementById('postPrivacy').value = defaultPrivacy });
 
-// Stories
+if(!SUPABASE_URL ||!SUPABASE_ANON_KEY){
+  document.getElementById('userAvatar').src = BLANK_AVATAR;
+  document.getElementById('composerAvatar').src = BLANK_AVATAR;
+  toast('Isi SUPABASE_URL / KEY dulu di home.html');
+} else {
+  sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  (async ()=>{
+    const { data:{session} } = await sb.auth.getSession();
+    if(!session){ location.replace('login.html'); return }
+    user = session.user;
+    try {
+      const { data:prof } = await sb.from('profiles').select('username,display_name,avatar_url,banner_url').eq('id', user.id).maybeSingle();
+      const me = safeProfile({ user_id:user.id, username: prof?.username, avatar_url: prof?.avatar_url });
+      document.getElementById('userAvatar').src = me.avatar;
+      document.getElementById('composerAvatar').src = me.avatar;
+    } catch(e){
+      const av = `https://i.pravatar.cc/80?u=${user.id}`;
+      document.getElementById('userAvatar').src = av;
+      document.getElementById('composerAvatar').src = av;
+    }
+    loadStories(); loadPosts();
+    sb.channel('posts-feed').on('postgres_changes',{event:'INSERT',schema:'public',table:'posts'}, p=>{ prependPost(p.new, true) }).subscribe();
+  })();
+}
+if(!sb){
+  document.getElementById('userAvatar').src = BLANK_AVATAR;
+  document.getElementById('composerAvatar').src = BLANK_AVATAR;
+}
+
 async function loadStories(){
+  if(!sb) return;
   const row = document.getElementById('storyRow');
   [...row.querySelectorAll('.story-card:not(.add)')].forEach(n=>n.remove());
-  const { data } = await sb.from('stories').select('*').gte('expires_at', new Date().toISOString()).order('created_at',{ascending:false}).limit(12);
-  (data||[]).forEach(s=>{
-    const el = document.createElement('div');
-    el.className='story-card';
-    el.innerHTML = `<img class="bg" src="${esc(s.image_url)}"><img class="story-avatar" src="https://i.pravatar.cc/60?u=${s.user_id}"><div class="story-name">${esc(s.username||'teman')}</div>`;
-    row.appendChild(el);
-  });
+  try {
+    const { data } = await sb.from('stories').select('*').gte('expires_at', new Date().toISOString()).order('created_at',{ascending:false}).limit(12);
+    (data||[]).forEach(s=>{
+      const p = safeProfile({ user_id: s.user_id, username: s.username, avatar_url: s.avatar_url });
+      const el = document.createElement('div');
+      el.className='story-card';
+      el.innerHTML = `<img class="bg" src="${esc(s.image_url||'')}" onerror="this.style.opacity='.3'"><img class="story-avatar" src="${p.avatar}" onerror="this.src='${BLANK_AVATAR}'"><div class="story-name">${esc(p.name)}</div>`;
+      row.appendChild(el);
+    });
+  } catch(e){}
 }
-document.getElementById('addStoryBtn').onclick = ()=> document.getElementById('storyFile').click();
+document.getElementById('addStoryBtn').onclick = ()=> { if(!sb) return toast('Isi Supabase key dulu'); document.getElementById('storyFile').click() };
 document.getElementById('storyFile').addEventListener('change', async e=>{
+  if(!sb) return;
   const f = e.target.files[0]; if(!f) return;
   toast('Upload story…');
   const path = `${user.id}/${Date.now()}_${f.name}`;
@@ -177,48 +204,57 @@ document.getElementById('storyFile').addEventListener('change', async e=>{
   const { data:{publicUrl} } = sb.storage.from('posts').getPublicUrl(path);
   const expires = new Date(Date.now()+24*3600*1000).toISOString();
   await sb.from('stories').insert({ user_id:user.id, image_url:publicUrl, expires_at:expires });
-  toast('Story terkirim');
-  loadStories();
-  e.target.value='';
+  toast('Story terkirim'); loadStories(); e.target.value='';
 });
 
-// Posts
 document.getElementById('pickImgBtn').onclick = ()=> document.getElementById('postImg').click();
 document.getElementById('postImg').addEventListener('change', e=>{
   document.getElementById('imgName').textContent = e.target.files[0]?.name || '';
 });
 
 async function loadPosts(){
-  const { data } = await sb.from('posts').select('*').order('created_at',{ascending:false}).limit(40);
-  document.getElementById('feed').innerHTML='';
-  (data||[]).forEach(p=> prependPost(p, false));
+  if(!sb) return;
+  try {
+    const { data } = await sb.from('posts').select('*').order('created_at',{ascending:false}).limit(40);
+    document.getElementById('feed').innerHTML='';
+    (data||[]).forEach(p=> prependPost(p, false));
+  } catch(e){}
 }
 
 function postHTML(p){
-  const name = p.username || (p.user_id||'').slice(0,8);
-  const avatar = `https://i.pravatar.cc/60?u=${p.user_id}`;
-  return `<div class="post-head"><img src="${avatar}"><div><b>${esc(name)}</b><span>${timeAgo(p.created_at)} • 🌎</span></div></div>
+  const prof = safeProfile({
+    user_id: p.user_id,
+    username: p.username || p.author_username,
+    avatar_url: p.avatar_url,
+    is_blocked: p.is_blocked
+  });
+  const privacyIcon = {publik:'🌎', teman:'👥', diri_sendiri:'🔒'}[p.privacy || 'publik'] || '🌎';
+  return `<div class="post-head"><img src="${prof.avatar}" onerror="this.src='${BLANK_AVATAR}'"><div><b>${esc(prof.name)}</b><span>${timeAgo(p.created_at)} • ${privacyIcon}</span></div></div>
   ${p.content? `<div class="post-text">${esc(p.content)}</div>` : ''}
   ${p.image_url? `<img class="post-img" src="${esc(p.image_url)}" loading="lazy">` : ''}
   <div class="post-stats">${p.likes||0} suka • ${p.comments_count||0} komentar</div>
   <div class="post-actions">
-    <button onclick="likePost('${p.id}', this)">👍 Suka</button>
+    <button onclick="likePost('${p.id||''}', this)">👍 Suka</button>
     <button onclick="toast('Komentar segera')">💬 Komentar</button>
     <button onclick="toast('Dibagikan')">↗️ Bagikan</button>
   </div>`;
 }
 
 function prependPost(p, top){
+  const privacy = p.privacy || 'publik';
+  if(privacy === 'diri_sendiri' && user && p.user_id && p.user_id!== user.id) return;
   const el = document.createElement('div');
-  el.className='post-card'; el.dataset.id=p.id;
+  el.className='post-card'; if(p.id) el.dataset.id=p.id;
   el.innerHTML = postHTML(p);
   const feed = document.getElementById('feed');
   if(top && feed.firstChild) feed.insertBefore(el, feed.firstChild); else feed.appendChild(el);
 }
 
 document.getElementById('sendPostBtn').onclick = async ()=>{
+  if(!sb) return toast('Isi SUPABASE_URL / KEY dulu');
   const text = document.getElementById('postText').value.trim();
   const file = document.getElementById('postImg').files[0];
+  const privacy = document.getElementById('postPrivacy').value;
   if(!text &&!file){ toast('Tulis sesuatu dulu'); return }
   const btn = document.getElementById('sendPostBtn'); btn.disabled=true; btn.textContent='…';
   let image_url = null;
@@ -228,24 +264,31 @@ document.getElementById('sendPostBtn').onclick = async ()=>{
     if(error){ toast(error.message); btn.disabled=false; btn.textContent='Kirim'; return }
     image_url = sb.storage.from('posts').getPublicUrl(path).data.publicUrl;
   }
-  const { error } = await sb.from('posts').insert({ user_id:user.id, content:text||null, image_url });
+  const payload = { user_id:user.id, content:text||null, image_url, privacy };
+  const { error } = await sb.from('posts').insert(payload);
+  if(error && String(error.message).includes('privacy')){
+    delete payload.privacy;
+    await sb.from('posts').insert(payload);
+  }
   btn.disabled=false; btn.textContent='Kirim';
-  if(error){ toast(error.message); return }
+  if(error &&!String(error.message).includes('privacy')){ toast(error.message); return }
   document.getElementById('postText').value=''; document.getElementById('postImg').value=''; document.getElementById('imgName').textContent='';
-  toast('Terkirim');
+  toast('Terkirim • ' + privacy.replace('_',' '));
 };
 
 async function likePost(id, btn){
+  if(!sb ||!id) return;
   btn.classList.toggle('liked');
-  const { data } = await sb.from('posts').select('likes').eq('id', id).single();
-  await sb.from('posts').update({ likes: (data?.likes||0)+1 }).eq('id', id);
+  try {
+    const { data } = await sb.from('posts').select('likes').eq('id', id).single();
+    await sb.from('posts').update({ likes: (data?.likes||0)+1 }).eq('id', id);
+  } catch(e){}
 }
 
-// UI misc
 document.getElementById('menuBtn').onclick = ()=> document.getElementById('sideMenu').classList.toggle('active');
-async function doLogout(){ await sb.auth.signOut(); location.replace('login.html') }
+async function doLogout(){ if(sb) await sb.auth.signOut(); location.replace('login.html') }
 document.getElementById('logoutLink').onclick = e=>{ e.preventDefault(); doLogout() };
 document.getElementById('userBtn').onclick = doLogout;
 </script>
 </body>
-        </html>
+</html>
