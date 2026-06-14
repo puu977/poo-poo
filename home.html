@@ -5,77 +5,110 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Puu Chat v2 – Home</title>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 <link rel="stylesheet" href="assets/css/puu.css">
 </head>
 
 <body>
 
-<header class="topbar">
-  <button class="hamburger icon-btn" id="hamburger">☰</button>
+  <header class="topbar">
+    <button class="hamburger icon-btn" id="hamburger" aria-label="Menu">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
 
-  <div class="logo-wrap">
-    <div class="logo-mark">P</div>
-    <div class="logo-text">Puu <span>Chat</span></div>
-  </div>
-
-  <div class="global-search">
-    <input id="globalSearchInput" placeholder="Cari...">
-  </div>
-
-  <div class="topbar-right">
-    <button class="icon-btn" id="topSettingsBtn">⚙</button>
-
-    <div class="top-user">
-      <div>
-        <div class="nu">User</div>
-        <div class="st">Online</div>
-      </div>
-      <img src="" alt="">
+    <div class="logo-wrap">
+      <div class="logo-mark">P</div>
+      <div class="logo-text">Puu <span>Chat</span></div>
     </div>
-  </div>
-</header>
 
-<div class="app-body">
-  <aside class="sidebar" id="sidebar">
-    <a class="nav-item active" href="home.html">Home</a>
-    <a class="nav-item" href="#">Pesan</a>
-    <a class="nav-item" href="#">Grup</a>
-    <a class="nav-item" href="#">Server</a>
-    <a class="nav-item" href="#">Pengaturan</a>
-  </aside>
+    <div class="global-search">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input id="globalSearchInput" placeholder="Cari pesan, grup, atau server…" />
+    </div>
 
-  <main class="main" id="main">
-    <div class="view-inner">
+    <div class="topbar-right">
+      <button class="icon-btn" id="topSettingsBtn" title="Pengaturan">⚙️</button>
 
-      <div class="section-title">Home</div>
+      <div class="top-user">
+        <div style="text-align:right">
+          <div class="nu">Kamu</div>
+          <div class="st">Online</div>
+        </div>
+        <img src="https://i.pravatar.cc/100?img=12" alt="Anda" />
+      </div>
+    </div>
+  </header>
 
-      <div class="home-grid">
+  <div class="app-body">
+    <aside class="sidebar" id="sidebar">
 
-        <div>
-          <div class="card stories-card">
-            <div class="stories-row" id="storyRow"></div>
+      <a class="nav-item active" href="home.html">🏠 Home</a>
+      <a class="nav-item" href="pesan.html">💬 Pesan</a>
+      <a class="nav-item" href="grup.html">👥 Grup</a>
+      <a class="nav-item" href="server.html">🗂️ Server</a>
+      <a class="nav-item" href="pengaturan.html">⚙️ Pengaturan</a>
+
+      <div class="sidebar-footer">
+        <div style="font-weight:700;margin-bottom:4px">Puu Chat v2</div>
+        <div class="tiny">Obrolan ringan, cepat, dan hangat.</div>
+        <button class="upgrade-btn" onclick="showToast('Puu Pro – segera hadir!')">
+          Coba Puu Pro
+        </button>
+      </div>
+
+    </aside>
+
+    <main class="main" id="main">
+      <div class="view-inner">
+
+        <div class="section-title">Home</div>
+
+        <div class="home-grid">
+          <div>
+            <div class="card stories-card">
+              <div class="stories-row" id="storyRow"></div>
+            </div>
+
+            <div class="feed-grid" id="feedGrid"></div>
           </div>
 
-          <div class="feed-grid" id="feedGrid"></div>
+          <aside class="right-rail">
+            <div class="card mini-card">
+              <h4>Online sekarang</h4>
+              <div id="onlineNow"></div>
+            </div>
+
+            <div class="card mini-card">
+              <h4>Trending</h4>
+              <div class="small muted" style="line-height:1.7">
+                #PuuChatV2<br>
+                #NgopiJakarta<br>
+                #UIDesign
+              </div>
+            </div>
+          </aside>
+
         </div>
 
-        <aside class="right-rail">
-          <div class="card mini-card">
-            <h4>Online</h4>
-            <div id="onlineNow"></div>
-          </div>
-        </aside>
-
       </div>
-    </div>
-  </main>
-</div>
+    </main>
+  </div>
 
-<div class="toast" id="toast"></div>
+  <div class="toast" id="toast">Tersalin</div>
 
-<script src="assets/js/supabase.js"></script>
-<script src="assets/js/app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/supa.js"></script>
+  <script src="assets/js/app.js"></script>
 
 </body>
   </html>
