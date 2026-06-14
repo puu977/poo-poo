@@ -6,7 +6,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
 <style>
-body{background:#49426E;color:#E2D3F4;font-family:'Poppins',sans-serif}
+body{background:#49426E;color:#E2D3F4;font-family:'Poppins',sans-serif;margin:0}
+.navbar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#332F54;border-bottom:1px solid #49426E;position:sticky;top:0;z-index:10}
+.nav-back{display:flex;align-items:center;gap:8px;color:#E2D3F4;text-decoration:none;font-weight:600;font-size:15px}
+.nav-back:hover{color:#EEC291}
 .wrap{max-width:640px;margin:0 auto;padding:16px}
 .card{background:#332F54;border-radius:16px;padding:16px;margin-bottom:14px}
 .card h3{margin:0 0 10px;color:#EEC291;font-size:15px}
@@ -20,12 +23,15 @@ code{background:#49426E;padding:2px 6px;border-radius:6px;font-size:12px}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-    <button class="btn-ghost" onclick="history.back()">← Kembali</button>
-    <h2 style="margin:0">Pengaturan Channel</h2>
+<div class="navbar">
+  <a href="server.html" class="nav-back" onclick="if(history.length>1){history.back();return false}">← Kembali</a>
+  <div style="display:flex;align-items:center;gap:12px">
+    <span style="color:#b9a9d3;font-size:13px">Pengaturan Channel</span>
+    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSI0MCIgY3k9IjQwIiByPSI0MCIgZmlsbD0iIzNGM2I2MiIvPjxjaXJjbGUgY3g9IjQwIiBjeT0iMzIiIHI9IjEyIiBmaWxsPSIjNTQ0RjdFIi8+PHBhdGggZD0iTTIwIDYyQzIwIDUwIDI4IDQ4IDQwIDQ4UzYwIDUwIDYwIDYyIiBmaWxsPSIjNTQ0RjdFIi8+PC9zdmc+" style="width:32px;height:32px;border-radius:50%;border:2px solid #EEC291" alt="">
   </div>
+</div>
 
+<div class="wrap">
   <div class="card">
     <h3>Overview Channel</h3>
     <label>Nama channel</label>
@@ -54,7 +60,6 @@ code{background:#49426E;padding:2px 6px;border-radius:6px;font-size:12px}
     <h3>Integrasi – Webhook</h3>
     <div id="whList" style="color:#b9a9d3;font-size:13px;margin-bottom:8px">Belum ada webhook.</div>
     <button class="btn-ghost" id="addWhBtn">+ Buat Webhook</button>
-    <div style="font-size:11.5px;color:#9b87b9;margin-top:6px">Gunakan URL webhook untuk kirim pesan bot ke channel ini.</div>
   </div>
 
   <div class="card">
@@ -86,7 +91,7 @@ document.getElementById('translateToggle').checked = localStorage.getItem('puu_t
 function renderWh(){
   const box=document.getElementById('whList');
   if(!ch.webhooks ||!ch.webhooks.length){ box.textContent='Belum ada webhook.'; return }
-  box.innerHTML = ch.webhooks.map((w,i)=>`<code>${w}</code> <button onclick="navigator.clipboard.writeText('${w}');toast('Disalin')" style="background:#49426E;border:1px solid #544F7E;color:#E2D3F4;border-radius:6px;padding:2px 6px;font-size:11px;cursor:pointer">Copy</button>`).join('<br>');
+  box.innerHTML = ch.webhooks.map(w=>`<code>${w}</code> <button onclick="navigator.clipboard.writeText('${w}');toast('Disalin')" style="background:#49426E;border:1px solid #544F7E;color:#E2D3F4;border-radius:6px;padding:2px 6px;font-size:11px;cursor:pointer">Copy</button>`).join('<br>');
 }
 renderWh();
 document.getElementById('addWhBtn').onclick = ()=>{
