@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grup – Puu Chat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+/* Puu classic – grup */
+.grup-layout{display:flex;flex:1;min-width:0;height:calc(100vh - 64px);overflow:hidden}
+.grup-list{width:320px;flex-shrink:0;background:#332F54;border-right:1px solid #49426E;display:flex;flex-direction:column}
+.grup-list-head{padding:14px 16px;border-bottom:1px solid #49426E;display:flex;align-items:center;justify-content:space-between}
+.grup-list-head b{color:#E2D3F4;font-size:16px}
+.btn-new{background:#EEC291;color:#332F54;border:none;border-radius:999px;padding:7px 14px;font-weight:700;font-size:12.5px;cursor:pointer}
+.grup-items{flex:1;overflow-y:auto}
+.grup-items::-webkit-scrollbar{display:none}
+.grup-item{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;border-bottom:1px solid #3b375e}
+.grup-item:hover,.grup-item.active{background:#49426E}
+.grup-item img{width:44px;height:44px;border-radius:50%;border:2px solid #544F7E;object-fit:cover;background:#3F3b62}
+.grup-item b{color:#E2D3F4;font-size:13.5px;display:block}
+.grup-item span{color:#9b87b9;font-size:11.5px}
+
+.grup-main{flex:1;display:flex;flex-direction:column;min-width:0;background:#49426E}
+.grup-header{display:flex;align-items:center;gap:10px;padding:12px 16px;background:#332F54;border-bottom:1px solid #49426E}
+.grup-header img{width:40px;height:40px;border-radius:50%;border:2px solid #EEC291;object-fit:cover;background:#3F3b62}
+.grup-header b{color:#E2D3F4}
+.grup-header span{color:#9b87b9;font-size:12px;display:block}
+.grup-header .right{margin-left:auto;display:flex;gap:8px}
+.icon-btn{background:#49426E;border:1px solid #544F7E;color:#E2D3F4;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer}
+
+.grup-messages{flex:1;overflow-y:auto;padding:16px}
+.grup-messages::-webkit-scrollbar{display:none}
+.msg{display:flex;gap:10px;margin-bottom:14px;align-items:flex-start}
+.msg.mine{flex-direction:row-reverse}
+.msg img{width:34px;height:34px;border-radius:50%;border:2px solid #544F7E;object-fit:cover;background:#3F3b62;flex-shrink:0}
+.msg-bubble{max-width:68%;background:#332F54;border-radius:14px;padding:8px 12px}
+.msg.mine .msg-bubble{background:#5b4e7a}
+.msg-bubble h4{margin:0 0 2px 0;font-size:12.5px;color:#EEC291}
+.msg-bubble h4 span{color:#9b87b9;font-weight:400;font-size:11px}
+.msg-bubble p{margin:0;color:#DDD9D0;font-size:13.5px;white-space:pre-wrap;word-break:break-word}
+
+.grup-composer{display:flex;gap:8px;padding:12px 14px;background:#332F54;border-top:1px solid #49426E;align-items:center}
+.grup-composer input{flex:1;background:#49426E;border:1px solid #544F7E;border-radius:999px;padding:10px 14px;color:#E2D3F4;font-size:14px}
+.grup-composer input::placeholder{color:#9b87b9}
+.grup-composer button{background:#EEC291;color:#332F54;border:none;border-radius:999px;padding:9px 16px;font-weight:700;cursor:pointer}
+
+.empty-state{height:100%;display:flex;align-items:center;justify-content:center;color:#9b87b9;text-align:center;padding:20px}
+
+/* modal buat grup */
+.modal-back{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:50}
+.modal-back.show{display:flex}
+.modal{background:#332F54;border-radius:16px;padding:18px;width:90%;max-width:360px;color:#E2D3F4}
+.modal h3{margin:0 0 12px 0;color:#EEC291}
+.modal input{width:100%;box-sizing:border-box;background:#49426E;border:1px solid #544F7E;border-radius:10px;padding:10px 12px;color:#E2D3F4;margin-bottom:10px;font-family:'Poppins',sans-serif}
+.modal .row{display:flex;gap:8px;justify-content:flex-end}
+.btn-ghost{background:#49426E;color:#E2D3F4;border:1px solid #544F7E;border-radius:10px;padding:8px 14px;cursor:pointer}
+.btn-primary{background:#EEC291;color:#332F54;border:none;border-radius:10px;padding:8px 14px;font-weight:700;cursor:pointer}
+
+@media(max-width:820px){
+  .grup-list{width:100%;display:block}
+  .grup-list.hide{display:none}
+  .grup-main{width:100%}
+  .grup-main.hide{display:none}
+}
+</style>
+</head>
+<body>
+<div class="main-container">
+  <div class="navbar">
+    <div class="nav-left">
+      <button class="toggle-btn" id="menuBtn"><img src="https://img.icons8.com/ios-filled/50/E2D3F4/menu--v1.png" alt=""></button>
+      <div class="main-logo" style="color:#E2D3F4;font-weight:700;font-size:20px">Puu <span style="color:#EEC291">Chat</span></div>
+    </div>
+    <div class="nav-right">
+      <div class="search-bar"><img src="https://img.icons8.com/ios-glyphs/30/332F54/search--v1.png" alt=""><input type="text" placeholder="Cari grup…"></div>
+      <a href="settings.html"><img src="https://img.icons8.com/ios-glyphs/30/E2D3F4/settings.png" class="setting" alt=""></a>
+      <div class="user" id="userBtn" title="Keluar"><img id="userAvatar" src="" alt=""></div>
+    </div>
+  </div>
+
+  <div class="bottom-sec" style="padding-top:0">
+    <div class="side-menu" id="sideMenu">
+      <div class="search-bar"><img src="https://img.icons8.com/ios-glyphs/30/332F54/search--v1.png" alt=""><input type="text" placeholder="Cari…"></div>
+      <ul>
+        <li><a href="home.html">🏠 Beranda</a></li>
+        <li><a href="chat.html">💬 Pesan</a></li>
+        <li><a href="grup.html" class="active">👥 Grup</a></li>
+        <li><a href="server.html">🛰️ Server</a></li>
+        <li><a href="settings.html">⚙️ Pengaturan</a></li>
+        <li><a href="#" id="logoutLink">🚪 Keluar</a></li>
+      </ul>
+    </div>
+
+    <div class="grup-layout" style="flex:1;min-width:0;width:100%">
+      <!-- daftar grup -->
+      <div class="grup-list" id="grupListPane">
+        <div class="grup-list-head">
+          <b>Grup Pesan</b>
+          <button class="btn-new" id="newGroupBtn">+ Buat</button>
+        </div>
+        <div class="grup-items" id="grupItems">
+          <div style="padding:16px;color:#9b87b9;font-size:13px">Memuat…</div>
+        </div>
+      </div>
+
+      <!-- area chat grup -->
+      <div class="grup-main hide" id="grupMain">
+        <div class="grup-header" id="grupHeader" style="display:none">
+          <img id="ghAvatar" src="" alt="">
+          <div>
+            <b id="ghName">Pilih grup</b>
+            <span id="ghMembers">-</span>
+          </div>
+          <div class="right">
+            <button class="icon-btn" id="backBtn" style="display:none">← Kembali</button>
+            <button class="icon-btn" id="infoBtn">Info</button>
+          </div>
+        </div>
+        <div class="grup-messages" id="grupMessages">
+          <div class="empty-state">Pilih grup di kiri untuk mulai chat.<br>Kalau member belum set profil / terblokir → avatar blank, nama “user”.</div>
+        </div>
+        <div class="grup-composer" id="grupComposer" style="display:none">
+          <input id="msgInput" type="text" placeholder="Tulis pesan grup…">
+          <button id="sendBtn">Kirim</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal buat grup -->
+<div class="modal-back" id="groupModal">
+  <div class="modal">
+    <h3>Buat Grup Baru</h3>
+    <input id="gName" type="text" placeholder="Nama grup, mis. Puu Nongkrong" maxlength="40">
+    <input id="gAvatarFile" type="file" accept="image/*" style="background:none;border:none;padding:0;color:#b9a9d3">
+    <div class="row">
+      <button class="btn-ghost" id="cancelGroupBtn">Batal</button>
+      <button class="btn-primary" id="createGroupBtn">Buat</button>
+    </div>
+    <div style="font-size:11.5px;color:#9b87b9;margin-top:8px">Foto grup opsional. Kalau kosong → avatar blank.</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// <-- ISI KEY KAMU
+const SUPABASE_URL = "https://gttedpjwqgiyszmrcnoe.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0dGVkcGp3cWdpeXN6bXJjbm9lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzNjk3MjIsImV4cCI6MjA5Njk0NTcyMn0.GzouEkyd6pRvT_IQuNR7LTyN6ewPiCTj2Xqu8l9yEcY";
+
+const BLANK_AVATAR = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSI0MCIgY3k9IjQwIiByPSI0MCIgZmlsbD0iIzNGM2I2MiIvPjxjaXJjbGUgY3g9IjQwIiBjeT0iMzIiIHI9IjEyIiBmaWxsPSIjNTQ0RjdFIi8+PHBhdGggZD0iTTIwIDYyQzIwIDUwIDI4IDQ4IDQwIDQ4UzYwIDUwIDYwIDYyIiBmaWxsPSIjNTQ0RjdFIi8+PC9zdmc+';
+
+function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(window._tt); window._tt=setTimeout(()=>t.classList.remove('show'),2000) }
+function esc(s){ const d=document.createElement('div'); d.textContent=s||''; return d.innerHTML }
+function timeStr(iso){ const d=new Date(iso); return d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}) }
+
+function safeProfile(p){
+  const blocked = !p || p.is_blocked || !p.user_id;
+  if(blocked) return {name:'user', avatar: BLANK_AVATAR};
+  return {
+    name: p.username || p.display_name || 'user',
+    avatar: p.avatar_url || `https://i.pravatar.cc/60?u=${p.user_id}`
+  };
+}
+
+let sb=null, user=null, currentGroup=null, msgChannel=null;
+const userAvatarEl = document.getElementById('userAvatar');
+userAvatarEl.src = BLANK_AVATAR;
+
+if(SUPABASE_URL && SUPABASE_ANON_KEY){
+  sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  (async ()=>{
+    const { data:{session} } = await sb.auth.getSession();
+    if(!session){ location.replace('login.html'); return }
+    user = session.user;
+    try{
+      const { data:prof } = await sb.from('profiles').select('avatar_url').eq('id', user.id).maybeSingle();
+      userAvatarEl.src = prof?.avatar_url || `https://i.pravatar.cc/60?u=${user.id}`;
+    }catch(e){ userAvatarEl.src = `https://i.pravatar.cc/60?u=${user.id}` }
+    loadGroups();
+  })();
+} else {
+  loadGroups(true);
+}
+
+async function loadGroups(demo=false){
+  const box = document.getElementById('grupItems');
+  let groups = [];
+  if(sb && !demo){
+    try{
+      const { data } = await sb.from('groups').select('*').order('created_at',{ascending:false}).limit(50);
+      groups = data || [];
+    }catch(e){}
+  }
+  if(groups.length===0){
+    groups = [
+      {id:'demo-1', name:'Puu Nongkrong', avatar_url:null, members_count:12},
+      {id:'demo-2', name:'Mabar Malam', avatar_url:null, members_count:5}
+    ];
+  }
+  box.innerHTML = '';
+  groups.forEach(g=>{
+    const avatar = g.avatar_url || BLANK_AVATAR;
+    const el = document.createElement('div');
+    el.className = 'grup-item';
+    el.dataset.id = g.id;
+    el.innerHTML = `<img src="${avatar}" onerror="this.src='${BLANK_AVATAR}'"><div><b>${esc(g.name)}</b><span>${g.members_count||'-'} anggota • tap untuk buka</span></div>`;
+    el.onclick = ()=> openGroup(g);
+    box.appendChild(el);
+  });
+}
+
+function openGroup(g){
+  currentGroup = g;
+  document.querySelectorAll('.grup-item').forEach(n=> n.classList.toggle('active', n.dataset.id===g.id));
+  document.getElementById('grupHeader').style.display = 'flex';
+  document.getElementById('grupComposer').style.display = 'flex';
+  document.getElementById('ghName').textContent = g.name;
+  document.getElementById('ghAvatar').src = g.avatar_url || BLANK_AVATAR;
+  document.getElementById('ghMembers').textContent = (g.members_count||'-') + ' anggota';
+  document.getElementById('grupMessages').innerHTML = '';
+
+  // mobile: switch pane
+  if(window.innerWidth <= 820){
+    document.getElementById('grupListPane').classList.add('hide');
+    document.getElementById('grupMain').classList.remove('hide');
+    document.getElementById('backBtn').style.display = 'inline-block';
+  } else {
+    document.getElementById('grupMain').classList.remove('hide');
+  }
+
+  loadGroupMessages(g.id);
+}
+
+async function loadGroupMessages(group_id){
+  const box = document.getElementById('grupMessages');
+  box.innerHTML = '';
+  if(!sb){
+    addMsg({sender_id:null, content:'Ini preview grup. Login Supabase untuk chat realtime.', created_at:new Date().toISOString(), is_blocked:true}, false);
+    return;
+  }
+  try{
+    const { data } = await sb.from('group_messages').select('*').eq('group_id', group_id).order('created_at',{ascending:true}).limit(100);
+    (data||[]).forEach(m=> addMsg(m, m.sender_id === user?.id));
+  }catch(e){}
+
+  if(msgChannel) sb.removeChannel(msgChannel);
+  if(sb){
+    msgChannel = sb.channel('grp-'+group_id)
+      .on('postgres_changes',{event:'INSERT',schema:'public',table:'group_messages',filter:`group_id=eq.${group_id}`}, p=>{
+        addMsg(p.new, p.new.sender_id === user?.id)
+      }).subscribe();
+  }
+}
+
+function addMsg(m, mine){
+  const box = document.getElementById('grupMessages');
+  const prof = safeProfile({user_id: m.sender_id, username: m.profiles?.username, avatar_url: m.profiles?.avatar_url, is_blocked: m.is_blocked});
+  const div = document.createElement('div');
+  div.className = 'msg' + (mine ? ' mine' : '');
+  div.innerHTML = `<img src="${prof.avatar}" onerror="this.src='${BLANK_AVATAR}'"><div class="msg-bubble"><h4>${esc(prof.name)} <span>• ${timeStr(m.created_at||Date.now())}</span></h4><p>${esc(m.content||'')}</p></div>`;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+}
+
+async function sendMsg(){
+  const input = document.getElementById('msgInput');
+  const text = input.value.trim();
+  if(!text || !currentGroup) return;
+  input.value = '';
+  if(!sb){
+    addMsg({sender_id:user?.id||'me', content:text, created_at:new Date().toISOString()}, true);
+    toast('Demo mode – belum tersimpan');
+    return;
+  }
+  try{
+    const { error } = await sb.from('group_messages').insert({ group_id: currentGroup.id, sender_id: user.id, content: text });
+    if(error) { toast(error.message); input.value = text; }
+  }catch(e){ toast('Gagal kirim'); input.value = text; }
+}
+document.getElementById('sendBtn').onclick = sendMsg;
+document.getElementById('msgInput').addEventListener('keydown', e=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendMsg() }});
+
+// buat grup
+document.getElementById('newGroupBtn').onclick = ()=> document.getElementById('groupModal').classList.add('show');
+document.getElementById('cancelGroupBtn').onclick = ()=> document.getElementById('groupModal').classList.remove('show');
+document.getElementById('createGroupBtn').onclick = async ()=>{
+  const name = document.getElementById('gName').value.trim();
+  if(!name){ toast('Isi nama grup dulu'); return }
+  const file = document.getElementById('gAvatarFile').files[0];
+  let avatar_url = null;
+  if(sb && file && user){
+    try{
+      const path = `${user.id}/group_${Date.now()}_${file.name}`;
+      await sb.storage.from('avatars').upload(path, file, {upsert:true});
+      avatar_url = sb.storage.from('avatars').getPublicUrl(path).data.publicUrl;
+    }catch(e){}
+  }
+  if(sb && user){
+    try{
+      const { data, error } = await sb.from('groups').insert({ name, avatar_url, created_by: user.id }).select().single();
+      if(!error && data){
+        await sb.from('group_members').insert({ group_id: data.id, user_id: user.id });
+        toast('Grup dibuat');
+        document.getElementById('groupModal').classList.remove('show');
+        loadGroups(); openGroup(data);
+        return;
+      }
+    }catch(e){}
+  }
+  // demo fallback
+  toast('Grup dibuat (demo)');
+  document.getElementById('groupModal').classList.remove('show');
+  openGroup({id:'demo-'+Date.now(), name, avatar_url, members_count:1});
+};
+
+// nav misc
+document.getElementById('backBtn').onclick = ()=>{
+  document.getElementById('grupMain').classList.add('hide');
+  document.getElementById('grupListPane').classList.remove('hide');
+};
+document.getElementById('infoBtn').onclick = ()=> toast(currentGroup ? currentGroup.name + ' • ' + (currentGroup.members_count||'-') + ' anggota' : 'Pilih grup dulu');
+document.getElementById('menuBtn').onclick = ()=> document.getElementById('sideMenu').classList.toggle('active');
+async function doLogout(){ if(sb) await sb.auth.signOut(); location.replace('login.html') }
+document.getElementById('logoutLink').onclick = e=>{ e.preventDefault(); doLogout() };
+document.getElementById('userBtn').onclick = doLogout;
+</script>
+</body>
+                                             </html>
