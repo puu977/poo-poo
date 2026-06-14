@@ -8,8 +8,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
+
 <style>
-/* Auth – pakai palette klasik Puu */
+/* CSS TIDAK DIUBAH SAMA SEKALI */
 .auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:#DDD9D0}
 .auth-card{width:100%;max-width:420px;background:#49426E;border:5px solid #E2D3F4;border-radius:25px;box-shadow:0 0 25px #9e8faf92;padding:32px 28px;color:#E2D3F4}
 .auth-logo{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:18px;font-weight:700;font-size:22px;color:#E2D3F4}
@@ -32,42 +33,75 @@
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
+
 <body>
 <div class="auth-wrap">
   <div class="auth-card">
     <div class="auth-logo">Puu <span>Chat</span></div>
     <div class="auth-title">Masuk</div>
     <div class="auth-sub">Selamat datang kembali</div>
+
     <form id="loginForm">
-      <div class="fld"><label>Email</label><input type="email" id="email" placeholder="kamu@email.com" required autocomplete="email"></div>
-      <div class="fld"><label>Password</label>
+      <div class="fld">
+        <label>Email</label>
+        <input type="email" id="email" placeholder="kamu@email.com" required autocomplete="email">
+      </div>
+
+      <div class="fld">
+        <label>Password</label>
         <div class="pw-wrap">
           <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password" style="padding-right:56px">
           <button type="button" class="pw-toggle" id="togglePw">Lihat</button>
         </div>
       </div>
-      <div class="auth-link-right"><a href="forgot-password.html">Lupa password?</a></div>
+
+      <div class="auth-link-right">
+        <a href="forgot-password.html">Lupa password?</a>
+      </div>
+
       <button class="btn-primary" id="loginBtn" type="submit">Masuk</button>
     </form>
-    <div class="auth-foot">Belum punya akun? <a href="register.html">Daftar</a></div>
+
+    <div class="auth-foot">
+      Belum punya akun? <a href="register.html">Daftar</a>
+    </div>
   </div>
 </div>
+
 <div class="toast" id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// --- isi dengan project kamu ---
+/* ================= SAFE INIT ================= */
 const SUPABASE_URL = "https://YOUR-PROJECT.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGci...YOUR_ANON_KEY";
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const SUPABASE_ANON_KEY = "YOUR_ANON_KEY";
 
-function showToast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(window._tt); window._tt=setTimeout(()=>t.classList.remove('show'),2400) }
+const sb = (window.supabase && SUPABASE_URL.includes('http'))
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  : null;
 
+/* ================= TOAST ================= */
+function showToast(msg){
+  const t = document.getElementById('toast');
+  if(!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(()=>t.classList.remove('show'), 2400);
+}
+
+/* ================= SESSION CHECK ================= */
 (async ()=>{
-  const { data:{session} } = await sb.auth.getSession();
-  if(session) location.replace('home.html');
+  try{
+    if(!sb) return;
+    const { data } = await sb.auth.getSession();
+    if(data?.session){
+      location.replace('home.html');
+    }
+  }catch(e){}
 })();
 
+/* ================= PASSWORD TOGGLE ================= */
 document.getElementById('togglePw').onclick = ()=>{
   const p = document.getElementById('password');
   const is = p.type === 'password';
@@ -75,18 +109,41 @@ document.getElementById('togglePw').onclick = ()=>{
   document.getElementById('togglePw').textContent = is ? 'Sembunyi' : 'Lihat';
 };
 
-document.getElementById('loginForm').addEventListener('submit', async e=>{
+/* ================= LOGIN ================= */
+document.getElementById('loginForm').addEventListener('submit', async (e)=>{
   e.preventDefault();
+
   const btn = document.getElementById('loginBtn');
   const email = document.getElementById('email').value.trim();
   const password = document.getElementById('password').value;
-  btn.disabled = true; btn.textContent = 'Masuk…';
-  const { error } = await sb.auth.signInWithPassword({ email, password });
-  btn.disabled = false; btn.textContent = 'Masuk';
-  if(error){ showToast(error.message.includes('Invalid') ? 'Email atau password salah' : error.message); return }
+
+  if(!sb){
+    showToast('Supabase belum dikonfigurasi');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Masuk…';
+
+  const { error } = await sb.auth.signInWithPassword({
+    email, password
+  });
+
+  btn.disabled = false;
+  btn.textContent = 'Masuk';
+
+  if(error){
+    const msg = error.message.toLowerCase().includes('invalid')
+      ? 'Email atau password salah'
+      : error.message;
+
+    showToast(msg);
+    return;
+  }
+
   showToast('Berhasil masuk');
-  setTimeout(()=> location.href = 'home.html', 400);
+  setTimeout(()=>location.href='home.html', 400);
 });
 </script>
 </body>
-  </html>
+</html>
