@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Puu Chat v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-900:#332F54;
+  --bg-800:#49426E;
+  --bg-700:#5a4f7c;
+  --bg-650:#60558a;
+  --card:#443c69;
+  --card-2:#3f3762;
+  --text-main:#E2D3F4;
+  --text-muted:#c3b8d8;
+  --text-soft:#DDD9D0;
+  --accent:#EEC291;
+  --accent-strong:#e9b06d;
+  --green:#8dd8a6;
+  --border:rgba(226,211,244,0.13);
+  --shadow: 0 18px 45px rgba(28, 21, 51, 0.42);
+  --radius-xl:24px;
+  --radius-lg:20px;
+  --radius-md:16px;
+  --topbar-h:68px;
+  --sidebar-w:240px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  background: linear-gradient(180deg,#4a436f 0%, #332F54 100%);
+  color:var(--text-main);
+  overflow:hidden;
+}
+button,input,textarea,select{font-family:inherit}
+button{cursor:pointer}
+a{color:inherit;text-decoration:none}
+
+/* Topbar */
+.topbar{
+  height:var(--topbar-h);
+  background:rgba(51,47,84,0.88);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  gap:18px;
+  padding:0 22px;
+  position:relative;
+  z-index:40;
+}
+.hamburger{
+  display:none;
+  background:none;border:none;color:var(--text-main);padding:6px;border-radius:10px;
+}
+.logo-wrap{display:flex;align-items:center;gap:12px;min-width:210px}
+.logo-mark{
+  width:40px;height:40px;border-radius:13px;
+  background:linear-gradient(135deg,#f0c796,#e9ac6b);
+  display:flex;align-items:center;justify-content:center;
+  color:#3b2b46;font-weight:700;font-size:18px;
+  box-shadow:0 8px 20px rgba(238,194,145,0.2);
+}
+.logo-text{font-weight:700;font-size:18px;letter-spacing:-0.01em}
+.logo-text span{color:var(--accent)}
+.global-search{
+  flex:1;max-width:520px;position:relative;
+}
+.global-search input{
+  width:100%;
+  background:#3f3762;
+  border:1px solid var(--border);
+  border-radius:999px;
+  height:42px;
+  padding:0 18px 0 44px;
+  color:var(--text-main);
+  outline:none;
+}
+.global-search input::placeholder{color:#a998c4}
+.global-search svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:#a998c4}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:14px}
+.icon-btn{
+  background:#413860;border:1px solid var(--border);width:40px;height:40px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;color:#d7cbe9;transition:.18s;
+}
+.icon-btn:hover{background:#4c4170;color:#fff}
+.top-user{
+  display:flex;align-items:center;gap:10px;padding-left:8px;cursor:pointer
+}
+.top-user img{width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid rgba(238,194,145,.45)}
+.top-user .nu{font-size:13px;font-weight:600}
+.top-user .st{font-size:11px;color:#ab98c4}
+
+/* App body */
+.app-body{display:flex;height:calc(100vh - var(--topbar-h))}
+.sidebar{
+  width:var(--sidebar-w);
+  background:rgba(58,50,88,0.66);
+  border-right:1px solid var(--border);
+  padding:18px 16px;
+  display:flex;flex-direction:column;gap:6px;
+  flex-shrink:0;
+  transition:transform .28s ease;
+  z-index:35;
+}
+.nav-item{
+  display:flex;align-items:center;gap:13px;
+  padding:12px 14px;border-radius:14px;color:#cdc0e2;font-weight:500;font-size:14.5px;
+  border:1px solid transparent;transition:.18s;
+  width:100%;background:none;text-align:left;
+}
+.nav-item svg{flex-shrink:0;opacity:.95}
+.nav-item:hover{background:rgba(255,255,255,.045)}
+.nav-item.active{
+  background:rgba(238,194,145,0.11);
+  color:var(--accent);
+  border-color:rgba(238,194,145,0.28);
+  box-shadow: inset 0 0 0 1px rgba(238,194,145,.04);
+}
+.nav-item.active svg{color:var(--accent)}
+.sidebar-footer{
+  margin-top:auto;
+  background:#3b345b;
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:16px;
+}
+.sidebar-footer .tiny{font-size:11.5px;color:#b9a9d3;line-height:1.55}
+.upgrade-btn{
+  margin-top:10px;width:100%;background:var(--accent);color:#3b2a1a;
+  border:none;border-radius:12px;padding:10px;font-weight:700;font-size:13px;
+}
+
+/* Main */
+.main{flex:1;overflow-y:auto;overflow-x:hidden;position:relative}
+.view{display:none;min-height:100%}
+.view.active{display:block}
+.view-inner{padding:28px 30px 44px;max-width:1200px;margin:0 auto}
+
+.story-row::-webkit-scrollbar{display:none}
+.story-item{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:80px;cursor:pointer}
+.story-avatar{
+  width:70px;height:70px;border-radius:50%;padding:3px;
+  background: conic-gradient(from 30deg, #f0c48c, #e9a96c, #d98bc1, #f0c48c);
+  position:relative;
+}
+.story-avatar-inner{
+  width:100%;height:100%;border-radius:50%;background:#3a315e;display:flex;align-items:center;justify-content:center;
+  overflow:hidden;border:3px solid #3f3762;
+}
+.story-avatar-inner img{width:100%;height:100%;object-fit:cover}
+.story-add .story-avatar{background:#4c4172}
+.story-name{font-size:12px;color:#cec0e3;font-weight:500;text-align:center;max-width:82px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.feed-grid{
+  margin-top:22px;
+  display:grid;grid-template-columns:1fr 1fr;gap:20px;
+}
+@media (max-width:980px){ .feed-grid{grid-template-columns:1fr} }
+.post-card{padding:20px 20px 14px}
+.post-head{display:flex;align-items:center;gap:12px}
+.post-head img{width:46px;height:46px;border-radius:50%;object-fit:cover}
+.post-author{font-weight:600}
+.post-time{font-size:12px;color:#af99ca}
+.post-body{margin:14px 0 14px;color:#ddd5ea;line-height:1.65}
+.post-image{
+  width:100%;height:210px;border-radius:18px;overflow:hidden;background:#352d57;display:flex;align-items:center;justify-content:center;
+  color:#9c85b9;font-size:13px;border:1px solid var(--border);
+}
+.post-actions{display:flex;gap:18px;padding-top:12px;border-top:1px solid var(--border);margin-top:12px;color:#c7b6dc;font-size:13.5px}
+.post-action{display:flex;align-items:center;gap:7px;cursor:pointer;background:none;border:none;color:inherit;font-size:13.5px}
+.post-action:hover{color:var(--accent)}
+.post-action.liked{color:var(--accent)}
+
+/* PESAN / GRUP / SERVER chat layout */
+.chat-layout{
+  display:flex;
+  height:calc(100vh - var(--topbar-h) - 56px);
+  min-height:620px;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:24px;
+  overflow:hidden;
+  box-shadow:var(--shadow);
+}
+.chat-left{
+  width:340px;
+  border-right:1px solid var(--border);
+  background:rgba(61,53,94,0.65);
+  display:flex;flex-direction:column;
+  flex-shrink:0;
+}
+.chat-left-head{padding:16px 16px 12px}
+.chat-left-head h3{font-size:16px;margin-bottom:10px}
+.chat-search{position:relative}
+.chat-search input{
+  width:100%;background:#3a315d;border:1px solid var(--border);border-radius:12px;height:42px;padding:0 14px 0 40px;color:var(--text-main);outline:none;font-size:13.5px
+}
+.chat-search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:#9d86bb}
+.contact-list{overflow-y:auto;flex:1;padding:6px 10px 18px}
+.contact-item{
+  display:flex;align-items:center;gap:12px;padding:10px 10px;border-radius:14px;cursor:pointer;transition:.16s;border:1px solid transparent;
+}
+.contact-item:hover{background:rgba(255,255,255,.035)}
+.contact-item.active{background:rgba(238,194,145,0.10);border-color:rgba(238,194,145,.22)}
+.contact-item img{width:46px;height:46px;border-radius:50%;object-fit:cover;flex-shrink:0}
+.c-name{font-weight:600;font-size:14px}
+.c-prev{font-size:12.5px;color:#b49dcf;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:190px}
+.c-meta{margin-left:auto;text-align:right}
+.c-time{font-size:11px;color:#9c85b9}
+.c-unread{background:var(--accent);color:#3a2515;font-size:11px;font-weight:700;border-radius:999px;padding:2px 7px;display:inline-block;margin-top:4px}
+
+.chat-panel{flex:1;display:flex;flex-direction:column;min-width:0;background: radial-gradient(1200px 600px at 80% -20%, rgba(238,194,145,.035), transparent 60%), #423762}
+.chat-header{
+  padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;background:rgba(54,44,82,0.55);
+  backdrop-filter:blur(6px);
+}
+.chat-header img{width:44px;height:44px;border-radius:50%;object-fit:cover}
+.chat-header .ch-name{font-weight:700}
+.chat-header .ch-status{font-size:12px;color:#a48bc0}
+.chat-header-right{margin-left:auto;display:flex;gap:8px}
+.circle-btn{
+  width:38px;height:38px;border-radius:12px;background:#4c4172;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:#dbcceb;transition:.16s
+}
+.circle-btn:hover{background:#5a4d80;color:#fff}
+
+.chat-messages{
+  flex:1;overflow-y:auto;padding:22px 22px 18px;display:flex;flex-direction:column;gap:12px;
+}
+.msg-row{display:flex;gap:10px;align-items:flex-end}
+.msg-row.me{justify-content:flex-end}
+.msg-bubble{
+  max-width:min(560px, 76%);
+  background:#4a3f6d;
+  border:1px solid var(--border);
+  padding:11px 14px;border-radius:18px 18px 6px;
+  font-size:14px;line-height:1.55;color:#e8dfff;
+  box-shadow:0 4px 18px rgba(0,0,0,.12)
+}
+.msg-row.me .msg-bubble{
+  background:linear-gradient(180deg,#eec291,#e5a76d);
+  color:#3a2516;border:none;border-radius:18px 18px 6px 18px;
+}
+.msg-time{font-size:11px;color:#ab90c5;margin-top:4px}
+.msg-row.me .msg-time{text-align:right;color:#a68a65}
+.translated-tag{font-size:10.5px;color:#cfa76a;margin-top:4px;font-style:italic}
+.msg-row.me .translated-tag{color:#7a5532}
+
+.chat-composer{
+  border-top:1px solid var(--border);
+  padding:12px 14px;
+  background:rgba(44,36,68,0.82);
+  display:flex;align-items:center;gap:9px;
+}
+.composer-input{
+  flex:1;background:#3a315d;border:1px solid var(--border);border-radius:14px;padding:12px 14px;color:var(--text-main);outline:none;font-size:14px
+}
+.composer-input::placeholder{color:#9a83b9}
+.cmp-btn{
+  width:40px;height:40px;border-radius:12px;background:#4b3f6c;border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;color:#d7c7ea;flex-shrink:0;
+}
+.cmp-btn:hover{background:#594b7c}
+.cmp-btn.send{background:var(--accent);color:#3b2816;border-color:transparent}
+.cmp-btn.active{background:rgba(238,194,145,.18);color:var(--accent);border-color:rgba(238,194,145,.35)}
+.attach-wrap{position:relative}
+.attach-pop{
+  position:absolute;bottom:54px;left:0;
+  background:#3d325f;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);
+  padding:8px;min-width:210px;display:none;z-index:20;
+}
+.attach-pop.open{display:block}
+.attach-pop button{
+  width:100%;text-align:left;background:none;border:none;color:#e2d3f4;padding:10px 12px;border-radius:10px;font-size:13.5px;display:flex;gap:10px;align-items:center;
+}
+.attach-pop button:hover{background:rgba(255,255,255,.05)}
+
+/* Grup view extras */
+.grup-toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.group-card{
+  padding:12px;border-radius:16px;background:#3e3561;border:1px solid var(--border);cursor:pointer;display:flex;gap:12px;align-items:center;margin-bottom:10px;
+}
+.group-card.active{outline:2px solid rgba(238,194,145,.28);background:#4a3d6d}
+.group-card img{width:48px;height:48px;border-radius:14px;object-fit:cover}
+.g-name{font-weight:600}
+.g-meta{font-size:12px;color:#b39bce}
+
+/* Server view */
+.server-shell{display:flex;min-height:680px;background:var(--card);border:1px solid var(--border);border-radius:24px;overflow:hidden;box-shadow:var(--shadow)}
+.server-rail{
+  width:78px;background:#32294f;border-right:1px solid var(--border);
+  padding:14px 10px;display:flex;flex-direction:column;align-items:center;gap:12px;
+}
+.srv-icon{
+  width:52px;height:52px;border-radius:18px;background:#443964;display:flex;align-items:center;justify-content:center;
+  color:#d9cbe9;font-weight:700;border:2px solid transparent;cursor:pointer;transition:.16s;overflow:hidden;
+}
+.srv-icon img{width:100%;height:100%;object-fit:cover}
+.srv-icon.active{border-color:var(--accent);box-shadow:0 0 0 3px rgba(238,194,145,.14)}
+.srv-icon.add{background:transparent;border:1px dashed #7b679f;color:#bba5d8}
+.server-channels{
+  width:270px;background:#3a315d;border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+}
+.sc-head{padding:16px 16px 10px;border-bottom:1px solid var(--border)}
+.sc-head h3{font-size:16px}
+.sc-invite{margin-top:8px;width:100%}
+.sc-list{padding:12px;flex:1;overflow:auto}
+.channel-item{
+  display:flex;align-items:center;gap:10px;padding:10px 11px;border-radius:11px;color:#ccbce2;cursor:pointer;font-size:14px;
+}
+.channel-item:hover{background:rgba(255,255,255,.035)}
+.channel-item.active{background:rgba(238,194,145,.10);color:var(--accent)}
+.channel-item .ch-gear{margin-left:auto;opacity:.75;background:none;border:none;color:inherit}
+.channel-item .ch-gear:hover{color:#fff}
+.sc-footer{padding:12px;border-top:1px solid var(--border)}
+.server-chat{flex:1;min-width:0;display:flex;flex-direction:column;background: radial-gradient(1200px 600px at 80% -20%, rgba(238,194,145,.035), transparent 60%), #423762}
+
+/* Settings */
+.settings-wrap{
+  display:grid;grid-template-columns:250px 1fr;gap:22px;
+}
+.settings-nav{
+  background:var(--card);border:1px solid var(--border);border-radius:20px;padding:10px;
+  height:fit-content;
+}
+.settings-nav button{
+  width:100%;text-align:left;padding:12px 14px;border-radius:12px;background:none;border:none;color:#cdbce2;font-weight:500;font-size:14px;
+}
+.settings-nav button.active{background:rgba(238,194,145,.11);color:var(--accent)}
+.settings-panel{
+  background:var(--card);border:1px solid var(--border);border-radius:22px;box-shadow:var(--shadow);padding:22px;
+}
+.settings-panel h3{font-size:20px;margin-bottom:14px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-grid .full{grid-column:1 / -1}
+.field label{display:block;font-size:12.5px;color:#bda8d7;margin-bottom:6px;font-weight:600}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px dashed rgba(255,255,255,.08)}
+.switch{
+  width:46px;height:26px;background:#3a2f5a;border-radius:999px;position:relative;cursor:pointer;border:1px solid var(--border);flex-shrink:0
+}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#bda9d8;transition:.2s}
+.switch.on{background:rgba(238,194,145,.34);border-color:rgba(238,194,145,.45)}
+.switch.on::after{transform:translateX(20px);background:#f1c78e}
+
+/* Modals */
+.modal-backdrop{
+  position:fixed;inset:0;background:rgba(18,12,33,.6);backdrop-filter:blur(6px);
+  display:none;align-items:center;justify-content:center;z-index:60;padding:18px;
+}
+.modal-backdrop.open{display:flex}
+.modal{
+  width:100%;max-width:520px;background:#40335f;border:1px solid var(--border);border-radius:22px;box-shadow:var(--shadow);
+  padding:20px;
+}
+.modal h4{font-size:18px;margin-bottom:12px}
+.modal-foot{display:flex;justify-content:flex-end;gap:10px;margin-top:16px}
+.member-check{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;background:#3a2f58;margin-bottom:6px}
+.member-check img{width:32px;height:32px;border-radius:50%}
+
+/* Toast */
+.toast{
+  position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(18px);
+  background:#211935;border:1px solid rgba(255,255,255,.1);
+  color:#efdccd;padding:11px 16px;border-radius:999px;font-size:13.5px;font-weight:600;
+  box-shadow:0 14px 40px rgba(0,0,0,.45);
+  opacity:0;pointer-events:none;transition:.22s;z-index:80;white-space:nowrap;max-width:92vw;text-align:center;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Utilities */
+.flex{display:flex}.between{justify-content:space-between}.items-center{align-items:center}
+.gap8{gap:8px}.gap10{gap:10px}.mt12{margin-top:12px}.mt16{margin-top:16px}.muted{color:#b19bcb}
+.small{font-size:12.5px}
+hr.soft{border:none;border-top:1px solid var(--border);margin:14px 0}
+.hidden{display:none !important}
+
+/* Scrollbars */
+*{scrollbar-width:thin;scrollbar-color:#5a4678 transparent}
+*::-webkit-scrollbar{height:8px;width:8px}
+*::-webkit-scrollbar-thumb{background:#5a4678;border-radius:99px}
+
+/* Responsive */
+@media (max-width:1100px){
+  .chat-left{width:300px}
+  .server-channels{width:240px}
+  .settings-wrap{grid-template-columns:1fr}
+}
+@media (max-width:900px){
+  .hamburger{display:flex}
+  .logo-wrap{min-width:auto}
+  .global-search{display:none}
+  .sidebar{
+    position:fixed;left:0;top:var(--topbar-h);bottom:0;
+    transform:translateX(-104%);
+    box-shadow:0 20px 40px rgba(0,0,0,.4);
+    background:#352c55;
+  }
+  .sidebar.open{transform:translateX(0)}
+  .view-inner{padding:18px 16px 40px}
+  .chat-layout{flex-direction:column;height:auto}
+  .chat-left{width:100%;border-right:none;border-bottom:1px solid var(--border)}
+  .contact-list{max-height:310px}
+  .chat-messages{min-height:380px}
+  .server-shell{flex-direction:column}
+  .server-rail{width:100%;flex-direction:row;overflow-x:auto;padding:10px}
+  .server-channels{width:100%}
+  .form-grid{grid-template-columns:1fr}
+  .feed-grid{grid-template-columns:1fr}
+  .top-user .nu, .top-user .st{display:none}
+}
+@media (max-width:560px){
+  .chat-header-right{gap:4px}
+  .circle-btn{width:36px;height:36px;border-radius:10px}
+  .composer-input{font-size:13.5px}
+  .section-title{font-size:24px}
+}
+</style>
+</head>
+<body>
+  <!-- Topbar -->
+  <header class="topbar">
+    <button class="hamburger icon-btn" id="hamburger" aria-label="Menu">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="logo-wrap">
+      <div class="logo-mark">P</div>
+      <div class="logo-text">Puu <span>Chat</span></div>
+    </div>
+    <div class="global-search">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="globalSearchInput" placeholder="Cari pesan, grup, atau server…" />
+    </div>
+
+      <div class="app-body">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <button class="nav-item active" data-view="home">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 22"/></svg>
+        Home
+      </button>
+      <button class="nav-item" data-view="pesan">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Pesan
+      </button>
+      <button class="nav-item" data-view="grup">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Grup
+      </button>
+      <button class="nav-item" data-view="server">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+        Server
+      </button>
+      <button class="nav-item" data-view="pengaturan">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06-.06a2 2 0 1 1-2.83 2.83l.06.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v-.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Pengaturan
+      </button>
+
+      <div class="sidebar-footer">
+        <div style="font-weight:700;margin-bottom:4px">Puu Chat v2</div>
+        <div class="tiny">Obrolan ringan, cepat, dan hangat. Upgrade ke Puu Pro untuk file besar, tema custom, dan panggilan grup tanpa batas.</div>
+        <button class="upgrade-btn" onclick="showToast('Puu Pro – segera hadir!')">Coba Puu Pro</button>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main" id="main">
+      <!-- HOME -->
+      <section id="view-home" class="view active">
+        <div class="view-inner">
+          <h1 class="section-title">Beranda Puu</h1>
+          <div class="card" style="padding:18px 18px 16px; margin-bottom:20px">
+            <div class="story-row" id="storyRow">
+              <!-- stories injected -->
+            </div>
+          </div>
+
+          <div class="feed-grid" id="feedGrid">
+            <!-- posts injected -->
+          </div>
+        </div>
+      </section>
+
+      <!-- PESAN -->
+      <section id="view-pesan" class="view">
+        <div class="view-inner">
+          <h1 class="section-title" style="margin-bottom:14px">Pesan</h1>
+          <div class="chat-layout">
+            <!-- left -->
+            <div class="chat-left">
+              <div class="chat-left-head">
+                <h3>Kontak</h3>
+                <div class="chat-search">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                  <input id="contactSearch" placeholder="Cari kontak…" />
+                </div>
+              </div>
+              <div class="contact-list" id="contactList"></div>
+            </div>
+            <!-- right -->
+            <div class="chat-panel">
+              <div class="chat-header" id="chatHeader">
+                <img id="dmAvatar" src="https://i.pravatar.cc/100?img=32" alt="">
+                <div>
+                  <div class="ch-name" id="dmName">Rina Pratiwi</div>
+                  <div class="ch-status" id="dmStatus">Online • sedang mengetik…</div>
+                </div>
+                <div class="chat-header-right">
+                  <button class="circle-btn" id="callVoiceBtn" title="Panggilan suara">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                  </button>
+                  <button class="circle-btn" id="callVideoBtn" title="Video call">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                  </button>
+                  <button class="circle-btn" id="chatMoreBtn" title="Opsi">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+                  </button>
+                </div>
+              <div class="chat-messages" id="dmMessages"></div>
+              <div class="chat-composer">
+                <div class="attach-wrap">
+                  <button class="cmp-btn" id="attachBtn" title="Lampirkan">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.19 9.19a2 2 0 0 1-2.83-2.83l8.49-8.49"/></svg>
+                  </button>
+                  <div class="attach-pop" id="attachPop">
+                    <button data-attach="Foto/Video">📷 Foto/Video</button>
+                    <button data-attach="Dokumen">📄 Dokumen</button>
+                    <button data-attach="Bagikan Lokasi">📍 Bagikan Lokasi</button>
+                    <button data-attach="Kontak">👤 Kontak</button>
+                    <button data-attach="Polling">📊 Polling</button>
+                    <button data-attach="Bagikan Layar">🖥️ Bagikan Layar</button>
+                  </div>
+                </div>
+                <button class="cmp-btn" id="translateBtn" title="Auto-translate ID → EN">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l6 6"/><path d="M4 14l6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="M22 22l-5-10-5 10"/><path d="M14 18h6"/></svg>
+                </button>
+                <input class="composer-input" id="dmInput" placeholder="Ketik pesan…" />
+                <button class="cmp-btn" id="emojiBtn" title="Emoji">😊</button>
+                <button class="cmp-btn" id="micBtn" title="Rekam suara">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                </button>
+                <button class="cmp-btn send" id="dmSend" title="Kirim">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- GRUP -->
+      <section id="view-grup" class="view">
+        <div class="view-inner">
+          <div class="flex between items-center" style="flex-wrap:wrap;gap:10px;margin-bottom:14px">
+            <h1 class="section-title" style="margin:0">Grup</h1>
+            <div class="grup-toolbar">
+              <button class="btn btn-accent btn-sm" id="btnBuatGrup">+ Buat Grup</button>
+              <button class="btn btn-sm" id="btnCariGrup">🔎 Cari Grup</button>
+              <button class="btn btn-sm" id="btnUndanganGrup">Undangan (2)</button>
+            </div>
+          </div>
+
+          <div class="chat-layout">
+            <div class="chat-left">
+              <div class="chat-left-head">
+                <h3>Daftar Grup</h3>
+                <div class="chat-search">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                  <input id="groupSearch" placeholder="Cari grup…" />
+                </div>
+              <div class="contact-list" id="groupList" style="padding:8px 10px"></div>
+            </div>
+            <div class="chat-panel">
+              <div class="chat-header">
+                <img id="grpAvatar" src="https://picsum.photos/seed/puu1/100" alt="">
+                <div>
+                  <div class="ch-name" id="grpName">Tim Desain Puu</div>
+                  <div class="ch-status" id="grpStatus">8 anggota • 4 online</div>
+                </div>
+              </div>
+              <div class="chat-messages" id="grpMessages"></div>
+              <div class="chat-composer">
+                <input class="composer-input" id="grpInput" placeholder="Kirim ke grup…" />
+                <button class="cmp-btn send" id="grpSend">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SERVER -->
+      <section id="view-server" class="view">
+        <div class="view-inner">
+          <h1 class="section-title" style="margin-bottom:14px">Server</h1>
+          <div class="server-shell">
+            <div class="server-rail" id="serverRail"></div>
+            <div class="server-channels">
+              <div class="sc-head">
+                <h3 id="serverNameLabel">Komunitas Puu</h3>
+                <div class="small muted" id="serverMemberCount">1.240 anggota</div>
+                <button class="btn btn-sm sc-invite" id="btnUndangServer">✉️ Undangan Server</button>
+              </div>
+              <div class="sc-list" id="channelList"></div>
+              <div class="sc-footer">
+                <button class="btn btn-sm" style="width:100%" id="btnTambahChannel">+ Tambah Channel</button>
+              </div>
+            </div>
+            <div class="server-chat">
+              <div class="chat-header">
+                <div style="font-weight:700;font-size:15px" id="channelHeader"># umum</div>
+              </div>
+              <div class="chat-messages" id="srvMessages"></div>
+              <div class="chat-composer">
+                <input class="composer-input" id="srvInput" placeholder="Kirim pesan ke #umum" />
+                <button class="cmp-btn send" id="srvSend">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+  </section>
+
+                      <div class="field">
+                  <label>&nbsp;</label>
+                  <button class="btn" onclick="sendOtp('email')">Kirim OTP</button>
+                </div>
+                <div class="field">
+                  <label>Kode OTP Email</label>
+                  <input class="input" id="emailOtp" placeholder="123456">
+                </div>
+
+                <div class="field full"><hr class="soft"></div>
+
+                <div class="field">
+                  <label>Ubah no. telepon</label>
+                  <input class="input" id="phoneInput2" placeholder="+62...">
+                </div>
+                <div class="field">
+                  <label>&nbsp;</label>
+                  <button class="btn" onclick="sendOtp('telepon')">Kirim OTP</button>
+                </div>
+                <div class="field">
+                  <label>Kode OTP Telepon</label>
+                  <input class="input" id="phoneOtp" placeholder="123456">
+                </div>
+
+                <div class="field full" style="display:flex;gap:10px;margin-top:6px">
+                  <button class="btn btn-accent" onclick="saveAccount()">Simpan</button>
+                  <span class="small muted">Mock OTP: 123456</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Keluar -->
+            <div class="settings-panel hidden" id="set-keluar">
+              <h3>Keluar</h3>
+              <p class="muted" style="line-height:1.7;margin-bottom:14px">Kamu akan keluar dari Puu Chat di perangkat ini. Obrolan tetap tersimpan secara lokal.</p>
+              <button class="btn" style="background:#a54a5a;border-color:transparent;color:#ffe7e7" onclick="document.getElementById('logoutModal').classList.add('open')">Log out</button>
+            </div>
+
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">Tersalin</div>
+
+  <!-- MODALS -->
+  <!-- Buat Grup -->
+  <div class="modal-backdrop" id="modalBuatGrup">
+    <div class="modal">
+      <h4>Buat Grup Baru</h4>
+      <div class="field">
+        <label>Nama grup</label>
+        <input class="input" id="newGroupName" placeholder="Mis. Tim Nongkrong">
+      </div>
+      <div class="field mt12">
+        <label>Tambah anggota</label>
+        <div id="newGroupMembers" style="max-height:220px;overflow:auto;margin-top:6px"></div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" onclick="closeModal('modalBuatGrup')">Batal</button>
+        <button class="btn btn-accent" id="confirmBuatGrup">Buat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cari Grup -->
+  <div class="modal-backdrop" id="modalCariGrup">
+    <div class="modal">
+      <h4>Cari Grup</h4>
+      <input class="input" placeholder="Ketik nama grup…" oninput="showToast('Mencari…')">
+      <div class="small muted mt12">Hasil: Komunitas Kopi Jogja, Belajar UI/UX, Puu Gamer ID</div>
+      <div class="modal-foot">
+        <button class="btn btn-accent" onclick="closeModal('modalCariGrup')">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Undangan Grup -->
+  <div class="modal-backdrop" id="modalUndanganGrup">
+    <div class="modal">
+      <h4>Undangan Grup (2)</h4>
+      <div id="groupInvites"></div>
+      <div class="modal-foot">
+        <button class="btn" onclick="closeModal('modalUndanganGrup')">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Channel Settings -->
+  <div class="modal-backdrop" id="modalChannelSettings">
+    <div class="modal">
+      <h4 id="chSettingsTitle">Pengaturan Channel</h4>
+      <div class="field">
+        <label>Ubah nama channel</label>
+        <input class="input" id="channelRenameInput" value="umum">
+      </div>
+      <div class="field mt12">
+        <label>Undang anggota ke channel</label>
+        <div id="channelInviteList" style="max-height:180px;overflow:auto"></div>
+      </div>
+      <div class="modal-foot" style="justify-content:space-between">
+        <button class="btn" style="background:#a54a5a;color:#ffe7e7;border-color:transparent" onclick="deleteChannel()">Hapus channel</button>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-ghost" onclick="closeModal('modalChannelSettings')">Batal</button>
+          <button class="btn btn-accent" onclick="saveChannelSettings()">Simpan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Buat Server -->
+  <div class="modal-backdrop" id="modalBuatServer">
+    <div class="modal">
+      <h4>Buat Server</h4>
+      <div class="field"><label>Nama server</label><input class="input" id="newServerName" placeholder="Server kerenku"></div>
+      <div class="field mt12"><label>Icon server</label><input type="file" class="input" accept="image/*" onchange="showToast('Icon diunggah (lokal)')"></div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" onclick="closeModal('modalBuatServer')">Batal</button>
+        <button class="btn btn-accent" onclick="createServer()">Buat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cari Server -->
+  <div class="modal-backdrop" id="modalCariServer">
+    <div class="modal">
+      <h4>Cari Server</h4>
+      <input class="input" placeholder="Cari komunitas…" />
+      <div class="small muted mt12">Coba: Puu Belajar, Game Santai, Freelance ID</div>
+      <div class="modal-foot"><button class="btn btn-accent" onclick="closeModal('modalCariServer')">Tutup</button></div>
+    </div>
+  </div>
+
+  <!-- Undangan Server -->
+  <div class="modal-backdrop" id="modalUndangServer">
+    <div class="modal">
+      <h4>Undangan Server</h4>
+      <div class="small muted" style="margin-bottom:10px">Bagikan link berikut:</div>
+      <div style="display:flex;gap:8px">
+        <input class="input" value="https://puu.chat/join/puu-community" readonly>
+        <button class="btn" onclick="showToast('Link disalin')">Salin</button>
+      </div>
+      <div class="small muted mt12">3 undangan tertunda • Kedaluwarsa dalam 7 hari</div>
+      <div class="modal-foot"><button class="btn btn-accent" onclick="closeModal('modalUndangServer')">Tutup</button></div>
+    </div>
+  </div>
+
+  <!-- Logout confirm -->
+  <div class="modal-backdrop" id="logoutModal">
+    <div class="modal" style="max-width:420px;text-align:center">
+      <h4>Keluar dari Puu Chat?</h4>
+      <p class="muted small" style="margin-top:4px">Sesi lokal akan dihapus.</p>
+      <div class="modal-foot" style="justify-content:center">
+        <button class="btn btn-ghost" onclick="closeModal('logoutModal')">Batal</button>
+        <button class="btn" style="background:#a54a5a;color:#ffe7e7;border-color:transparent" onclick="doLogout()">Ya, Keluar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Emoji pop -->
+  <div class="modal-backdrop" id="emojiModal">
+    <div class="modal" style="max-width:360px">
+      <h4>Pilih Emoji</h4>
+      <div id="emojiGrid" style="display:flex;flex-wrap:wrap;gap:8px;font-size:22px;cursor:pointer"></div>
+      <div class="modal-foot"><button class="btn" onclick="closeModal('emojiModal')">Tutup</button></div>
+    </div>
+  </div>
+
+<script>
+/* ---------- Data ---------- */
+const USERS = [
+  {id:'rina', name:'Rina Pratiwi', avatar:'https://i.pravatar.cc/150?img=32', status:'Online'},
+  {id:'dimas', name:'Dimas Arya', avatar:'https://i.pravatar.cc/150?img=56', status:'Online'},
+  {id:'maya', name:'Maya Lintang', avatar:'https://i.pravatar.cc/150?img=26', status:'Terakhir dilihat 12m lalu'},
+  {id:'rafi', name:'Rafi – Tim Puu', avatar:'https://i.pravatar.cc/150?img=15', status:'Online'},
+  {id:'siska', name:'Siska N', avatar:'https://i.pravatar.cc/150?img=23', status:'Online'},
+  {id:'bayu', name:'Bayu K', avatar:'https://i.pravatar.cc/150?img=68', status:'Offline'},
+];
+
+const DM_THREADS = {
+  rina:[
+    {me:false, text:'Hai! Lagi dimana?', time:'09:20'},
+    {me:true, text:'Baru kelar meeting, kamu gimana?', time:'09:21'},
+    {me:false, text:'Lagi ngopi di Blok M, mau join?', time:'09:22'},
+  ],
+  dimas:[
+    {me:false, text:'File desainnya udah aku kirim ya', time:'Kemarin'},
+    {me:true, text:'Siap, terima kasih Mas!', time:'Kemarin'},
+  ],
+  maya:[
+    {me:false, text:'Besok jadi ke workshop?', time:'18:40'},
+    {me:true, text:'Jadi dong! Ketemuan jam 9 ya', time:'18:42'},
+  ],
+  rafi:[
+    {me:false, text:'Selamat datang di Puu Chat v2 🎉', time:'Senin'},
+    {me:false, text:'Coba fitur translate di pojok kiri chat ya', time:'Senin'},
+  ]
+};
+
+const DICT = {
+  'hai':'hi',
+  'halo':'hello',
+  'terima kasih':'thank you',
+  'makasih':'thanks',
+  'besok':'tomorrow',
+  'kemarin':'yesterday',
+  'gimana':'how about you',
+  'lagi dimana':'where are you',
+  'ngopi':'having coffee',
+  'join':'join me',
+  'file desainnya udah aku kirim ya':'I already sent the design file',
+  'siap':'got it',
+  'jadi dong':'of course!',
+  'ketemuan jam 9 ya':'let’s meet at 9',
+  'selamat datang di puu chat v2':'welcome to Puu Chat v2',
+  'coba fitur translate di pojok kiri chat ya':'try the translate feature on the left side of the chat',
+  'baru kelar meeting, kamu gimana?':'just finished a meeting, how about you?',
+  'lagi ngopi di blok m, mau join?':'I’m having coffee in Blok M, wanna join?',
+  'besok jadi ke workshop?':'are we still going to the workshop tomorrow?'
+};
+
+function translateText(idText){
+  const lower = idText.toLowerCase();
+  if(DICT[lower]) return DICT[lower];
+  let out = lower;
+  Object.keys(DICT).forEach(k=>{
+    out = out.replaceAll(k, DICT[k]);
+  });
+  if(out === lower) return idText + ' (EN)';
+  return out.charAt(0).toUpperCase() + out.slice(1);
+}
+
+/* ---------- Toast ---------- */
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> t.classList.remove('show'), 2100);
+}
+  /* ---------- Navigation ---------- */
+const navItems = document.querySelectorAll('.nav-item');
+navItems.forEach(b=>{
+  b.addEventListener('click', ()=>{
+    const view = b.dataset.view;
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+    document.getElementById('view-'+view).classList.add('active');
+    navItems.forEach(n=>n.classList.remove('active'));
+    b.classList.add('active');
+    document.getElementById('sidebar').classList.remove('open');
+    window.scrollTo(0,0);
+  });
+});
+document.getElementById('hamburger').addEventListener('click', ()=>{
+  document.getElementById('sidebar').classList.toggle('open');
+});
+document.getElementById('topSettingsBtn').addEventListener('click', ()=>{
+  document.querySelector('[data-view="pengaturan"]').click();
+});
+
+/* ---------- HOME ---------- */
+function renderStories(){
+  const row = document.getElementById('storyRow');
+  const stories = [
+    {name:'Tambah Story', add:true, avatar:''},
+   ...USERS.slice(0,5).map(u=>({name:u.name.split(' ')[0], avatar:u.avatar}))
+  ];
+  row.innerHTML = stories.map(s=> s.add? `
+    <div class="story-item story-add" onclick="showToast('Buat Story – segera hadir')">
+      <div class="story-avatar"><div class="story-avatar-inner" style="background:#473b6a;color:#dcc6ee;font-weight:700;font-size:28px">+</div></div>
+      <div class="story-name">Tambah Story</div>
+    </div>` : `
+    <div class="story-item" onclick="showToast('Membuka Story ${s.name}')">
+      <div class="story-avatar"><div class="story-avatar-inner"><img src="${s.avatar}" alt=""></div></div>
+      <div class="story-name">${s.name}</div>
+    </div>
+  `).join('');
+}
+const POSTS = [
+  {user:USERS[0], time:'2 jam lalu', text:'Akhirnya rilis Puu Chat v2! UI-nya ungu hangat banget, cocok buat nongkrong digital 💜', likes:24},
+  {user:USERS[1], time:'5 jam lalu', text:'Wireframe minggu ini kelar. Besok handoff ke dev. Semangat tim!', likes:12},
+  {user:USERS[2], time:'Kemarin', text:'Workshop UI besok di Jakarta Selatan, ada yang ikut? Bawa laptop ya.', likes:18},
+  {user:USERS[3], time:'Senin', text:'Terima kasih yang sudah coba beta Puu Chat. Feedback kalian ngebantu banget 🙌', likes:41},
+];
+function renderFeed(){
+  const grid = document.getElementById('feedGrid');
+  grid.innerHTML = POSTS.map((p,i)=>`
+    <article class="card post-card">
+      <div class="post-head">
+        <img src="${p.user.avatar}" alt="">
+        <div><div class="post-author">${p.user.name}</div><div class="post-time">${p.time} • Publik</div></div>
+      </div>
+      <div class="post-body">${p.text}</div>
+      <div class="post-image">Gambar pratinjau</div>
+      <div class="post-actions">
+        <button class="post-action" data-like="${i}">♡ <span>${p.likes}</span> Suka</button>
+        <button class="post-action" onclick="showToast('Komentar – buka utas')">💬 Komentar</button>
+        <button class="post-action" onclick="showToast('Tautan disalin')">↗ Bagikan</button>
+      </div>
+    </article>
+  `).join('');
+  grid.querySelectorAll('[data-like]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const idx = +btn.dataset.like;
+      POSTS[idx].likes += btn.classList.contains('liked')? -1 : 1;
+      btn.classList.toggle('liked');
+      btn.querySelector('span').textContent = POSTS[idx].likes;
+    });
+  });
+}
+renderStories(); renderFeed();
+
+/* ---------- PESAN ---------- */
+let currentDm = 'rina';
+let dmAutoTranslate = false;
+
+function renderContactList(filter=''){
+  const list = document.getElementById('contactList');
+  const items = USERS.filter(u => u.name.toLowerCase().includes(filter.toLowerCase()));
+  const lastMsgs = {
+    rina:'Lagi ngopi di Blok M, mau join?',
+    dimas:'Siap, terima kasih Mas!',
+    maya:'Jadi dong! Ketemuan jam 9 ya',
+    rafi:'Coba fitur translate...',
+    siska:'Otw yaa',
+    bayu:'Nanti aku kabarin'
+  };
+  list.innerHTML = items.map(u=>`
+    <div class="contact-item ${u.id===currentDm?'active':''}" data-uid="${u.id}">
+      <img src="${u.avatar}" alt="">
+      <div>
+        <div class="c-name">${u.name}</div>
+        <div class="c-prev">${lastMsgs[u.id]||'Mulai obrolan…'}</div>
+      </div>
+      <div class="c-meta"><div class="c-time">09:22</div>${u.id==='maya'? '<span class="c-unread">2</span>' : ''}</div>
+    </div>
+  `).join('');
+  list.querySelectorAll('.contact-item').forEach(el=>{
+    el.addEventListener('click', ()=>{ openDm(el.dataset.uid); });
+  });
+}
+function openDm(uid){
+  currentDm = uid;
+  const u = USERS.find(x=>x.id===uid);
+  document.getElementById('dmAvatar').src = u.avatar;
+  document.getElementById('dmName').textContent = u.name;
+  document.getElementById('dmStatus').textContent = u.status;
+  renderContactList(document.getElementById('contactSearch').value);
+  renderDmMessages();
+}
+function renderDmMessages(){
+  const box = document.getElementById('dmMessages');
+  const msgs = DM_THREADS[currentDm] || [];
+  box.innerHTML = msgs.map(m=>{
+    const translated = dmAutoTranslate &&!m.me? translateText(m.text) : null;
+    return `
+    <div class="msg-row ${m.me?'me':''}">
+      <div>
+        <div class="msg-bubble">${m.me? m.text : (translated || m.text)}</div>
+        ${translated? `<div class="translated-tag">diterjemahkan • asli: "${m.text}"</div>` : ''}
+        <div class="msg-time">${m.time}</div>
+      </div>
+    </div>`;
+  }).join('');
+  box.scrollTop = box.scrollHeight;
+}
+document.getElementById('contactSearch').addEventListener('input', e=> renderContactList(e.target.value));
+renderContactList();
+renderDmMessages();
+
+document.getElementById('dmSend').addEventListener('click', sendDm);
+document.getElementById('dmInput').addEventListener('keydown', e=>{ if(e.key==='Enter'){ sendDm(); }});
+
+function sendDm(){
+  // --- lanjutan sendDmMsg(), tempel setelah showToast() di Part 4a ---
+// NOTE: blok renderDmMessages() / awal sendDmMsg() baris ~1050-1199 belum kekirim
+// File lengkap ambil di link atas ya
+
+function sendDmMsg(){
+  const input = document.getElementById('dmInput');
+  const text = input.value.trim();
+  if(!text) return;
+  DM_THREADS[currentDm] = DM_THREADS[currentDm] || [];
+  DM_THREADS[currentDm].push({me:true, text, time:'Baru saja'});
+  input.value='';
+  renderDmMessages();
+  // fake auto reply
+  setTimeout(()=>{
+    const replies = [
+      'Oke siap!',
+      'Noted, makasih ya',
+      'Bisa banget, nanti aku kabarin',
+      'Wkwk iya juga ya',
+      'Siap meluncur!'
+    ];
+    DM_THREADS[currentDm].push({me:false, text: replies[Math.floor(Math.random()*replies.length)], time:'Baru saja'});
+    renderDmMessages();
+  }, 950);
+}
+
+// translate toggle
+document.getElementById('translateBtn').addEventListener('click', function(){
+  dmAutoTranslate =!dmAutoTranslate;
+  this.classList.toggle('active', dmAutoTranslate);
+  renderDmMessages();
+  showToast(dmAutoTranslate? 'Auto-translate ID → EN aktif' : 'Auto-translate nonaktif');
+});
+
+// attach menu
+const attachBtn = document.getElementById('attachBtn');
+const attachPop = document.getElementById('attachPop');
+attachBtn.addEventListener('click', (e)=>{
+  e.stopPropagation();
+  attachPop.classList.toggle('open');
+});
+attachPop.querySelectorAll('button').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    showToast(`Fitur ${b.dataset.attach} – segera hadir di Puu Pro`);
+    attachPop.classList.remove('open');
+  });
+});
+document.addEventListener('click', ()=> attachPop.classList.remove('open'));
+
+// call buttons
+document.getElementById('callVoiceBtn').addEventListener('click', ()=>{
+  const name = document.getElementById('dmName').textContent;
+  showToast(`Memanggil ${name}…`);
+});
+document.getElementById('callVideoBtn').addEventListener('click', ()=>{
+  const name = document.getElementById('dmName').textContent;
+  showToast(`Video call ${name}…`);
+});
+document.getElementById('chatMoreBtn').addEventListener('click', ()=> showToast('Opsi obrolan'));
+
+// emoji
+const emojis = ['😊','😂','❤️','🔥','👍','🙏','✨','🎉','😭','😅','💜','🙌','🥲','👌'];
+document.getElementById('emojiBtn').addEventListener('click', ()=>{
+  const grid = document.getElementById('emojiGrid');
+  grid.innerHTML = emojis.map(e=>`<span data-e="${e}">${e}</span>`).join('');
+  grid.querySelectorAll('span').forEach(s=>{
+    s.onclick = ()=>{ document.getElementById('dmInput').value += s.dataset.e; closeModal('emojiModal'); document.getElementById('dmInput').focus(); };
+  });
+  openModal('emojiModal');
+});
+document.getElementById('micBtn').addEventListener('click', ()=> showToast('Rekaman suara – Puu Pro'));
+
+/* ---------- GRUP ---------- */
+let groups = [
+  {id:'g1', name:'Tim Desain Puu', members:8, avatar:'https://picsum.photos/seed/puu1/120'},
+  {id:'g2', name:'Nongkrong Jakarta', members:14, avatar:'https://picsum.photos/seed/puu2/120'},
+  {id:'g3', name:'Belajar UI/UX', members:32, avatar:'https://picsum.photos/seed/puu3/120'},
+];
+let currentGroup = 'g1';
+const groupChats = {
+  g1:[ {me:false, from:'Maya', text:'Mockup homepage udah update ya', time:'10:02'}, {me:true, text:'Mantap, aku cek dulu', time:'10:04'} ],
+  g2:[ {me:false, from:'Bayu', text:'Minggu ngopi dimana guys?', time:'Kemarin'}],
+  g3:[ {me:false, from:'Rina', text:'Ada rekomendasi course Figma?', time:'Senin'}],
+};
+function renderGroupList(){
+  const el = document.getElementById('groupList');
+  el.innerHTML = groups.map(g=>`
+    <div class="group-card ${g.id===currentGroup?'active':''}" data-gid="${g.id}">
+      <img src="${g.avatar}" alt="">
+      <div><div class="g-name">${g.name}</div><div class="g-meta">${g.members} anggota</div></div>
+    </div>
+  `).join('');
+  el.querySelectorAll('.group-card').forEach(c=> c.addEventListener('click', ()=> openGroup(c.dataset.gid)));
+}
+function openGroup(id){
+  currentGroup = id;
+  const g = groups.find(x=>x.id===id);
+  document.getElementById('grpName').textContent = g.name;
+  document.getElementById('grpAvatar').src = g.avatar;
+  document.getElementById('grpStatus').textContent = g.members + ' anggota • 4 online';
+  renderGroupList();
+  renderGroupMessages();
+}
+function renderGroupMessages(){
+  const box = document.getElementById('grpMessages');
+  const msgs = groupChats[currentGroup] || [];
+  box.innerHTML = msgs.map(m=>`
+    <div class="msg-row ${m.me?'me':''}">
+      <div>
+        ${!m.me && m.from? `<div class="small muted" style="margin-bottom:3px">${m.from}</div>` : ''}
+        <div class="msg-bubble">${m.text}</div>
+        <div class="msg-time">${m.time}</div>
+      </div>
+    </div>
+  `).join('');
+  box.scrollTop = box.scrollHeight;
+}
+function sendGroupMsg(){
+  const input = document.getElementById('grpInput');
+  const text = input.value.trim(); if(!text) return;
+  groupChats[currentGroup] = groupChats[currentGroup] || [];
+  groupChats[currentGroup].push({me:true, text, time:'Baru saja'});
+  input.value=''; renderGroupMessages();
+}
+document.getElementById('grpSend').addEventListener('click', sendGroupMsg);
+document.getElementById('grpInput').addEventListener('keydown', e=>{ if(e.key==='Enter') sendGroupMsg(); });
+
+renderGroupList(); renderGroupMessages();
+
+// Grup modals
+document.getElementById('btnBuatGrup').addEventListener('click', ()=>{
+  const box = document.getElementById('newGroupMembers');
+  box.innerHTML = USERS.map(u=>`
+    <label class="member-check"><input type="checkbox" value="${u.id}"> <img src="${u.avatar}"> ${u.name}</label>
+  `).join('');
+  openModal('modalBuatGrup');
+});
+document.getElementById('confirmBuatGrup').addEventListener('click', ()=>{
+  const name = document.getElementById('newGroupName').value.trim() || 'Grup Baru';
+  const id = 'g'+Date.now();
+  groups.push({id, name, members: 3, avatar:'https://picsum.photos/seed/'+id+'/120'});
+  groupChats[id]=[];
+  closeModal('modalBuatGrup');
+  document.getElementById('newGroupName').value='';
+  renderGroupList();
+  openGroup(id);
+  showToast('Grup "'+name+'" dibuat');
+});
+document.getElementById('btnCariGrup').addEventListener('click', ()=> openModal('modalCariGrup'));
+document.getElementById('btnUndanganGrup').addEventListener('click', ()=>{
+  document.getElementById('groupInvites').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:12px;background:#352b56;margin-bottom:8px">
+      <div><b>Komunitas Kopi Jogja</b><div class="small muted">Diundang oleh Rina</div></div>
+      <div style="display:flex;gap:6px"><button class="btn btn-sm btn-accent" onclick="respondInvite(true,'Komunitas Kopi Jogja')">Terima</button><button class="btn btn-sm" onclick="respondInvite(false)">Tolak</button></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:12px;background:#352b56">
+      <div><b>Puu Gamer ID</b><div class="small muted">Diundang oleh Dimas</div></div>
+      <div style="display:flex;gap:6px"><button class="btn btn-sm btn-accent" onclick="respondInvite(true,'Puu Gamer ID')">Terima</button><button class="btn btn-sm" onclick="respondInvite(false)">Tolak</button></div>
+    </div>
+  `;
+  openModal('modalUndanganGrup');
+});
+function respondInvite(accept, name){
+  closeModal('modalUndanganGrup');
+  showToast(accept? `Bergabung ke ${name}` : 'Undangan ditolak');
+}
+
+/* ---------- SERVER ---------- */
+let servers = [
+  {id:'srv1', name:'Komunitas Puu', members:1240, icon:'https://picsum.photos/seed/srv1/100'},
+  {id:'srv2', name:'Belajar Koding', members:860, icon:'https://picsum.photos/seed/srv2/100'},
+  {id:'srv3', name:'Game Santai', members:540, icon:'https://picsum.photos/seed/srv3/100'},
+];
+let currentServer = 'srv1';
+let serverChannels = {
+  srv1:[{id:'umum', name:'umum'}, {id:'ngobrol', name:'ngobrol'}, {id:'share', name:'share'}],
+  srv2:[{id:'umum', name:'umum'}, {id:'tanya-jawab', name:'tanya-jawab'}],
+  srv3:[{id:'umum', name:'umum'}, {id:'mabar', name:'mabar'}],
+};
+let currentChannel = 'umum';
+let serverChats = {'srv1_umum':[
+  {from:'rafi', text:'Selamat datang di server Komunitas Puu!', time:'09:00'},
+  {from:'maya', text:'Hai semua 👋', time:'09:12'}
+]};
+
+function renderServers(){
+  const rail = document.getElementById('serverRail');
+  rail.innerHTML = servers.map(s=>`
+    <div class="srv-icon ${s.id===currentServer?'active':''}" data-sid="${s.id}" title="${s.name}">
+      <img src="${s.icon}" alt="">
+    </div>
+  `).join('') + `
+    <div class="srv-icon add" id="addServerBtn" title="Buat Server">+</div>
+    <div class="srv-icon add" id="findServerBtn" title="Cari Server" style="font-size:18px">⌕</div>
+  `;
+  rail.querySelectorAll('[data-sid]').forEach(el=> el.addEventListener('click', ()=> selectServer(el.dataset.sid)));
+  document.getElementById('addServerBtn').addEventListener('click', ()=> openModal('modalBuatServer'));
+  document.getElementById('findServerBtn').addEventListener('click', ()=> openModal('modalCariServer'));
+}
+function selectServer(id){
+  currentServer = id;
+  const s = servers.find(x=>x.id===id);
+  document.getElementById('serverNameLabel').textContent = s.name;
+  document.getElementById('serverMemberCount').textContent = s.members.toLocaleString('id-ID') + ' anggota';
+  currentChannel = serverChannels[id][0].id;
+  renderServers();
+  renderChannels();
+  renderServerMessages();
+}
+function renderChannels(){
+  const list = document.getElementById('channelList');
+  const chans = serverChannels[currentServer] || [];
+  list.innerHTML = chans.map(c=>`
+    <div class="channel-item ${c.id===currentChannel?'active':''}" data-cid="${c.id}">
+      <span># ${c.name}</span>
+      <button class="ch-gear" data-gear="${c.id}" title="Pengaturan channel">⚙️</button>
+    </div>
+  `).join('');
+  list.querySelectorAll('.channel-item').forEach(el=>{
+    el.addEventListener('click', (e)=>{
+      if(e.target.closest('.ch-gear')) return;
+      currentChannel = el.dataset.cid;
+      renderChannels();
+      renderServerMessages();
+    });
+  });
+  list.querySelectorAll('.ch-gear').forEach(b=>{
+    b.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      openChannelSettings(b.dataset.gear);
+    });
+  });
+  document.getElementById('channelHeader').textContent = '# ' + currentChannel;
+  const srvInput = document.getElementById('srvInput');
+  if(srvInput) srvInput.placeholder = 'Kirim pesan ke #'+currentChannel;
+}
+function renderServerMessages(){
+  const key = currentServer+'_'+currentChannel;
+  const msgs = serverChats[key] || [];
+  const box = document.getElementById('srvMessages');
+  box.innerHTML = msgs.map(m=>{
+    const u = USERS.find(us=>us.id===m.from) || {name:m.from, avatar:'https://i.pravatar.cc/60'};
+    return `<div class="msg-row"><div><div class="small muted" style="margin-bottom:3px">${u.name||m.from}</div><div class="msg-bubble">${m.text}</div><div class="msg-time">${m.time}</div></div></div>`;
+  }).join('') || `<div class="small muted" style="padding:8px">Belum ada pesan di #${currentChannel}. Jadilah yang pertama!</div>`;
+  box.scrollTop = box.scrollHeight;
+}
+function sendServerMsg(){
+  const input = document.getElementById('srvInput');
+  const text = input.value.trim(); if(!text) return;
+  const key = currentServer+'_'+currentChannel;
+  serverChats[key] = serverChats[key] || [];
+  serverChats[key].push({from:'kamu', text, time:'Baru saja'});
+  input.value=''; renderServerMessages();
+}
+document.getElementById('srvSend').addEventListener('click', sendServerMsg);
+document.getElementById('srvInput').addEventListener('keydown', e=>{ if(e.key==='Enter') sendServerMsg(); });
+
+document.getElementById('btnTambahChannel').addEventListener('click', ()=>{
+  const name = prompt('Nama channel baru:');
+  if(!name) return;
+  const id = name.toLowerCase().replace(/\s+/g,'-');
+  serverChannels[currentServer].push({id, name});
+  currentChannel = id;
+  renderChannels();
+  renderServerMessages();
+  showToast('Channel #'+name+' dibuat');
+});
+document.getElementById('btnUndangServer').addEventListener('click', ()=> openModal('modalUndangServer'));
+
+let editingChannelId = null;
+function openChannelSettings(cid){
+  editingChannelId = cid;
+  document.getElementById('channelRenameInput').value = cid;
+  document.getElementById('chSettingsTitle').textContent = 'Pengaturan #'+cid;
+  document.getElementById('channelInviteList').innerHTML = USERS.slice(0,4).map(u=>`
+    <label class="member-check"><input type="checkbox"> <img src="${u.avatar}"> ${u.name}</label>
+  `).join('');
+  openModal('modalChannelSettings');
+}
+function saveChannelSettings(){
+  const newName = document.getElementById('channelRenameInput').value.trim().toLowerCase().replace(/\s+/g,'-');
+  const chans = serverChannels[currentServer];
+  const ch = chans.find(c=>c.id===editingChannelId);
+  if(ch && newName){ ch.id = newName; ch.name = newName; currentChannel = newName; }
+  closeModal('modalChannelSettings');
+  renderChannels(); renderServerMessages();
+  showToast('Channel disimpan');
+}
+function deleteChannel(){
+  serverChannels[currentServer] = serverChannels[currentServer].filter(c=>c.id!==editingChannelId);
+  closeModal('modalChannelSettings');
+  currentChannel = serverChannels[currentServer][0]?.id || 'umum';
+  renderChannels(); renderServerMessages();
+  showToast('Channel dihapus');
+}
+
+function createServer(){
+  const name = document.getElementById('newServerName').value.trim() || 'Server Baru';
+  const id = 'srv'+Date.now();
+  servers.push({id, name, members: 1, icon: 'https://picsum.photos/seed/'+id+'/100'});
+  serverChannels[id] = [{id:'umum', name:'umum'}];
+  closeModal('modalBuatServer');
+  document.getElementById('newServerName').value='';
+  selectServer(id);
+  showToast('Server "'+name+'" dibuat');
+}
+
+renderServers(); renderChannels(); renderServerMessages();
+
+/* ---------- PENGATURAN ---------- */
+document.querySelectorAll('#settingsNav button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#settingsNav button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const tab = btn.dataset.settab;
+    document.querySelectorAll('.settings-panel').forEach(p=>p.classList.add('hidden'));
+    document.getElementById('set-'+tab).classList.remove('hidden');
+  });
+});
+
+// Notifikasi toggles
+const notifItems = [
+  'Panggilan suara',
+  'Video call',
+  'Pesan pribadi',
+  'Pesan grup',
+  'Channel server'
+];
+document.getElementById('notifList').innerHTML = notifItems.map((n,i)=>`
+  <div class="toggle-row"><span>${n}</span><div class="switch ${i<4?'on':''}" data-n="${i}"></div></div>
+`).join('');
+document.querySelectorAll('#notifList.switch').forEach(sw=>{
+  sw.addEventListener('click', ()=> sw.classList.toggle('on'));
+});
+
+// Avatar upload preview
+document.getElementById('avatarUpload').addEventListener('change', e=>{
+  const f = e.target.files[0]; if(!f) return;
+  const url = URL.createObjectURL(f);
+  document.getElementById('profileAvatarPreview').src = url;
+  showToast('Avatar diperbarui (lokal)');
+});
+
+// Akun OTP
+function sendOtp(kind){
+  showToast(`OTP ${kind} dikirim. Kode: 123456`);
+}
+function saveAccount(){
+  const eOtp = document.getElementById('emailOtp').value.trim();
+  const pOtp = document.getElementById('phoneOtp').value.trim();
+  if((eOtp && eOtp!== '123456') || (pOtp && pOtp!== '123456')){
+    showToast('OTP salah. Gunakan 123456');
+    return;
+  }
+  showToast('Akun disimpan');
+}
+
+function doLogout(){
+  closeModal('logoutModal');
+  showToast('Berhasil keluar');
+  setTimeout(()=>{ document.querySelector('[data-view="home"]').click(); }, 700);
+}
+
+/* ---------- Generic modal helpers ---------- */
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-backdrop').forEach(m=>{
+  m.addEventListener('click', e=>{ if(e.target===m) m.classList.remove('open'); });
+});
+
+/* ---------- Global search ---------- */
+document.getElementById('globalSearchInput').addEventListener('keydown', e=>{
+  if(e.key==='Enter'){
+    showToast('Hasil pencarian: Rina, Tim Desain Puu, #umum');
+    document.querySelector('[data-view="pesan"]').click();
+  }
+});
+
+/* ---------- Init ---------- */
+try{
+  const savedName = localStorage.getItem('puu_display_name');
+  if(savedName) document.getElementById('pfName').value = savedName;
+  document.getElementById('pfName').addEventListener('change', e=>{
+    localStorage.setItem('puu_display_name', e.target.value);
+  });
+}catch(e){}
+
+/* Close sidebar on mobile */
+document.getElementById('main').addEventListener('click', ()=>{
+  if(window.innerWidth <= 900){
+    document.getElementById('sidebar').classList.remove('open');
+  }
+});
+</script>
+</body>
+</html>
