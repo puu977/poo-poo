@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Puu Chat v2 – Home</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/puu.css">
+</head>
+
+<body>
+
+<header class="topbar">
+  <button class="hamburger icon-btn" id="hamburger">☰</button>
+
+  <div class="logo-wrap">
+    <div class="logo-mark">P</div>
+    <div class="logo-text">Puu <span>Chat</span></div>
+  </div>
+
+  <div class="global-search">
+    <input id="globalSearchInput" placeholder="Cari...">
+  </div>
+
+  <div class="topbar-right">
+    <button class="icon-btn" id="topSettingsBtn">⚙</button>
+
+    <div class="top-user">
+      <div>
+        <div class="nu">User</div>
+        <div class="st">Online</div>
+      </div>
+      <img src="" alt="">
+    </div>
+  </div>
+</header>
+
+<div class="app-body">
+  <aside class="sidebar" id="sidebar">
+    <a class="nav-item active" href="home.html">Home</a>
+    <a class="nav-item" href="#">Pesan</a>
+    <a class="nav-item" href="#">Grup</a>
+    <a class="nav-item" href="#">Server</a>
+    <a class="nav-item" href="#">Pengaturan</a>
+  </aside>
+
+  <main class="main" id="main">
+    <div class="view-inner">
+
+      <div class="section-title">Home</div>
+
+      <div class="home-grid">
+
+        <div>
+          <div class="card stories-card">
+            <div class="stories-row" id="storyRow"></div>
+          </div>
+
+          <div class="feed-grid" id="feedGrid"></div>
+        </div>
+
+        <aside class="right-rail">
+          <div class="card mini-card">
+            <h4>Online</h4>
+            <div id="onlineNow"></div>
+          </div>
+        </aside>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="assets/js/supabase.js"></script>
+<script src="assets/js/app.js"></script>
+
+</body>
+  </html>
