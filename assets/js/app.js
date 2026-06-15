@@ -21,3 +21,10 @@ function showToast(msg){
   t.textContent = msg; t.classList.add('show')
   setTimeout(()=>t.classList.remove('show'), 2000)
 }
+document.getElementById('avatarUpload').addEventListener('change', async e=>{
+  const file = e.target.files[0]; if(!file) return
+  const url = URL.createObjectURL(file) 
+  document.getElementById('topAvatar').src = url
+  localStorage.setItem('puu_avatar', url)
+  showToast('Foto profil diperbarui')
+})
