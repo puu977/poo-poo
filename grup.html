@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Puu Chat – Grup</title>
+<link rel="stylesheet" href="assets/css/puu.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="topbar">
+  <button class="hamburger icon-btn" id="hamburger">☰</button>
+  <div class="logo-wrap"><div class="logo-mark">P</div><div class="logo-text">Puu <span>Chat</span></div></div>
+  <div class="topbar-right">
+    <a class="icon-btn" href="settings.html">⚙️</a>
+    <a class="top-user" href="profil.html"><img id="topAvatar" src="assets/img/avatar-blank.png" alt=""></a>
+  </div>
+</header>
+
+<div class="app-body" style="height:calc(100vh - 68px)">
+<div class="group-layout" style="width:100%">
+  <aside class="sidebar" id="sidebar" style="position:relative;transform:none">
+    <a class="nav-item" href="index.html">Home</a>
+    <a class="nav-item" href="teman.html">Teman</a>
+    <a class="nav-item" href="chat.html">Pesan</a>
+    <a class="nav-item active" href="grup.html">Grup</a>
+    <a class="nav-item" href="server.html">Server</a>
+    <a class="nav-item" href="settings.html">Pengaturan</a>
+  </aside>
+
+  <div class="group-left">
+    <div class="group-left-top">
+      <button class="btn btn-sm" onclick="showToast('Buat grup – segera')">+ Buat</button>
+      <button class="btn btn-sm btn-ghost" onclick="showToast('Cari grup')">Cari</button>
+    </div>
+    <div class="group-list" id="groupList">
+      <div class="small muted" style="padding:12px">Belum ada grup</div>
+    </div>
+  </div>
+
+  <div class="group-right">
+    <div class="group-header">
+      <img src="assets/img/avatar-blank.png" style="width:42px;height:42px;border-radius:10px" alt="">
+      <div><div style="font-weight:700">Pilih grup</div><div class="small muted">-</div></div>
+    </div>
+    <div class="group-messages" style="display:flex;align-items:center;justify-content:center;color:#b99ecf">
+      Pilih grup di kiri untuk mulai ngobrol
+    </div>
+    <div class="chat-composer">
+      <div class="composer-inner">
+        <input class="composer-input" placeholder="Pilih grup dulu…" disabled>
+        <button class="send-btn" disabled>Kirim</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/supabase-client.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
