@@ -37,6 +37,14 @@
 .post-fb-actions button:hover{background:rgba(255,255,255,.06)}
 .post-fb-actions button.liked{color:#4a8cff}
 
+/* Overlay Sidebar Fix */
+.sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:39;display:none}
+.sidebar-overlay.show{display:block}
+@media (max-width: 768px){
+ .sidebar{position:fixed;left:0;top:0;bottom:0;z-index:40;transform:translateX(-100%);transition:.25s}
+ .sidebar.open{transform:translateX(0)}
+}
+
 /* Comment Sheet Fullscreen */
 .comment-sheet{position:fixed;inset:0;background:var(--purple-950);z-index:92;display:flex;flex-direction:column;transform:translateY(100%);transition:.3s}
 .comment-sheet.open{transform:translateY(0)}
@@ -63,7 +71,7 @@
 .comment-composer img{width:32px;height:32px;border-radius:50%}
 .comment-input-box{flex:1;background:#3b2058;border-radius:18px;padding:8px 12px;display:flex;align-items:center}
 .comment-input-box input{flex:1;background:transparent;border:none;outline:none;color:#f4e9ff}
-.comment-input-box button{background:transparent;border:none;color:#4a8cff;cursor:pointer;font-weight:700;padding:0 4px}
+.comment-input-box button{background:transparent;border:none;color:#4a8cff;cursor:pointer;font-weight:700;padding:0 4px;font-size:18px}
 .comment-as{font-size:11px;color:#b99ecf;text-align:right;margin:-4px 12px 4px 0}
 
 /* Post menu sheet */
@@ -90,6 +98,8 @@
     <a class="top-user" href="profil.html"><img id="topAvatar" src="assets/img/avatar-blank.png" alt=""></a>
   </div>
 </header>
+
+<div class="sidebar-overlay" id="sideOverlay"></div>
 
 <div class="app-body">
 <aside class="sidebar" id="sidebar">
@@ -134,7 +144,7 @@
 </main>
 </div>
 
-<!-- Comment Sheet Terpisah -->
+<!-- Comment Sheet -->
 <div class="comment-sheet" id="commentSheet">
   <div class="cs-head">
     <div class="back" onclick="closeCommentSheet()">←</div>
@@ -182,6 +192,13 @@ document.getElementById('topAvatar').src = myAvatar
 document.getElementById('csAvatar').src = myAvatar
 document.getElementById('commentAs').textContent = 'Komentari sebagai ' + myName
 
+/* ---------- Sidebar Fix ---------- */
+const hamburger = document.getElementById('hamburger')
+const sidebar = document.getElementById('sidebar')
+const sideOverlay = document.getElementById('sideOverlay')
+hamburger.onclick = ()=>{sidebar.classList.toggle('open');sideOverlay.classList.toggle('show')}
+sideOverlay.onclick = ()=>{sidebar.classList.remove('open');sideOverlay.classList.remove('show')}
+
 /* ---------- Stories ---------- */
 let stories = JSON.parse(localStorage.getItem('puu_stories_fb')||'[]')
 stories = stories.filter(s=> Date.now()-s.ts < 24*3600*1000)
@@ -214,7 +231,7 @@ document.getElementById('postMedia').onchange = e=>{
   postMediaType = f.type.startsWith('video')? 'video' : 'image'
   document.getElementById('mediaPreview').style.display='block'
   document.getElementById('mediaPreview').innerHTML = postMediaType==='video'
- ? `<video src="${postMediaUrl}" controls style="width:100%;max-height:260px;border-radius:12px"></video> <button class="btn btn-sm" onclick="clearMedia()" style="margin-top:6px">Hapus</button>`
+? `<video src="${postMediaUrl}" controls style="width:100%;max-height:260px;border-radius:12px"></video> <button class="btn btn-sm" onclick="clearMedia()" style="margin-top:6px">Hapus</button>`
     : `<img src="${postMediaUrl}" style="width:100%;max-height:260px;object-fit:cover;border-radius:12px"><br><button class="btn btn-sm" onclick="clearMedia()" style="margin-top:6px">Hapus</button>`
   e.target.value=''
 }
@@ -265,14 +282,14 @@ function likePost(i){posts[i].liked=!posts[i].liked; posts[i].likes+= posts[i].l
 function sharePost(i){posts[i].shares++; save(); renderFeed(); showToast('Tautan disalin')}
 function save(){localStorage.setItem('puu_posts_fb', JSON.stringify(posts))}
 
-/* ---------- Comment Sheet Terpisah ---------- */
+/* ---------- Comment Sheet ---------- */
 function openComments(i){
   currentPost = i
   const p = posts[i]
   document.getElementById('csTitle').textContent = `${p.comments.length} komentar`
   renderComments()
   document.getElementById('commentSheet').classList.add('open')
-  document.getElementById('csInput').focus()
+  setTimeout(()=>document.getElementById('csInput').focus(),300)
 }
 function closeCommentSheet(){document.getElementById('commentSheet').classList.remove('open')}
 
@@ -331,6 +348,7 @@ function sendComment(){
   const input=document.getElementById('csInput'); const t=input.value.trim(); if(!t) return
   posts[currentPost].comments.push({name:myName,text:t,ts:Date.now(),likes:0,liked:false,replies:[]})
   input.value=''; save(); renderFeed(); renderComments()
+  document.getElementById('csTitle').textContent = `${posts[currentPost].comments.length} komentar`
 }
 function likeComment(c){
   const com = posts[currentPost].comments[c]
@@ -355,7 +373,7 @@ function replyComment(c,rc=null){
 }
 function sendReply(c,rc,input){
   const t=input.value.trim(); if(!t) return
-  const arr = rc===null? posts[currentPost].comments[c] : posts[currentPost].comments[c]
+  const arr = posts[currentPost].comments[c]
   if(!arr.replies) arr.replies=[]
   arr.replies.push({name:myName,text:t,ts:Date.now(),likes:0,liked:false})
   save(); renderFeed(); renderComments()
