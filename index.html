@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Puu Chat – Beranda</title>
+<title>Puu – Home</title>
 <link rel="stylesheet" href="assets/css/puu.css">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -37,15 +37,19 @@
 .post-fb-actions button:hover{background:rgba(255,255,255,.06)}
 .post-fb-actions button.liked{color:#4a8cff}
 
-/* Overlay Sidebar Fix */
-.sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:39;display:none}
-.sidebar-overlay.show{display:block}
-@media (max-width: 768px){
- .sidebar{position:fixed;left:0;top:0;bottom:0;z-index:40;transform:translateX(-100%);transition:.25s}
- .sidebar.open{transform:translateX(0)}
+/* SIDEBAR FULL SCREEN */
+.sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:39;display:none;opacity:0;transition:.25s}
+.sidebar-overlay.show{display:block;opacity:1}
+body.sidebar-open{overflow:hidden}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:280px;background:#2a1b40;z-index:40;transform:translateX(-100%);transition:transform.3s ease;overflow-y:auto}
+.sidebar.open{transform:translateX(0)}
+@media (min-width: 769px){
+.sidebar{transform:translateX(0);position:relative;width:240px}
+.sidebar-overlay{display:none!important}
+.hamburger{display:none}
 }
 
-/* Comment Sheet Fullscreen */
+/* Comment Sheet */
 .comment-sheet{position:fixed;inset:0;background:var(--purple-950);z-index:92;display:flex;flex-direction:column;transform:translateY(100%);transition:.3s}
 .comment-sheet.open{transform:translateY(0)}
 .cs-head{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--border)}
@@ -92,10 +96,10 @@
 <header class="topbar">
   <button class="hamburger icon-btn" id="hamburger">☰</button>
   <div class="logo-wrap"><div class="logo-mark">P</div><div class="logo-text">Puu <span>Chat</span></div></div>
-  <div class="global-search"><input placeholder="Cari…"></div>
+  <div class="global-search"><input placeholder="Search…"></div>
   <div class="topbar-right">
     <a class="icon-btn" href="settings.html">⚙️</a>
-    <a class="top-user" href="profil.html"><img id="topAvatar" src="assets/img/avatar-blank.png" alt=""></a>
+    <a class="top-user" href="profile.html"><img id="topAvatar" src="assets/img/avatar-blank.png" alt=""></a>
   </div>
 </header>
 
@@ -104,40 +108,36 @@
 <div class="app-body">
 <aside class="sidebar" id="sidebar">
   <a class="nav-item active" href="index.html">Home</a>
-  <a class="nav-item" href="teman.html">Teman</a>
-  <a class="nav-item" href="chat.html">Pesan</a>
-  <a class="nav-item" href="grup.html">Grup</a>
+  <a class="nav-item" href="chat.html">Chat</a>
+  <a class="nav-item" href="groups.html">Groups</a>
   <a class="nav-item" href="server.html">Server</a>
-  <a class="nav-item" href="settings.html">Pengaturan</a>
+  <a class="nav-item" href="settings.html">Settings</a>
 </aside>
 
 <main class="main">
 <div class="fb-wrap">
 
-  <!-- Stories -->
   <div class="stories-row" id="storiesRow">
     <div class="story-fb add" onclick="document.getElementById('storyFile').click()">
-      <div><div class="story-add-btn">+</div>Buat<br>cerita</div>
+      <div><div class="story-add-btn">+</div>Create<br>story</div>
     </div>
   </div>
   <input type="file" id="storyFile" accept="image/*,video/*" hidden>
 
-  <!-- Composer -->
   <div class="card composer-fb">
     <div class="composer-fb-top">
       <img id="composerAvatar" src="assets/img/avatar-blank.png">
-      <input id="statusInput" placeholder="Apa yang Anda pikirkan?" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();postStatus()}">
+      <input id="statusInput" placeholder="What's on your mind?" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();postStatus()}">
     </div>
     <div id="mediaPreview" style="display:none;margin-top:10px"></div>
     <div class="composer-fb-actions">
-      <span onclick="document.getElementById('postMedia').click()">📷 Foto/Video</span>
-      <span>😊 Perasaan</span>
-      <button class="btn btn-accent btn-sm" style="margin-left:auto" onclick="postStatus()">Kirim</button>
+      <span onclick="document.getElementById('postMedia').click()">📷 Photo/Video</span>
+      <span>😊 Feeling</span>
+      <button class="btn btn-accent btn-sm" style="margin-left:auto" onclick="postStatus()">Post</button>
     </div>
     <input type="file" id="postMedia" accept="image/*,video/*" hidden>
   </div>
 
-  <!-- Feed -->
   <div id="feed"></div>
 
 </div>
@@ -148,15 +148,15 @@
 <div class="comment-sheet" id="commentSheet">
   <div class="cs-head">
     <div class="back" onclick="closeCommentSheet()">←</div>
-    <div class="title" id="csTitle">Komentar</div>
+    <div class="title" id="csTitle">Comments</div>
   </div>
   <div class="cs-body" id="csBody"></div>
   <div class="cs-foot">
-    <div class="comment-as" id="commentAs">Komentari sebagai User#0000</div>
+    <div class="comment-as" id="commentAs">Commenting as User#0000</div>
     <div class="comment-composer">
       <img id="csAvatar" src="assets/img/avatar-blank.png">
       <div class="comment-input-box">
-        <input id="csInput" placeholder="Tulis komentar..." onkeydown="if(event.key==='Enter'){sendComment()}">
+        <input id="csInput" placeholder="Write a comment..." onkeydown="if(event.key==='Enter'){sendComment()}">
         <button onclick="sendComment()">➤</button>
       </div>
     </div>
@@ -167,14 +167,14 @@
 <div class="post-sheet-backdrop" id="postSheetBg" onclick="closePostMenu(event)">
   <div class="post-sheet" onclick="event.stopPropagation()">
     <div class="sheet-handle"></div>
-    <div class="sheet-item" onclick="postAction('pin')"><div class="si">📌</div><div><b>Sematkan postingan</b></div></div>
-    <div class="sheet-item" onclick="postAction('save')"><div class="si">🔖</div><div><b>Simpan postingan</b><small>Tambahkan ini ke item yang Anda simpan.</small></div></div>
-    <div class="sheet-item" onclick="postAction('edit')"><div class="si">✏️</div><div><b>Edit postingan</b></div></div>
-    <div class="sheet-item" onclick="postAction('privacy')"><div class="si">👥</div><div><b>Edit Privasi</b></div></div>
-    <div class="sheet-item" onclick="postAction('notif')"><div class="si">🔕</div><div><b>Nonaktifkan notifikasi untuk postingan ini</b></div></div>
-    <div class="sheet-item" onclick="postAction('copy')"><div class="si">🔗</div><div><b>Salin tautan</b></div></div>
+    <div class="sheet-item" onclick="postAction('pin')"><div class="si">📌</div><div><b>Pin post</b></div></div>
+    <div class="sheet-item" onclick="postAction('save')"><div class="si">🔖</div><div><b>Save post</b><small>Add this to your saved items.</small></div></div>
+    <div class="sheet-item" onclick="postAction('edit')"><div class="si">✏️</div><div><b>Edit post</b></div></div>
+    <div class="sheet-item" onclick="postAction('privacy')"><div class="si">👥</div><div><b>Edit Privacy</b></div></div>
+    <div class="sheet-item" onclick="postAction('notif')"><div class="si">🔕</div><div><b>Turn off notifications for this post</b></div></div>
+    <div class="sheet-item" onclick="postAction('copy')"><div class="si">🔗</div><div><b>Copy link</b></div></div>
     <div class="sheet-sep"></div>
-    <div class="sheet-item" onclick="postAction('hide')"><div class="si">✖️</div><div><b>Sembunyikan dari profil</b><small>Postingan ini mungkin masih akan muncul di tempat lain.</small></div></div>
+    <div class="sheet-item" onclick="postAction('hide')"><div class="si">✖️</div><div><b>Hide from profile</b><small>This post may still appear elsewhere.</small></div></div>
   </div>
 </div>
 
@@ -190,16 +190,28 @@ const myAvatar = localStorage.getItem('puu_avatar') || BLANK
 document.getElementById('composerAvatar').src = myAvatar
 document.getElementById('topAvatar').src = myAvatar
 document.getElementById('csAvatar').src = myAvatar
-document.getElementById('commentAs').textContent = 'Komentari sebagai ' + myName
+document.getElementById('commentAs').textContent = 'Commenting as ' + myName
 
-/* ---------- Sidebar Fix ---------- */
+// SIDEBAR
 const hamburger = document.getElementById('hamburger')
 const sidebar = document.getElementById('sidebar')
 const sideOverlay = document.getElementById('sideOverlay')
-hamburger.onclick = ()=>{sidebar.classList.toggle('open');sideOverlay.classList.toggle('show')}
-sideOverlay.onclick = ()=>{sidebar.classList.remove('open');sideOverlay.classList.remove('show')}
+function toggleSidebar(){
+  const isOpen = sidebar.classList.contains('open')
+  if(isOpen){
+    sidebar.classList.remove('open')
+    sideOverlay.classList.remove('show')
+    document.body.classList.remove('sidebar-open')
+  }else{
+    sidebar.classList.add('open')
+    sideOverlay.classList.add('show')
+    document.body.classList.add('sidebar-open')
+  }
+}
+hamburger.onclick = toggleSidebar
+sideOverlay.onclick = toggleSidebar
 
-/* ---------- Stories ---------- */
+// Stories
 let stories = JSON.parse(localStorage.getItem('puu_stories_fb')||'[]')
 stories = stories.filter(s=> Date.now()-s.ts < 24*3600*1000)
 localStorage.setItem('puu_stories_fb', JSON.stringify(stories))
@@ -217,11 +229,11 @@ document.getElementById('storyFile').onchange = e=>{
   const url=URL.createObjectURL(f)
   stories.unshift({name:myName, avatar:myAvatar, url, ts:Date.now()})
   localStorage.setItem('puu_stories_fb', JSON.stringify(stories))
-  renderStories(); showToast('Story ditambahkan'); e.target.value=''
+  renderStories(); showToast('Story added'); e.target.value=''
 }
 renderStories()
 
-/* ---------- Feed ---------- */
+// Feed
 let posts = JSON.parse(localStorage.getItem('puu_posts_fb')||'[]')
 let postMediaUrl = null, postMediaType = null, currentPost = null
 
@@ -231,24 +243,24 @@ document.getElementById('postMedia').onchange = e=>{
   postMediaType = f.type.startsWith('video')? 'video' : 'image'
   document.getElementById('mediaPreview').style.display='block'
   document.getElementById('mediaPreview').innerHTML = postMediaType==='video'
-? `<video src="${postMediaUrl}" controls style="width:100%;max-height:260px;border-radius:12px"></video> <button class="btn btn-sm" onclick="clearMedia()" style="margin-top:6px">Hapus</button>`
-    : `<img src="${postMediaUrl}" style="width:100%;max-height:260px;object-fit:cover;border-radius:12px"><br><button class="btn btn-sm" onclick="clearMedia()" style="margin-top:6px">Hapus</button>`
+? `<video src="${postMediaUrl}" controls style="width:100%;max-height:260px;border-radius:12px"></video> <button class="btn btn-sm" onclick="clearMedia()" style="margin-top:6px">Remove</button>`
+    : `<img src="${postMediaUrl}" style="width:100%;max-height:260px;object-fit:cover;border-radius:12px"><br><button class="btn btn-sm" onclick="clearMedia()" style="margin-top:6px">Remove</button>`
   e.target.value=''
 }
 function clearMedia(){postMediaUrl=null;postMediaType=null;document.getElementById('mediaPreview').style.display='none'}
 
 function timeStr(ts){
   const d = Date.now()-ts, m = Math.floor(d/60000)
-  if(m<1) return 'Baru saja'
-  if(m<60) return m+' mnt'
+  if(m<1) return 'Just now'
+  if(m<60) return m+' min'
   const h = Math.floor(m/60)
-  if(h<24) return h+' jam'
-  return new Date(ts).toLocaleDateString('id-ID',{day:'numeric',month:'short'})
+  if(h<24) return h+' hr'
+  return new Date(ts).toLocaleDateString('en-US',{day:'numeric',month:'short'})
 }
 
 function renderFeed(){
   const el=document.getElementById('feed')
-  if(!posts.length){el.innerHTML='<div class="card post-fb" style="padding:16px;color:#b99ecf">Belum ada status. Tulis yang pertama!</div>';return}
+  if(!posts.length){el.innerHTML='<div class="card post-fb" style="padding:16px;color:#b99ecf">No posts yet. Write the first one!</div>';return}
   el.innerHTML = posts.map((p,i)=>`
   <div class="card post-fb" data-i="${i}">
     <div class="post-fb-head">
@@ -258,11 +270,11 @@ function renderFeed(){
     </div>
     ${p.text? `<div class="post-fb-body">${p.text.replace(/</g,'&lt;')}</div>` : ''}
     ${p.media? (p.mediaType==='video'? `<video class="post-fb-media" src="${p.media}" controls></video>` : `<img class="post-fb-media" src="${p.media}">`) : ''}
-    <div class="post-fb-counts"><span>👍 ${p.likes}</span><span>${p.comments.length} komentar · ${p.shares} dibagikan</span></div>
+    <div class="post-fb-counts"><span>👍 ${p.likes}</span><span>${p.comments.length} comments · ${p.shares} shares</span></div>
     <div class="post-fb-actions">
-      <button class="${p.liked?'liked':''}" onclick="likePost(${i})">👍 Suka</button>
-      <button onclick="openComments(${i})">💬 Komentar</button>
-      <button onclick="sharePost(${i})">↗️ Bagikan</button>
+      <button class="${p.liked?'liked':''}" onclick="likePost(${i})">👍 Like</button>
+      <button onclick="openComments(${i})">💬 Comment</button>
+      <button onclick="sharePost(${i})">↗️ Share</button>
     </div>
   </div>`).join('')
 }
@@ -270,23 +282,23 @@ function renderFeed(){
 function postStatus(){
   const input=document.getElementById('statusInput')
   const text=input.value.trim()
-  if(!text &&!postMediaUrl){showToast('Tulis sesuatu atau tambah foto');return}
+  if(!text &&!postMediaUrl){showToast('Write something or add a photo');return}
   posts.unshift({
     name:myName, avatar:myAvatar, text,
     media: postMediaUrl, mediaType: postMediaType,
     ts: Date.now(), likes:0, liked:false, shares:0, comments:[]
   })
-  save(); input.value=''; clearMedia(); renderFeed(); showToast('Status diposting')
+  save(); input.value=''; clearMedia(); renderFeed(); showToast('Posted')
 }
 function likePost(i){posts[i].liked=!posts[i].liked; posts[i].likes+= posts[i].liked?1:-1; save(); renderFeed()}
-function sharePost(i){posts[i].shares++; save(); renderFeed(); showToast('Tautan disalin')}
+function sharePost(i){posts[i].shares++; save(); renderFeed(); showToast('Link copied')}
 function save(){localStorage.setItem('puu_posts_fb', JSON.stringify(posts))}
 
-/* ---------- Comment Sheet ---------- */
+// Comment Sheet
 function openComments(i){
   currentPost = i
   const p = posts[i]
-  document.getElementById('csTitle').textContent = `${p.comments.length} komentar`
+  document.getElementById('csTitle').textContent = `${p.comments.length} comments`
   renderComments()
   document.getElementById('commentSheet').classList.add('open')
   setTimeout(()=>document.getElementById('csInput').focus(),300)
@@ -296,7 +308,7 @@ function closeCommentSheet(){document.getElementById('commentSheet').classList.r
 function renderComments(){
   const p = posts[currentPost]
   const el = document.getElementById('csBody')
-  if(!p.comments.length){el.innerHTML='<div style="text-align:center;color:#b99ecf;padding:40px 0">Belum ada komentar<br>Jadilah yang pertama berkomentar</div>';return}
+  if(!p.comments.length){el.innerHTML='<div style="text-align:center;color:#b99ecf;padding:40px 0">No comments yet<br>Be the first to comment</div>';return}
   el.innerHTML = p.comments.map((c,idx)=>`
     <div class="comment-thread">
       <div class="comment-item">
@@ -308,13 +320,13 @@ function renderComments(){
           </div>
           <div class="comment-actions">
             <span>${timeStr(c.ts)}</span>
-            <span class="${c.liked?'liked':''}" onclick="likeComment(${idx})">Suka</span>
-            <span onclick="replyComment(${idx})">Balas</span>
+            <span class="${c.liked?'liked':''}" onclick="likeComment(${idx})">Like</span>
+            <span onclick="replyComment(${idx})">Reply</span>
             ${c.likes? `<span>👍 ${c.likes}</span>`:''}
           </div>
           <div id="reply-box-${idx}" style="display:none"></div>
           ${c.replies && c.replies.length? 
-            `<div class="view-replies" onclick="toggleReplies(this)">Lihat ${c.replies.length} balasan</div>
+            `<div class="view-replies" onclick="toggleReplies(this)">View ${c.replies.length} replies</div>
              <div class="reply-wrap" style="display:none">${renderReplies(c.replies,idx)}</div>` : ''
           }
         </div>
@@ -335,8 +347,8 @@ function renderReplies(replies,parentIdx){
         </div>
         <div class="comment-actions">
           <span>${timeStr(c.ts)}</span>
-          <span class="${c.liked?'liked':''}" onclick="likeReply(${parentIdx},${idx})">Suka</span>
-          <span onclick="replyComment(${parentIdx},${idx})">Balas</span>
+          <span class="${c.liked?'liked':''}" onclick="likeReply(${parentIdx},${idx})">Like</span>
+          <span onclick="replyComment(${parentIdx},${idx})">Reply</span>
           ${c.likes? `<span>👍 ${c.likes}</span>`:''}
         </div>
       </div>
@@ -348,7 +360,7 @@ function sendComment(){
   const input=document.getElementById('csInput'); const t=input.value.trim(); if(!t) return
   posts[currentPost].comments.push({name:myName,text:t,ts:Date.now(),likes:0,liked:false,replies:[]})
   input.value=''; save(); renderFeed(); renderComments()
-  document.getElementById('csTitle').textContent = `${posts[currentPost].comments.length} komentar`
+  document.getElementById('csTitle').textContent = `${posts[currentPost].comments.length} comments`
 }
 function likeComment(c){
   const com = posts[currentPost].comments[c]
@@ -366,7 +378,7 @@ function replyComment(c,rc=null){
   box.innerHTML=`<div class="comment-composer" style="margin-left:0;margin-top:8px">
     <img src="${myAvatar}">
     <div class="comment-input-box">
-      <input placeholder="Balas ${target.name}..." onkeydown="if(event.key==='Enter'){sendReply(${c},${rc},this)}">
+      <input placeholder="Reply to ${target.name}..." onkeydown="if(event.key==='Enter'){sendReply(${c},${rc},this)}">
       <button onclick="sendReply(${c},${rc},this.previousElementSibling)">➤</button>
     </div></div>`
   box.querySelector('input').focus()
@@ -378,19 +390,19 @@ function sendReply(c,rc,input){
   arr.replies.push({name:myName,text:t,ts:Date.now(),likes:0,liked:false})
   save(); renderFeed(); renderComments()
 }
-function toggleReplies(el){const box=el.nextElementSibling; box.style.display = box.style.display==='none'?'block':'none'; el.textContent = box.style.display==='none'? el.textContent.replace('Sembunyikan','Lihat') : el.textContent.replace('Lihat','Sembunyikan')}
+function toggleReplies(el){const box=el.nextElementSibling; box.style.display = box.style.display==='none'?'block':'none'; el.textContent = box.style.display==='none'? el.textContent.replace('Hide','View') : el.textContent.replace('View','Hide')}
 
-/* post menu ••• */
+// Post menu
 let activePost = null
 function openPostMenu(i){activePost=i; document.getElementById('postSheetBg').classList.add('open')}
 function closePostMenu(e){if(e && e.target!==e.currentTarget) return; document.getElementById('postSheetBg').classList.remove('open')}
 function postAction(act){
   closePostMenu()
   const p = posts[activePost]; if(!p) return
-  if(act==='copy'){navigator.clipboard.writeText(location.href).catch(()=>{}); showToast('Tautan disalin')}
-  else if(act==='edit'){ const t=prompt('Edit postingan:', p.text||''); if(t!==null){p.text=t; save(); renderFeed(); showToast('Postingan diupdate')} }
-  else if(act==='hide'){ if(confirm('Sembunyikan postingan ini?')){ posts.splice(activePost,1); save(); renderFeed(); showToast('Postingan disembunyikan')} }
-  else { showToast({pin:'Postingan disematkan',save:'Postingan disimpan',privacy:'Privasi diupdate',notif:'Notifikasi dinonaktifkan'}[act]||'OK') }
+  if(act==='copy'){navigator.clipboard.writeText(location.href).catch(()=>{}); showToast('Link copied')}
+  else if(act==='edit'){ const t=prompt('Edit post:', p.text||''); if(t!==null){p.text=t; save(); renderFeed(); showToast('Post updated')} }
+  else if(act==='hide'){ if(confirm('Hide this post?')){ posts.splice(activePost,1); save(); renderFeed(); showToast('Post hidden')} }
+  else { showToast({pin:'Post pinned',save:'Post saved',privacy:'Privacy updated',notif:'Notifications off'}[act]||'OK') }
 }
 
 renderFeed()
