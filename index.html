@@ -2,282 +2,82 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="style.css">
+
 <title>Home</title>
-<link rel="stylesheet" href="assets/css/puu.css">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-/* FB Home override */
-.fb-wrap{max-width:620px;margin:0 auto}
-.stories-row{display:flex;gap:10px;overflow-x:auto;padding-bottom:16px;margin-bottom:14px}
-.story-fb{width:110px;height:190px;flex-shrink:0;border-radius:14px;position:relative;overflow:hidden;background:#3b2058;border:1px solid rgba(255,255,255,.12);cursor:pointer}
-.story-fb.add{background:#2f1a48;display:grid;place-items:center;text-align:center;color:#b99ecf}
-.story-fb img.wall{width:100%;height:100%;object-fit:cover;opacity:.85}
-.story-fb.s-avatar{position:absolute;top:10px;left:10px;width:36px;height:36px;border-radius:50%;border:2px solid #eec291;object-fit:cover;background:#241236}
-.story-fb.s-name{position:absolute;bottom:8px;left:10px;right:10px;font-size:12px;font-weight:600}
-.story-add-btn{width:44px;height:44px;border-radius:50%;background:#4a8cff;color:#fff;display:grid;place-items:center;font-size:24px;font-weight:700;margin-bottom:8px}
-
-.composer-fb{padding:14px;margin-bottom:14px}
-.composer-fb-top{display:flex;gap:10px;align-items:center}
-.composer-fb-top img{width:40px;height:40px;border-radius:50%}
-.composer-fb-top input{flex:1;background:#3b2058;border:1px solid rgba(255,255,255,.12);color:#f4e9ff;padding:11px 16px;border-radius:999px;outline:none}
-.composer-fb-actions{display:flex;gap:18px;padding-top:10px;margin-top:10px;border-top:1px solid rgba(255,255,255,.08);font-size:13px;color:#b99ecf}
-.composer-fb-actions span{cursor:pointer}
-.post-fb{padding:0;margin-bottom:14px;overflow:hidden}
-.post-fb-head{display:flex;gap:10px;padding:12px 14px 0 14px;align-items:flex-start}
-.post-fb-head img{width:40px;height:40px;border-radius:50%}
-.post-fb-name{font-weight:700}
-.post-fb-time{font-size:12px;color:#b99ecf}
-.post-fb-menu{margin-left:auto;cursor:pointer;padding:4px 8px;border-radius:8px}
-.post-fb-menu:hover{background:rgba(255,255,255,.06)}
-.post-fb-body{padding:10px 14px;white-space:pre-wrap}
-.post-fb-media{width:100%;max-height:520px;object-fit:cover;background:#1d102c;display:block}
-.post-fb-counts{display:flex;justify-content:space-between;padding:8px 14px;font-size:12px;color:#b99ecf;border-bottom:1px solid rgba(255,255,255,.08)}
-.post-fb-actions{display:flex;padding:4px 8px}
-.post-fb-actions button{flex:1;background:transparent;border:none;color:#b99ecf;padding:9px;border-radius:8px;cursor:pointer;font-weight:600;font-family:inherit}
-.post-fb-actions button:hover{background:rgba(255,255,255,.06)}
-.post-fb-actions button.liked{color:#4a8cff}
-.comments-wrap{padding:0 14px 12px 14px;border-top:1px solid rgba(255,255,255,.08);display:none}
-.comments-wrap.open{display:block}
-.comment-item{display:flex;gap:8px;margin-top:10px;font-size:13px}
-.comment-item img{width:28px;height:28px;border-radius:50%}
-.comment-bubble{background:#3b2058;padding:8px 12px;border-radius:14px}
-.comment-input-row{display:flex;gap:8px;margin-top:10px}
-.comment-input-row input{flex:1;background:#3b2058;border:1px solid rgba(255,255,255,.12);color:#f4e9ff;padding:9px 12px;border-radius:999px;outline:none}
-
-/* post menu sheet */
-.post-sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:90;display:none}
-.post-sheet-backdrop.open{display:block}
-.post-sheet{position:fixed;left:0;right:0;bottom:0;background:#f7f2fb;color:#241236;border-radius:18px 18px 0 0;z-index:91;padding:12px 14px 24px;max-width:620px;margin:0 auto;transform:translateY(100%);transition:.25s}
-.post-sheet-backdrop.open.post-sheet{transform:translateY(0)}
-.sheet-handle{width:40px;height:4px;background:#d0c5d8;border-radius:99px;margin:6px auto 14px}
-.sheet-item{display:flex;align-items:center;gap:14px;padding:12px;border-radius:12px;cursor:pointer}
-.sheet-item:hover{background:#ece6f2}
-.sheet-item.si{font-size:20px;width:28px;text-align:center}
-.sheet-item b{display:block}
-.sheet-item small{color:#6b5b7a}
-.sheet-sep{height:8px;background:#ece6f2;margin:8px -14px;border-radius:12px}
-
-/* story viewer */
-.story-viewer{position:fixed;inset:0;background:#000;z-index:95;display:none;align-items:center;justify-content:center}
-.story-viewer.open{display:flex}
-.story-viewer img,.story-viewer video{max-width:100%;max-height:90vh;object-fit:contain}
-.story-viewer.sv-close{position:absolute;top:14px;right:14px;background:rgba(0,0,0,.4);color:#fff;border:none;padding:8px 12px;border-radius:99px;cursor:pointer}
-.story-bar{position:absolute;top:8px;left:12px;right:12px;height:3px;background:rgba(255,255,255,.3);border-radius:99px;overflow:hidden}
-.story-bar-fill{height:100%;background:#fff;width:0%}
-</style>
 </head>
+
 <body>
-<header class="topbar">
-  <button class="hamburger icon-btn" id="hamburger">☰</button>
-  <div class="logo-wrap"><div class="logo-mark">P</div><div class="logo-text">Puu <span>Chat</span></div></div>
-  <div class="global-search"><input placeholder="Cari…"></div>
-  <div class="topbar-right">
-    <a class="icon-btn" href="settings.html">⚙️</a>
-    <a class="top-user" href="profil.html"><img id="topAvatar" src="assets/img/avatar-blank.png" alt=""></a>
-  </div>
-</header>
 
-<div class="app-body">
-<aside class="sidebar" id="sidebar">
-  <a class="nav-item active" href="index.html">Home</a>
-  <a class="nav-item" href="teman.html">Teman</a>
-  <a class="nav-item" href="chat.html">Pesan</a>
-  <a class="nav-item" href="grup.html">Grup</a>
-  <a class="nav-item" href="server.html">Server</a>
-  <a class="nav-item" href="settings.html">Pengaturan</a>
-</aside>
+<!-- HEADER -->
+<div class="header">
 
-<main class="main">
-<div class="fb-wrap">
-
-  <!-- Stories -->
-  <div class="stories-row" id="storiesRow">
-    <div class="story-fb add" onclick="document.getElementById('storyFile').click()">
-      <div><div class="story-add-btn">+</div>Buat<br>cerita</div>
+    <!-- HAMBURGER -->
+    <div class="menu-btn" onclick="openSidebar()">
+        ☰
     </div>
-  </div>
-  <input type="file" id="storyFile" accept="image/*,video/*" hidden>
 
-  <!-- Composer -->
-  <div class="card composer-fb">
-    <div class="composer-fb-top">
-      <img id="composerAvatar" src="assets/img/avatar-blank.png">
-      <input id="statusInput" placeholder="Apa yang Anda pikirkan?" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();postStatus()}">
+    <div class="title">Home</div>
+
+</div>
+
+
+<!-- SIDEBAR OVERLAY -->
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+
+    <div class="profile">
+        <img src="https://i.pravatar.cc/100?img=12">
+        <div>
+            <b>User Name</b>
+            <p>Lihat profil</p>
+        </div>
     </div>
-    <div id="mediaPreview" style="display:none;margin-top:10px"></div>
-    <div class="composer-fb-actions">
-      <span onclick="document.getElementById('postMedia').click()">📷 Foto/Video</span>
-      <span>😊 Perasaan</span>
-      <button class="btn btn-accent btn-sm" style="margin-left:auto" onclick="postStatus()">Kirim</button>
+
+    <a href="home.html">🏠 Home</a>
+    <a href="group.html">👥 Grup</a>
+    <a href="saved.html">🔖 Tersimpan</a>
+    <a href="memories.html">⏰ Kenangan</a>
+    <a href="marketplace.html">🛒 Marketplace</a>
+    <a href="game.html">🎮 Game</a>
+
+    <hr>
+
+    <a href="help.html">❓ Bantuan</a>
+    <a href="settings.html">⚙️ Pengaturan</a>
+
+    <hr>
+
+    <a href="logout.html">🚪 Keluar</a>
+
+</div>
+
+
+<!-- FEED -->
+<div class="feed">
+
+    <div class="post">
+        <p>Contoh postingan...</p>
     </div>
-    <input type="file" id="postMedia" accept="image/*,video/*" hidden>
-  </div>
-
-  <!-- Feed -->
-  <div id="feed"></div>
 
 </div>
-</main>
-</div>
 
-<!-- Post menu sheet -->
-<div class="post-sheet-backdrop" id="postSheetBg" onclick="closePostMenu(event)">
-  <div class="post-sheet" onclick="event.stopPropagation()">
-    <div class="sheet-handle"></div>
-    <div class="sheet-item" onclick="postAction('pin')"><div class="si">📌</div><div><b>Sematkan postingan</b></div></div>
-    <div class="sheet-item" onclick="postAction('save')"><div class="si">🔖</div><div><b>Simpan postingan</b><small>Tambahkan ini ke item yang Anda simpan.</small></div></div>
-    <div class="sheet-item" onclick="postAction('edit')"><div class="si">✏️</div><div><b>Edit postingan</b></div></div>
-    <div class="sheet-item" onclick="postAction('privacy')"><div class="si">👥</div><div><b>Edit Privasi</b></div></div>
-    <div class="sheet-item" onclick="postAction('notif')"><div class="si">🔕</div><div><b>Nonaktifkan notifikasi untuk postingan ini</b></div></div>
-    <div class="sheet-item" onclick="postAction('copy')"><div class="si">🔗</div><div><b>Salin tautan</b></div></div>
-    <div class="sheet-sep"></div>
-    <div class="sheet-item" onclick="postAction('hide')"><div class="si">✖️</div><div><b>Sembunyikan dari profil</b><small>Postingan ini mungkin masih akan muncul di tempat lain.</small></div></div>
-  </div>
-</div>
 
-<!-- Story viewer -->
-<div class="story-viewer" id="storyViewer">
-  <div class="story-bar"><div class="story-bar-fill" id="storyBar"></div></div>
-  <button class="sv-close" onclick="closeStory()">✕</button>
-  <div id="storyContent"></div>
-</div>
-
-<div class="toast" id="toast"></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="assets/js/supabase-client.js"></script>
-<script src="assets/js/app.js"></script>
 <script>
-const BLANK='assets/img/avatar-blank.png'
-const myAvatar = localStorage.getItem('puu_avatar') || BLANK
-document.getElementById('composerAvatar').src = myAvatar
-document.getElementById('topAvatar').src = myAvatar
-
-/* ---------- Stories 24j ---------- */
-let stories = JSON.parse(localStorage.getItem('puu_stories_fb')||'[]')
-stories = stories.filter(s=> Date.now()-s.ts < 24*3600*1000)
-localStorage.setItem('puu_stories_fb', JSON.stringify(stories))
-
-function renderStories(){
-  const row = document.getElementById('storiesRow')
-  row.querySelectorAll('.story-fb:not(.add)').forEach(n=>n.remove())
-  stories.forEach((s,i)=>{
-    const d=document.createElement('div'); d.className='story-fb'
-    d.innerHTML = s.type==='video'
-     ? `<video class="wall" src="${s.url}" muted></video><img class="s-avatar" src="${s.avatar}"><div class="s-name">${s.name}</div>`
-      : `<img class="wall" src="${s.url}"><img class="s-avatar" src="${s.avatar}"><div class="s-name">${s.name}</div>`
-    d.onclick=()=>openStory(i)
-    row.appendChild(d)
-  })
-}
-document.getElementById('storyFile').onchange = e=>{
-  const f=e.target.files[0]; if(!f) return
-  const url=URL.createObjectURL(f)
-  stories.unshift({name:'Kamu', avatar:myAvatar, url, type:f.type.startsWith('video')?'video':'image', ts:Date.now()})
-  localStorage.setItem('puu_stories_fb', JSON.stringify(stories))
-  renderStories(); showToast('Story ditambahkan, hilang dalam 24 jam'); e.target.value=''
-}
-let storyTimer
-function openStory(i){
-  const s=stories[i]; if(!s) return
-  const v=document.getElementById('storyViewer')
-  document.getElementById('storyContent').innerHTML = s.type==='video'
-   ? `<video src="${s.url}" autoplay playsinline style="max-width:100vw;max-height:90vh"></video>`
-    : `<img src="${s.url}">`
-  v.classList.add('open')
-  let p=0; const bar=document.getElementById('storyBar')
-  clearInterval(storyTimer)
-  storyTimer=setInterval(()=>{p+=0.6; bar.style.width=p+'%'; if(p>=100) closeStory()},30)
-}
-function closeStory(){document.getElementById('storyViewer').classList.remove('open'); clearInterval(storyTimer); document.getElementById('storyBar').style.width='0%'}
-renderStories()
-
-/* ---------- Feed ---------- */
-let posts = JSON.parse(localStorage.getItem('puu_posts_fb')||'[]')
-let postMediaUrl = null, postMediaType = null
-
-document.getElementById('postMedia').onchange = e=>{
-  const f=e.target.files[0]; if(!f) return
-  postMediaUrl = URL.createObjectURL(f)
-  postMediaType = f.type.startsWith('video')? 'video' : 'image'
-  document.getElementById('mediaPreview').style.display='block'
-  document.getElementById('mediaPreview').innerHTML = postMediaType==='video'
-   ? `<video src="${postMediaUrl}" controls style="width:100%;max-height:260px;border-radius:12px"></video> <button class="btn btn-sm" onclick="clearMedia()" style="margin-top:6px">Hapus</button>`
-    : `<img src="${postMediaUrl}" style="width:100%;max-height:260px;object-fit:cover;border-radius:12px"><br><button class="btn btn-sm" onclick="clearMedia()" style="margin-top:6px">Hapus</button>`
-  e.target.value=''
-}
-function clearMedia(){postMediaUrl=null;postMediaType=null;document.getElementById('mediaPreview').style.display='none';document.getElementById('mediaPreview').innerHTML=''}
-
-function timeStr(ts){
-  const d = Date.now()-ts
-  const m = Math.floor(d/60000)
-  if(m<1) return 'Baru saja'
-  if(m<60) return m+' mnt'
-  const h = Math.floor(m/60)
-  if(h<24) return h+' jam'
-  return new Date(ts).toLocaleDateString('id-ID',{day:'numeric',month:'short'})
+function openSidebar(){
+    document.getElementById("sidebar").classList.add("active");
+    document.getElementById("overlay").classList.add("active");
 }
 
-function renderFeed(){
-  const el=document.getElementById('feed')
-  if(!posts.length){el.innerHTML='<div class="card post-fb" style="padding:16px;color:#b99ecf">Belum ada status. Tulis yang pertama!</div>';return}
-  el.innerHTML = posts.map((p,i)=>`
-  <div class="card post-fb" data-i="${i}">
-    <div class="post-fb-head">
-      <img src="${p.avatar}">
-      <div><div class="post-fb-name">${p.name}</div><div class="post-fb-time">${timeStr(p.ts)} · 🌐</div></div>
-      <div class="post-fb-menu" onclick="openPostMenu(${i})">•••</div>
-    </div>
-    ${p.text? `<div class="post-fb-body">${p.text.replace(/</g,'&lt;')}</div>` : ''}
-    ${p.media? (p.mediaType==='video'? `<video class="post-fb-media" src="${p.media}" controls></video>` : `<img class="post-fb-media" src="${p.media}">`) : ''}
-    <div class="post-fb-counts"><span>👍 ${p.likes}</span><span>${p.comments.length} komentar · ${p.shares} dibagikan</span></div>
-    <div class="post-fb-actions">
-      <button class="${p.liked?'liked':''}" onclick="likePost(${i})">👍 Suka</button>
-      <button onclick="toggleComments(${i})">💬 Komentar</button>
-      <button onclick="sharePost(${i})">↗️ Bagikan</button>
-    </div>
-    <div class="comments-wrap" id="c-${i}">
-      ${p.comments.map(c=>`<div class="comment-item"><img src="${BLANK}"><div class="comment-bubble"><b>${c.name}</b><br>${c.text}</div></div>`).join('')}
-      <div class="comment-input-row">
-        <img src="${myAvatar}" style="width:28px;height:28px;border-radius:50%">
-        <input placeholder="Tulis komentar…" onkeydown="if(event.key==='Enter'){addComment(${i},this)}">
-      </div>
-    </div>
-  </div>`).join('')
+function closeSidebar(){
+    document.getElementById("sidebar").classList.remove("active");
+    document.getElementById("overlay").classList.remove("active");
 }
-
-function postStatus(){
-  const input=document.getElementById('statusInput')
-  const text=input.value.trim()
-  if(!text &&!postMediaUrl){showToast('Tulis sesuatu atau tambah foto');return}
-  posts.unshift({
-    name:'Kamu', avatar:myAvatar, text,
-    media: postMediaUrl, mediaType: postMediaType,
-    ts: Date.now(), likes:0, liked:false, shares:0, comments:[]
-  })
-  localStorage.setItem('puu_posts_fb', JSON.stringify(posts))
-  input.value=''; clearMedia(); renderFeed(); showToast('Status diposting')
-}
-function likePost(i){posts[i].liked=!posts[i].liked; posts[i].likes+= posts[i].liked?1:-1; save(); renderFeed()}
-function toggleComments(i){document.getElementById('c-'+i).classList.toggle('open')}
-function addComment(i, input){const t=input.value.trim(); if(!t) return; posts[i].comments.push({name:'Kamu',text:t}); input.value=''; save(); renderFeed(); toggleComments(i); setTimeout(()=>document.getElementById('c-'+i).classList.add('open'),30)}
-function sharePost(i){posts[i].shares++; save(); renderFeed(); showToast('Tautan disalin')}
-function save(){localStorage.setItem('puu_posts_fb', JSON.stringify(posts))}
-
-/* post menu ••• */
-let activePost = null
-function openPostMenu(i){activePost=i; document.getElementById('postSheetBg').classList.add('open')}
-function closePostMenu(e){if(e && e.target!==e.currentTarget) return; document.getElementById('postSheetBg').classList.remove('open')}
-function postAction(act){
-  closePostMenu()
-  const p = posts[activePost]; if(!p) return
-  if(act==='copy'){navigator.clipboard.writeText(location.href+'#post-'+activePost).catch(()=>{}); showToast('Tautan disalin')}
-  else if(act==='edit'){ const t=prompt('Edit postingan:', p.text||''); if(t!==null){p.text=t; save(); renderFeed(); showToast('Postingan diupdate')} }
-  else if(act==='hide'){ if(confirm('Sembunyikan postingan ini?')){ posts.splice(activePost,1); save(); renderFeed(); showToast('Postingan disembunyikan')} }
-  else { showToast({pin:'Postingan disematkan',save:'Postingan disimpan',privacy:'Privasi diupdate',notif:'Notifikasi dinonaktifkan'}[act]||'OK') }
-}
-
-renderFeed()
 </script>
+
 </body>
 </html>
