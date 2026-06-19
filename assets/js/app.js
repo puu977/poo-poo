@@ -1,30 +1,78 @@
-const BLANK_AVATAR = 'assets/img/avatar-blank.png'
-function avatarUrl(url){ return url && url.trim()? url : BLANK_AVATAR }
+// APP.JS - GABUNGAN
+const BL = 'assets/img/avatar-blank.png'
+if(!localStorage.pid) localStorage.pid = 'User#'+Math.floor(1000+Math.random()*9000)
+const me = localStorage.pn || localStorage.pid
+const av = localStorage.getItem('puu_avatar') || localStorage.pa || BL
+let posts = JSON.parse(localStorage.ps || '[]')
 
-async function loadTopAvatar(){
-  const img = document.getElementById('topAvatar')
-  if(!img) return
-  const saved = localStorage.getItem('puu_avatar')
-  if(saved){ img.src = saved; return }
-  img.src = BLANK_AVATAR
-}
-document.addEventListener('DOMContentLoaded', loadTopAvatar)
-
-// sidebar mobile
-document.addEventListener('click', e=>{
-  if(e.target.closest('#hamburger')) document.getElementById('sidebar')?.classList.toggle('open')
-})
+function avatarUrl(url){ return url && url.trim()? url : BL }
+function toggleMenu(){ document.getElementById('side')?.classList.toggle('open') }
+function time(t){ const d=Date.now()-t,m=d/60000|0; return m<1?'Baru':m<60?m+'m':(m/60|0)<24?(m/60|0)+'j':new Date(t).toLocaleDateString('id') }
 
 function showToast(msg){
-  const t = document.getElementById('toast')
-  if(!t) return
-  t.textContent = msg; t.classList.add('show')
-  setTimeout(()=>t.classList.remove('show'), 2000)
+  let t = document.getElementById('toast')
+  if(!t){ t=document.createElement('div'); t.id='toast'; t.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#2a1b40;padding:10px 18px;border-radius:8px;z-index:99'; document.body.appendChild(t) }
+  t.textContent=msg; t.style.display='block'; setTimeout(()=>t.style.display='none',2000)
 }
-document.getElementById('avatarUpload').addEventListener('change', async e=>{
-  const file = e.target.files[0]; if(!file) return
-  const url = URL.createObjectURL(file) 
-  document.getElementById('topAvatar').src = url
-  localStorage.setItem('puu_avatar', url)
-  showToast('Foto profil diperbarui')
-})
+
+function renderFeed(){
+  const f = document.getElementById('feed'); if(!f) return
+
+  const composer = `
+    <div class="post" style="padding:12px;margin-bottom:14px">
+      <div style="display:flex;gap:10px;align-items:center">
+        <img src="${av}" style="width:40px;height:40px;border-radius:50%;cursor:pointer" onclick="document.getElementById('avatarUpload')?.click()">
+        <input onclick="location.href='create.html'" placeholder="Apa yang Anda pikirkan?" readonly style="flex:1;background:var(--card2);border:1px solid var(--b);padding:10px 14px;border-radius:20px;color:var(--t);outline:none;font-family:Poppins">
+      </div>
+      <input type="file" id="avatarUpload" hidden accept="image/*">
+    </div>
+  `
+
+  if(!posts.length){
+    f.innerHTML = composer + '<div style="text-align:center;color:var(--d);padding:40px">Belum ada postingan<br><br><button onclick="demo()" style="background:var(--a);color:#fff;border:none;padding:10px 20px;border-radius:8px;margin-top:10px">Buat Demo</button></div>'
+    bindAvatar(); return
+  }
+
+  f.innerHTML = composer + posts.map((p,i)=>`
+    <div class="post" onclick="openPost(${i})">
+      <div class="ph">
+        <img src="${avatarUrl(p.a)}">
+        <div><div class="pn">${p.n}</div><div class="pt">${time(p.t)}</div></div>
+        <div class="pm" onclick="event.stopPropagation();openMenu(${i})">•••</div>
+      </div>
+      ${p.x?`<div class="pb">${p.x}</div>`:''}
+      ${p.m?`<div class="pmed">${p.mt==='v'?`<video src="${p.m}"></video>`:`<img src="${p.m}">`}</div>`:''}
+      <div class="ps"><span>👍 ${p.l||0}</span><span>${(p.c||[]).length} komentar</span></div>
+      <div class="pa">
+        <button onclick="event.stopPropagation();like(${i})">Suka</button>
+        <button onclick="event.stopPropagation();openPost(${i})">Komentar</button>
+        <button onclick="event.stopPropagation();share(${i})">Bagikan</button>
+      </div>
+    </div>
+  `).join('')
+  bindAvatar()
+}
+
+function bindAvatar(){
+  const up = document.getElementById('avatarUpload'); if(!up) return
+  up.onchange = e => {
+    const file = e.target.files[0]; if(!file) return
+    const url = URL.createObjectURL(file)
+    localStorage.setItem('puu_avatar', url)
+    localStorage.pa = url
+    showToast('Foto profil diperbarui')
+    location.reload()
+  }
+}
+
+function openPost(i){ location.href = `post.html?id=${i}` }
+function like(i){ posts[i].l = (posts[i].l||0)+1; save() }
+function save(){ localStorage.ps = JSON.stringify(posts); renderFeed() }
+function demo(){
+  posts = [{n:me,a:av,t:Date.now(),x:'Halo ini postingan pertama Puu Chat!',m:'',mt:'',l:5,c:[],s:0}]
+  save()
+}
+function openMenu(i){ showToast('Menu •••') }
+function share(i){ showToast('Bagikan') }
+
+document.addEventListener('DOMContentLoaded', renderFeed)
