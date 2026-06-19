@@ -1,156 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Puu Chat</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#1d102c;--card:#2a1b40;--card2:#3b2058;--b:rgba(255,255,255,.12);--t:#f4e9ff;--d:#b99ecf;--a:#4a8cff}
-*{margin:0;padding:0;box-sizing:border-box}body{font-family:Poppins,sans-serif;background:var(--bg);color:var(--t)}
-.top{position:sticky;top:0;background:var(--card);padding:10px 14px;display:flex;gap:12px;align-items:center;border-bottom:1px solid var(--b);z-index:10}
-.ham{background:none;border:none;color:var(--t);font-size:22px}
-.logo{font-weight:700}.logo span{color:#eec291}
-.sr{flex:1;max-width:300px}.sr input{width:100%;background:var(--card2);border:1px solid var(--b);padding:8px 14px;border-radius:20px;color:var(--t)}
-.app{display:flex}.side{position:fixed;left:0;top:0;bottom:0;width:260px;background:var(--card);transform:translateX(-100%);transition:.3s;padding:70px 12px;z-index:5}.side.open{transform:translateX(0)}.ov{position:fixed;inset:0;background:#0008;display:none;z-index:4}.ov.show{display:block}
-.nav{display:block;padding:12px;border-radius:10px;margin-bottom:4px}.nav:hover{background:var(--card2)}
-.main{flex:1;padding:16px;max-width:640px;margin:0 auto;width:100%}
-@media(min-width:769px){.side{position:relative;transform:none;width:220px;padding-top:12px}.ham,.ov{display:none}}
-.story-row{display:flex;gap:10px;overflow:auto;padding-bottom:12px}.st{width:110px;height:180px;background:var(--card2);border-radius:12px;flex-shrink:0;position:relative;border:1px solid var(--b)}.st.add{display:grid;place-items:center;text-align:center;color:var(--d)}.st img{width:100%;height:100%;object-fit:cover;border-radius:12px}
-.comp{background:var(--card);border:1px solid var(--b);border-radius:12px;padding:12px;margin:14px 0}.ct{display:flex;gap:10px;align-items:center}.ct img{width:38px;height:38px;border-radius:50%}.ct input{flex:1;background:var(--card2);border:1px solid var(--b);padding:10px 14px;border-radius:20px;color:var(--t)}.ca{display:flex;gap:16px;margin-top:10px;padding-top:10px;border-top:1px solid var(--b);font-size:13px;color:var(--d)}.btn{margin-left:auto;background:var(--a);color:#fff;border:none;padding:6px 14px;border-radius:8px;font-weight:600}
-.post{background:var(--card);border:1px solid var(--b);border-radius:12px;margin-bottom:14px;overflow:hidden}.ph{display:flex;gap:10px;padding:12px}.ph img{width:40px;height:40px;border-radius:50%}.pn{font-weight:600}.pt{font-size:12px;color:var(--d)}.pm{margin-left:auto;cursor:pointer;padding:4px 8px;border-radius:6px}.pm:hover{background:#fff1}.pb{padding:0 12px 10px;white-space:pre-wrap}.pmed{position:relative}.pmed img,.pmed video{width:100%;max-height:500px;object-fit:cover;display:block}.dl{position:absolute;top:8px;right:8px;width:32px;height:32px;background:#0009;border:none;border-radius:50%;color:#fff;display:grid;place-items:center;cursor:pointer}.ps{display:flex;justify-content:space-between;padding:8px 12px;font-size:12px;color:var(--d);border-top:1px solid var(--b);border-bottom:1px solid var(--b)}.pa{display:flex}.pa button{flex:1;background:none;border:none;color:var(--d);padding:10px;font-weight:600;cursor:pointer}.pa button:hover{background:#fff1}
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--card);padding:10px 18px;border-radius:8px;border:1px solid var(--b);display:none;z-index:99}.toast.show{display:block}
-
-/* SHEETS */
-.bg{position:fixed;inset:0;background:#0009;z-index:90;display:none}.bg.show{display:block}
-.sh{position:fixed;left:0;right:0;bottom:0;background:#fff;color:#000;z-index:91;max-width:640px;margin:0 auto;border-radius:16px 16px 0 0;transform:translateY(100%);transition:.3s;max-height:85vh;display:flex;flex-direction:column}.sh.show{transform:translateY(0)}
-.hdl{width:36px;height:4px;background:#bcc0c4;border-radius:2px;margin:8px auto}
-.sc{overflow-y:auto;padding-bottom:20px}
-.gr{background:#f0f2f5;margin:8px;border-radius:10px;overflow:hidden}
-.it{display:flex;align-items:center;gap:14px;padding:14px 16px;background:#fff;cursor:pointer;border-bottom:1px solid #e4e6eb}.it:last-child{border:none}.it:active{background:#e4e6eb}.it b{font-weight:500;flex:1}
-.ic{width:24px;text-align:center;font-size:18px}
-.hd{display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid #e4e6eb}.bk{font-size:24px;width:32px;cursor:pointer}.ttl{flex:1;text-align:center;font-weight:600}
-.share-prev{display:flex;gap:10px;padding:12px;margin:8px;background:#fff;border-radius:10px;border:1px solid #e4e6eb}.share-prev img{width:40px;height:40px;border-radius:50%}.share-prev div{font-size:14px;flex:1}
-.apps{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;padding:16px}.appb{text-align:center;cursor:pointer}.appb.ic{width:56px;height:56px;border-radius:50%;background:#f0f2f5;display:grid;place-items:center;margin:0 auto 6px;font-size:26px}.appb.ic.g{background:#25D366;color:#fff}.appb.ic.b{background:#0084FF;color:#fff}.appb span{font-size:11px;color:#65676b}
-</style>
+<link rel="stylesheet" href="assets/css/main.css">
 </head>
 <body>
 <div class="top">
-  <button class="ham" id="ham">☰</button>
+  <button class="ham" onclick="toggleMenu()">☰</button>
   <div class="logo">Puu <span>Chat</span></div>
-  <div class="sr"><input placeholder="Cari..."></div>
+  <div class="sr"><input placeholder="Cari..." id="search"></div>
 </div>
-<div class="ov" id="ov"></div>
+
 <div class="app">
-  <aside class="side" id="sd">
-    <a class="nav" href="index.html">Home</a>
+  <aside class="side" id="side">
+    <a class="nav active" href="index.html">Home</a>
     <a class="nav" href="chat.html">Chat</a>
     <a class="nav" href="groups.html">Groups</a>
-    <a class="nav" href="server.html">Server</a>
     <a class="nav" href="settings.html">Settings</a>
   </aside>
-  <main class="main">
-    <div class="story-row" id="sr">
-      <div class="st add" onclick="sf.click()"><div><div style="width:40px;height:40px;background:var(--a);border-radius:50%;display:grid;place-items:center;font-size:24px;margin:0 auto 6px">+</div>Buat<br>cerita</div></div>
-    </div>
-    <input type="file" id="sf" hidden accept="image/*,video/*">
-    <div class="comp">
-      <div class="ct">
-        <img id="av" src="assets/img/avatar-blank.png">
-        <input id="tx" placeholder="Apa yang Anda pikirkan?" onkeydown="if(event.key==='Enter')pst()">
-      </div>
-      <div id="pv" style="display:none;margin-top:10px"></div>
-      <div class="ca">
-        <span onclick="pf.click()">📷 Foto/Video</span>
-        <button class="btn" onclick="pst()">Kirim</button>
-      </div>
-      <input type="file" id="pf" hidden accept="image/*,video/*">
-    </div>
-    <div id="fd"></div>
-  </main>
-</div>
-<div class="toast" id="ts"></div>
-
-<div class="bg" id="bg" onclick="cls()"></div>
-
-<!-- POST MENU -->
-<div class="sh" id="m1">
-  <div class="hdl"></div>
-  <div class="sc">
-    <div class="gr">
-      <div class="it" onclick="act('in')"><div class="ic">⊕</div><b>Tertarik</b></div>
-      <div class="it" onclick="act('out')"><div class="ic">⊖</div><b>Tidak tertarik</b></div>
-    </div>
-    <div class="gr">
-      <div class="it" onclick="act('sv')"><div class="ic">🔖</div><b>Simpan postingan</b></div>
-      <div class="it" onclick="act('rp')"><div class="ic">⚠️</div><b>Laporkan postingan</b></div>
-    </div>
-    <div class="gr">
-      <div class="it" onclick="os('m2')"><b>Opsi lainnya</b><span style="color:#999">›</span></div>
-    </div>
-  </div>
+  <main class="main" id="feed"></main>
 </div>
 
-<div class="sh" id="m2">
-  <div class="hd"><div class="bk" onclick="os('m1')">←</div><div class="ttl">Opsi lainnya</div><div style="width:32px"></div></div>
-  <div class="sc">
-    <div class="gr">
-      <div class="it" onclick="act('fv')"><div class="ic">⭐</div><b>Tambahkan <span id="fn">User</span> ke Favorit</b></div>
-      <div class="it" onclick="act('wy')"><div class="ic">ⓘ</div><b>Mengapa saya melihat postingan ini?</b></div>
-      <div class="it" onclick="act('nt')"><div class="ic">🔔</div><b>Aktifkan notifikasi untuk postingan ini</b></div>
-      <div class="it" onclick="act('cp')"><div class="ic">🔗</div><b>Salin tautan</b></div>
-      <div class="it" onclick="act('mg')"><div class="ic">⚙️</div><b>Kelola Beranda</b></div>
-    </div>
-  </div>
-</div>
-
-<!-- SHARE -->
-<div class="sh" id="shr">
-  <div class="hdl"></div>
-  <div class="sc">
-    <div class="share-prev">
-      <img id="si" src="assets/img/avatar-blank.png">
-      <div id="st">Bagikan postingan</div>
-    </div>
-    <div class="apps">
-      <div class="appb" onclick="shr('story')"><div class="ic">⊕</div><span>Cerita Anda</span></div>
-      <div class="appb" onclick="shr('msg')"><div class="ic b">💬</div><span>Messenger</span></div>
-      <div class="appb" onclick="shr('wa')"><div class="ic g">📱</div><span>WhatsApp</span></div>
-      <div class="appb" onclick="shr('was')"><div class="ic g">⭕</div><span>Status WhatsApp</span></div>
-      <div class="appb" onclick="shr('grp')"><div class="ic">👥</div><span>Grup</span></div>
-    </div>
-  </div>
-</div>
-
-<script>
-const BL='assets/img/avatar-blank.png'
-if(!localStorage.pid)localStorage.pid='User#'+Math.floor(1000+Math.random()*9000)
-const me=localStorage.pn||localStorage.pid, av=localStorage.pa||BL
-document.getElementById('av').src=av
-ham.onclick=()=>{sd.classList.toggle('open');ov.classList.toggle('show')}
-ov.onclick=ham.onclick
-const ts=(m)=>{const t=document.getElementById('ts');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
-
-let sts=JSON.parse(localStorage.ss||'[]').filter(s=>Date.now()-s.t<86400000)
-const rs=()=>{const r=sr;r.querySelectorAll('.st:not(.add)').forEach(e=>e.remove());sts.forEach(s=>{const d=document.createElement('div');d.className='st';d.innerHTML=`<img src="${s.u}">`;r.appendChild(d)})}
-sf.onchange=e=>{const f=e.target.files[0];if(!f)return;const u=URL.createObjectURL(f);sts.unshift({u,t:Date.now()});localStorage.ss=JSON.stringify(sts);rs();ts('Cerita ditambahkan');e.target.value=''};rs()
-
-let ps=JSON.parse(localStorage.ps||'[]'),pm=null,pmt=null,cp=0
-pf.onchange=e=>{const f=e.target.files[0];if(!f)return;pm=URL.createObjectURL(f);pmt=f.type.startsWith('video')?'v':'i';pv.style.display='block';pv.innerHTML=`<div class="pmed">${pmt==='v'?`<video src="${pm}" controls style="max-height:200px;width:100%;border-radius:8px"></video>`:`<img src="${pm}" style="max-height:200px;width:100%;object-fit:cover;border-radius:8px">`}<button class="dl" onclick="dlt('${pm}')">⬇</button></div>`;e.target.value=''}
-const dlt=u=>{const a=document.createElement('a');a.href=u;a.download='puu-'+Date.now();a.click();ts('Disimpan')}
-const tm=t=>{const d=Date.now()-t,m=d/60000|0;return m<1?'Baru saja':m<60?m+' menit':(m/60|0)<24?(m/60|0)+' jam':new Date(t).toLocaleDateString('id')}
-const rf=()=>{fd.innerHTML=ps.length?ps.map((p,i)=>`<div class="post"><div class="ph"><img src="${p.a}"><div><div class="pn">${p.n}</div><div class="pt">${tm(p.t)} · 🌐</div></div><div class="pm" onclick="op(${i})">•••</div></div>${p.x?`<div class="pb">${p.x}</div>`:''}${p.m?`<div class="pmed">${p.mt==='v'?`<video src="${p.m}" controls></video>`:`<img src="${p.m}">`}<button class="dl" onclick="dlt('${p.m}')">⬇</button></div>`:''}<div class="ps"><span>👍 ${p.l}</span><span>${p.c.length} komentar · ${p.s} dibagikan</span></div><div class="pa"><button onclick="lk(${i})">👍 Suka</button><button onclick="oc(${i})">💬 Komentar</button><button onclick="osh(${i})">↗️ Bagikan</button></div></div>`).join(''):`<div class="post" style="padding:20px;text-align:center;color:var(--d)">Belum ada postingan</div>`}
-const pst=()=>{const t=tx.value.trim();if(!t&&!pm)return ts('Tulis sesuatu');ps.unshift({n:me,a:av,t:Date.now(),x:t,m:pm,mt:pmt,l:0,c:[],s:0});localStorage.ps=JSON.stringify(ps);tx.value='';pm=null;pv.style.display='none';rf();ts('Diposting')}
-const lk=i=>{ps[i].l++;localStorage.ps=JSON.stringify(ps);rf()}
-const oc=i=>{localStorage.pc=i;location.href='comments.html'}
-rf()
-
-const bg=document.getElementById('bg'),os=id=>{bg.classList.add('show');document.querySelectorAll('.sh').forEach(s=>s.classList.remove('show'));document.getElementById(id).classList.add('show')},cls=()=>{bg.classList.remove('show');document.querySelectorAll('.sh').forEach(s=>s.classList.remove('show'))}
-
-function op(i){cp=i;fn.textContent=ps[i].n;os('m1')}
-function act(a){cls();const m={in:'Ditandai tertarik',out:'Disembunyikan',sv:'Disimpan',rp:'Dilaporkan',fv:'Ditambahkan ke favorit',wy:'Menampilkan info',nt:'Notifikasi aktif',cp:'Tautan disalin',mg:'Pengaturan dibuka'};if(a==='cp')navigator.clipboard.writeText(location.href);ts(m[a])}
-function osh(i){cp=i;const p=ps[i];si.src=p.a;st.textContent=(p.x||'Lihat postingan ini').slice(0,70);os('shr');ps[i].s++;localStorage.ps=JSON.stringify(ps);rf()}
-function shr(t){cls();ts({story:'Dibagikan ke cerita',msg:'Messenger dibuka',wa:'WhatsApp dibuka',was:'Status WhatsApp',grp:'Pilih grup'}[t])}
-</script>
+<div id="sheets"></div>
+<script src="assets/js/app.js"></script>
 </body>
 </html>
