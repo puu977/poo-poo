@@ -7,6 +7,33 @@
 <link rel="stylesheet" href="assets/css/puu.css">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+/* === OVERRIDE PUUCSS - SIDEBAR MOBILE FIX === */
+.sidebar-overlay{position:fixed!important;inset:0;background:rgba(0,0,0,.6);z-index:39;display:none;opacity:0;transition:.25s}
+.sidebar-overlay.show{display:block!important;opacity:1!important}
+body.sidebar-open{overflow:hidden!important}
+
+@media (max-width: 768px){
+.sidebar{
+    position:fixed!important;
+    left:0!important;top:0!important;bottom:0!important;
+    width:280px!important;
+    background:#2a1b40!important;
+    z-index:40!important;
+    transform:translateX(-100%)!important;
+    transition:transform.3s ease!important;
+    overflow-y:auto!important;
+    display:block!important;
+  }
+.sidebar.open{transform:translateX(0)!important}
+.hamburger{display:inline-flex!important}
+}
+
+@media (min-width: 769px){
+.sidebar{transform:translateX(0)!important;position:relative!important;width:240px!important}
+.sidebar-overlay{display:none!important}
+.hamburger{display:none!important}
+}
+
 .fb-wrap{max-width:620px;margin:0 auto}
 .stories-row{display:flex;gap:10px;overflow-x:auto;padding-bottom:16px;margin-bottom:14px}
 .story-fb{width:110px;height:190px;flex-shrink:0;border-radius:14px;position:relative;overflow:hidden;background:#3b2058;border:1px solid rgba(255,255,255,.12);cursor:pointer}
@@ -37,19 +64,6 @@
 .post-fb-actions button:hover{background:rgba(255,255,255,.06)}
 .post-fb-actions button.liked{color:#4a8cff}
 
-/* SIDEBAR FIX: Mobile default hidden */
-.sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:39;display:none;opacity:0;transition:.25s}
-.sidebar-overlay.show{display:block;opacity:1}
-body.sidebar-open{overflow:hidden}
-.sidebar{position:fixed;left:0;top:0;bottom:0;width:280px;background:#2a1b40;z-index:40;transform:translateX(-100%);transition:transform.3s ease;overflow-y:auto}
-.sidebar.open{transform:translateX(0)}
-@media (min-width: 769px){
-.sidebar{transform:translateX(0)!important;position:relative;width:240px}
-.sidebar-overlay{display:none!important}
-.hamburger{display:none}
-}
-
-/* Comment Sheet */
 .comment-sheet{position:fixed;inset:0;background:var(--purple-950);z-index:92;display:flex;flex-direction:column;transform:translateY(100%);transition:.3s}
 .comment-sheet.open{transform:translateY(0)}
 .cs-head{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--border)}
@@ -69,7 +83,7 @@ body.sidebar-open{overflow:hidden}
 .comment-actions span:hover{text-decoration:underline}
 .comment-actions.liked{color:#4a8cff}
 .reply-wrap{margin-left:40px;border-left:2px solid rgba(255,255,255,.1);padding-left:8px}
-.view-replies{color:#b99ecf;font-size:13px;font-weight:600;margin:6px 0 44px;cursor:pointer}
+.view-replies{color:#b99ecf;font-size:13px;font-weight:600;margin:6px 0 0 44px;cursor:pointer}
 .view-replies:hover{text-decoration:underline}
 .comment-composer{display:flex;gap:8px;align-items:center}
 .comment-composer img{width:32px;height:32px;border-radius:50%}
@@ -78,7 +92,6 @@ body.sidebar-open{overflow:hidden}
 .comment-input-box button{background:transparent;border:none;color:#4a8cff;cursor:pointer;font-weight:700;padding:0 4px;font-size:18px}
 .comment-as{font-size:11px;color:#b99ecf;text-align:right;margin:-4px 12px 4px 0}
 
-/* Post menu sheet */
 .post-sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:90;display:none}
 .post-sheet-backdrop.open{display:block}
 .post-sheet{position:fixed;left:0;right:0;bottom:0;background:#f7f2fb;color:#241236;border-radius:18px 18px 0 0;z-index:91;padding:12px 14px 24px;max-width:620px;margin:0 auto;transform:translateY(100%);transition:.25s}
@@ -144,7 +157,6 @@ body.sidebar-open{overflow:hidden}
 </main>
 </div>
 
-<!-- Comment Sheet -->
 <div class="comment-sheet" id="commentSheet">
   <div class="cs-head">
     <div class="back" onclick="closeCommentSheet()">←</div>
@@ -163,7 +175,6 @@ body.sidebar-open{overflow:hidden}
   </div>
 </div>
 
-<!-- Post menu sheet -->
 <div class="post-sheet-backdrop" id="postSheetBg" onclick="closePostMenu(event)">
   <div class="post-sheet" onclick="event.stopPropagation()">
     <div class="sheet-handle"></div>
@@ -192,7 +203,6 @@ document.getElementById('topAvatar').src = myAvatar
 document.getElementById('csAvatar').src = myAvatar
 document.getElementById('commentAs').textContent = 'Commenting as ' + myName
 
-// SIDEBAR
 const hamburger = document.getElementById('hamburger')
 const sidebar = document.getElementById('sidebar')
 const sideOverlay = document.getElementById('sideOverlay')
@@ -210,8 +220,12 @@ function toggleSidebar(){
 }
 hamburger.onclick = toggleSidebar
 sideOverlay.onclick = toggleSidebar
+if(window.innerWidth <= 768){
+  sidebar.classList.remove('open')
+  sideOverlay.classList.remove('show')
+  document.body.classList.remove('sidebar-open')
+}
 
-// Stories
 let stories = JSON.parse(localStorage.getItem('puu_stories_fb')||'[]')
 stories = stories.filter(s=> Date.now()-s.ts < 24*3600*1000)
 localStorage.setItem('puu_stories_fb', JSON.stringify(stories))
@@ -233,10 +247,8 @@ document.getElementById('storyFile').onchange = e=>{
 }
 renderStories()
 
-// Feed
 let posts = JSON.parse(localStorage.getItem('puu_posts_fb')||'[]')
 let postMediaUrl = null, postMediaType = null, currentPost = null
-
 document.getElementById('postMedia').onchange = e=>{
   const f=e.target.files[0]; if(!f) return
   postMediaUrl = URL.createObjectURL(f)
@@ -248,7 +260,6 @@ document.getElementById('postMedia').onchange = e=>{
   e.target.value=''
 }
 function clearMedia(){postMediaUrl=null;postMediaType=null;document.getElementById('mediaPreview').style.display='none'}
-
 function timeStr(ts){
   const d = Date.now()-ts, m = Math.floor(d/60000)
   if(m<1) return 'Just now'
@@ -257,7 +268,6 @@ function timeStr(ts){
   if(h<24) return h+' hr'
   return new Date(ts).toLocaleDateString('en-US',{day:'numeric',month:'short'})
 }
-
 function renderFeed(){
   const el=document.getElementById('feed')
   if(!posts.length){el.innerHTML='<div class="card post-fb" style="padding:16px;color:#b99ecf">No posts yet. Write the first one!</div>';return}
@@ -278,7 +288,6 @@ function renderFeed(){
     </div>
   </div>`).join('')
 }
-
 function postStatus(){
   const input=document.getElementById('statusInput')
   const text=input.value.trim()
@@ -293,8 +302,6 @@ function postStatus(){
 function likePost(i){posts[i].liked=!posts[i].liked; posts[i].likes+= posts[i].liked?1:-1; save(); renderFeed()}
 function sharePost(i){posts[i].shares++; save(); renderFeed(); showToast('Link copied')}
 function save(){localStorage.setItem('puu_posts_fb', JSON.stringify(posts))}
-
-// Comment Sheet
 function openComments(i){
   currentPost = i
   const p = posts[i]
@@ -304,7 +311,6 @@ function openComments(i){
   setTimeout(()=>document.getElementById('csInput').focus(),300)
 }
 function closeCommentSheet(){document.getElementById('commentSheet').classList.remove('open')}
-
 function renderComments(){
   const p = posts[currentPost]
   const el = document.getElementById('csBody')
@@ -335,7 +341,6 @@ function renderComments(){
   `).join('')
   el.scrollTop = el.scrollHeight
 }
-
 function renderReplies(replies,parentIdx){
   return replies.map((c,idx)=>`
     <div class="comment-item">
@@ -355,7 +360,6 @@ function renderReplies(replies,parentIdx){
     </div>
   `).join('')
 }
-
 function sendComment(){
   const input=document.getElementById('csInput'); const t=input.value.trim(); if(!t) return
   posts[currentPost].comments.push({name:myName,text:t,ts:Date.now(),likes:0,liked:false,replies:[]})
@@ -391,8 +395,6 @@ function sendReply(c,rc,input){
   save(); renderFeed(); renderComments()
 }
 function toggleReplies(el){const box=el.nextElementSibling; box.style.display = box.style.display==='none'?'block':'none'; el.textContent = box.style.display==='none'? el.textContent.replace('Hide','View') : el.textContent.replace('View','Hide')}
-
-// Post menu
 let activePost = null
 function openPostMenu(i){activePost=i; document.getElementById('postSheetBg').classList.add('open')}
 function closePostMenu(e){if(e && e.target!==e.currentTarget) return; document.getElementById('postSheetBg').classList.remove('open')}
@@ -404,7 +406,6 @@ function postAction(act){
   else if(act==='hide'){ if(confirm('Hide this post?')){ posts.splice(activePost,1); save(); renderFeed(); showToast('Post hidden')} }
   else { showToast({pin:'Post pinned',save:'Post saved',privacy:'Privacy updated',notif:'Notifications off'}[act]||'OK') }
 }
-
 renderFeed()
 </script>
 </body>
