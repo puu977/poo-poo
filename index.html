@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Puu – Home</title>
+<title>Puu Chat – Home</title>
 <link rel="stylesheet" href="assets/css/puu.css">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -37,14 +37,14 @@
 .post-fb-actions button:hover{background:rgba(255,255,255,.06)}
 .post-fb-actions button.liked{color:#4a8cff}
 
-/* SIDEBAR FULL SCREEN */
+/* SIDEBAR FIX: Mobile default hidden */
 .sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:39;display:none;opacity:0;transition:.25s}
 .sidebar-overlay.show{display:block;opacity:1}
 body.sidebar-open{overflow:hidden}
 .sidebar{position:fixed;left:0;top:0;bottom:0;width:280px;background:#2a1b40;z-index:40;transform:translateX(-100%);transition:transform.3s ease;overflow-y:auto}
 .sidebar.open{transform:translateX(0)}
 @media (min-width: 769px){
-.sidebar{transform:translateX(0);position:relative;width:240px}
+.sidebar{transform:translateX(0)!important;position:relative;width:240px}
 .sidebar-overlay{display:none!important}
 .hamburger{display:none}
 }
@@ -69,7 +69,7 @@ body.sidebar-open{overflow:hidden}
 .comment-actions span:hover{text-decoration:underline}
 .comment-actions.liked{color:#4a8cff}
 .reply-wrap{margin-left:40px;border-left:2px solid rgba(255,255,255,.1);padding-left:8px}
-.view-replies{color:#b99ecf;font-size:13px;font-weight:600;margin:6px 0 0 44px;cursor:pointer}
+.view-replies{color:#b99ecf;font-size:13px;font-weight:600;margin:6px 0 44px;cursor:pointer}
 .view-replies:hover{text-decoration:underline}
 .comment-composer{display:flex;gap:8px;align-items:center}
 .comment-composer img{width:32px;height:32px;border-radius:50%}
