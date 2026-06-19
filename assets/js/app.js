@@ -1,7 +1,50 @@
-const side=document.getElementById('side');function toggleSide(){side.classList.toggle('open')}
-document.addEventListener('click',e=>{if(side.classList.contains('open')&&!e.target.closest('.side')&&!e.target.closest('.ham'))side.classList.remove('open')});
-let posts=JSON.parse(localStorage.getItem('ps')||'[]');if(!localStorage.pid)localStorage.pid='User'+Math.floor(Math.random()*900);const me=localStorage.pid;
-function timeAgo(t){const m=Math.floor((Date.now()-t)/60000);return m<1?'Baru':m<60?m+'m':m/60<24?Math.floor(m/60)+'j':new Date(t).toLocaleDateString('id')}
-function render(){document.getElementById('composer').innerHTML=`<div class="post" style="padding:12px"><div style="display:flex;gap:10px"><img src="" style="width:38px;height:38px;border-radius:50%;background:#000"><div onclick="location='create-post.html'" style="flex:1;background:var(--c2);border:1px solid var(--b);border-radius:20px;padding:9px 12px;color:var(--d)">Apa yang Anda pikirkan?</div></div></div>`;document.getElementById('feed').innerHTML=posts.map((v,i)=>`<div class="post"><div class="ph"><img src="${v.a||''}"><div><div class="pn">${v.n}</div><div class="pt">${timeAgo(v.t)}</div></div><a class="pm" href="option-post.html?id=${i}">•••</a></div><div class="pb">${v.x||''}</div><div class="ps"><span>👍 ${v.l||0}</span><span>${v.c?.length||0} komentar</span></div><div class="pa"><a href="#" onclick="like(${i});return false">Suka</a><a href="comment.html?id=${i}">Komentar</a><a href="share-post.html?id=${i}">Bagikan</a></div></div>`).join('')||`<div style="text-align:center;padding:40px;color:var(--d)">Belum ada<br><button onclick="demo()" style="margin-top:10px;background:var(--a);border:none;padding:8px 14px;border-radius:8px;color:#000">Demo</button></div>`}
-function like(i){posts[i].l=(posts[i].l||0)+1;localStorage.setItem('ps',JSON.stringify(posts));render()}
-function demo(){posts.unshift({n:me,t:Date.now(),x:'Halo Puu Chat!',l:0,c:[],a:''});localStorage.setItem('ps',JSON.stringify(posts));render()}render();
+// 1. Sidebar bisa buka tutup
+const sidebar = document.getElementById('sidebar');
+const menuBtn = document.getElementById('menuBtn');
+
+menuBtn.onclick = () => sidebar.classList.toggle('open');
+
+// klik luar nutup
+document.addEventListener('click', (e) => {
+  if (sidebar.classList.contains('open') && !e.target.closest('.sidebar') && e.target !== menuBtn) {
+    sidebar.classList.remove('open');
+  }
+});
+
+// 2. Data postingan (sementara pakai localStorage)
+let posts = JSON.parse(localStorage.getItem('puu_posts') || '[]');
+
+// 3. Render feed
+function render() {
+  const feed = document.getElementById('feed');
+  if (posts.length === 0) {
+    feed.innerHTML = `<div class="card" style="text-align:center;color:var(--muted)">Belum ada postingan</div>`;
+    return;
+  }
+  feed.innerHTML = posts.map((p,i) => `
+    <div class="post">
+      <div class="post-h">
+        <div class="avatar"></div>
+        <div><div class="name">${p.name}</div><div class="time">baru saja</div></div>
+        <div class="menu">•••</div>
+      </div>
+      <div class="post-b">${p.text}</div>
+      <div class="post-f">
+        <button>Suka</button>
+        <button>Komentar</button>
+        <button>Bagikan</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// 4. Klik "Apa yang Anda pikirkan?"
+document.getElementById('makePost').onclick = () => {
+  const text = prompt('Tulis postingan:');
+  if (!text) return;
+  posts.unshift({ name: 'User', text });
+  localStorage.setItem('puu_posts', JSON.stringify(posts));
+  render();
+};
+
+render();
