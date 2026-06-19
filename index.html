@@ -1,30 +1,26 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<!DOCTYPE html><html lang="id"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Puu Chat</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/main.css">
-</head>
-<body>
-<div class="top">
-  <button class="ham" onclick="toggleMenu()">☰</button>
+</head><body>
+<header class="top">
+  <button class="ham" onclick="toggleSide()">☰</button>
   <div class="logo">Puu <span>Chat</span></div>
-  <div class="sr"><input placeholder="Cari..." id="search"></div>
-</div>
-
+  <div class="sr"><input placeholder="Cari..."></div>
+</header>
 <div class="app">
-  <aside class="side" id="side">
-    <a class="nav active" href="index.html">Home</a>
-    <a class="nav" href="chat.html">Chat</a>
-    <a class="nav" href="groups.html">Groups</a>
-    <a class="nav" href="settings.html">Settings</a>
-  </aside>
-  <main class="main" id="feed"></main>
+<aside class="side" id="side">
+  <a class="nav active" href="index.html">Home</a>
+  <a class="nav" href="chat.html">Chat</a>
+  <a class="nav" href="groups.html">Groups</a>
+  <a class="nav" href="server.html">Server</a>
+  <a class="nav" href="settings.html">Settings</a>
+</aside>
+<main class="main">
+  <div id="composer"></div>
+  <div id="feed"></div>
+</main>
 </div>
-
-<div id="sheets"></div>
+<script src="assets/js/supabase.js"></script>
 <script src="assets/js/app.js"></script>
-</body>
-</html>
+</body></html>
