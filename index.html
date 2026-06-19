@@ -4,66 +4,105 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Puu Chat – Home</title>
-<link rel="stylesheet" href="assets/css/puu.css">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* === OVERRIDE PUUCSS - SIDEBAR MOBILE FIX === */
-.sidebar-overlay{position:fixed!important;inset:0;background:rgba(0,0,0,.6);z-index:39;display:none;opacity:0;transition:.25s}
-.sidebar-overlay.show{display:block!important;opacity:1!important}
-body.sidebar-open{overflow:hidden!important}
+:root{
+  --purple-950:#1d102c;
+  --purple-900:#2a1b40;
+  --purple-800:#3b2058;
+  --border:rgba(255,255,255,.12);
+  --text:#f4e9ff;
+  --text-dim:#b99ecf;
+  --accent:#4a8cff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Poppins',sans-serif;background:var(--purple-950);color:var(--text)}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+img{display:block;max-width:100%}
 
-@media (max-width: 768px){
+/* TOPBAR */
+.topbar{position:sticky;top:0;z-index:30;background:#2a1b40;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;padding:8px 14px}
+.hamburger{font-size:20px;background:transparent;border:none;color:var(--text);padding:8px;border-radius:8px}
+.hamburger:hover{background:rgba(255,255,255,.06)}
+.logo-wrap{display:flex;align-items:center;gap:8px}
+.logo-mark{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#eec291,#b99ecf);display:grid;place-items:center;color:#241236;font-weight:700}
+.logo-text{font-weight:700}
+.logo-text span{color:#eec291}
+.global-search{flex:1;max-width:320px}
+.global-search input{width:100%;background:var(--purple-800);border:1px solid var(--border);color:var(--text);padding:8px 14px;border-radius:999px;outline:none}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.icon-btn{width:36px;height:36px;border-radius:50%;background:var(--purple-800);border:1px solid var(--border);display:grid;place-items:center}
+.top-user img{width:36px;height:36px;border-radius:50%;border:2px solid #eec291}
+
+/* LAYOUT */
+.app-body{display:flex;min-height:calc(100vh - 57px)}
+.main{flex:1;padding:16px}
+
+/* SIDEBAR - MOBILE DEFAULT HIDDEN */
+.sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:39;display:none;opacity:0;transition:.25s}
+.sidebar-overlay.show{display:block;opacity:1}
+body.sidebar-open{overflow:hidden}
+
 .sidebar{
-    position:fixed!important;
-    left:0!important;top:0!important;bottom:0!important;
-    width:280px!important;
-    background:#2a1b40!important;
-    z-index:40!important;
-    transform:translateX(-100%)!important;
-    transition:transform.3s ease!important;
-    overflow-y:auto!important;
-    display:block!important;
-  }
-.sidebar.open{transform:translateX(0)!important}
-.hamburger{display:inline-flex!important}
+  position:fixed;left:0;top:0;bottom:0;
+  width:280px;background:var(--purple-900);
+  z-index:40;transform:translateX(-100%);
+  transition:transform.3s ease;overflow-y:auto;
+  border-right:1px solid var(--border);
+  padding:12px;
 }
+.sidebar.open{transform:translateX(0)}
+.nav-item{display:block;padding:12px 16px;border-radius:12px;margin-bottom:4px;font-weight:500}
+.nav-item:hover{background:rgba(255,255,255,.06)}
+.nav-item.active{background:#3b2058}
 
+/* DESKTOP: Sidebar always visible */
 @media (min-width: 769px){
-.sidebar{transform:translateX(0)!important;position:relative!important;width:240px!important}
+.sidebar{position:relative;transform:translateX(0);width:240px}
 .sidebar-overlay{display:none!important}
-.hamburger{display:none!important}
+.hamburger{display:none}
 }
 
+/* CARD */
+.card{background:var(--purple-900);border:1px solid var(--border);border-radius:14px}
+
+/* FEED */
 .fb-wrap{max-width:620px;margin:0 auto}
 .stories-row{display:flex;gap:10px;overflow-x:auto;padding-bottom:16px;margin-bottom:14px}
-.story-fb{width:110px;height:190px;flex-shrink:0;border-radius:14px;position:relative;overflow:hidden;background:#3b2058;border:1px solid rgba(255,255,255,.12);cursor:pointer}
-.story-fb.add{background:#2f1a48;display:grid;place-items:center;text-align:center;color:#b99ecf}
+.story-fb{width:110px;height:190px;flex-shrink:0;border-radius:14px;position:relative;overflow:hidden;background:#3b2058;border:1px solid var(--border);cursor:pointer}
+.story-fb.add{background:#2f1a48;display:grid;place-items:center;text-align:center;color:var(--text-dim)}
 .story-fb img.wall{width:100%;height:100%;object-fit:cover;opacity:.85}
 .story-fb.s-avatar{position:absolute;top:10px;left:10px;width:36px;height:36px;border-radius:50%;border:2px solid #eec291;object-fit:cover;background:#241236}
 .story-fb.s-name{position:absolute;bottom:8px;left:10px;right:10px;font-size:12px;font-weight:600}
-.story-add-btn{width:44px;height:44px;border-radius:50%;background:#4a8cff;color:#fff;display:grid;place-items:center;font-size:24px;font-weight:700;margin-bottom:8px}
+.story-add-btn{width:44px;height:44px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:24px;font-weight:700;margin-bottom:8px}
 
 .composer-fb{padding:14px;margin-bottom:14px}
 .composer-fb-top{display:flex;gap:10px;align-items:center}
 .composer-fb-top img{width:40px;height:40px;border-radius:50%}
-.composer-fb-top input{flex:1;background:#3b2058;border:1px solid rgba(255,255,255,.12);color:#f4e9ff;padding:11px 16px;border-radius:999px;outline:none}
-.composer-fb-actions{display:flex;gap:18px;padding-top:10px;margin-top:10px;border-top:1px solid rgba(255,255,255,.08);font-size:13px;color:#b99ecf}
+.composer-fb-top input{flex:1;background:var(--purple-800);border:1px solid var(--border);color:var(--text);padding:11px 16px;border-radius:999px;outline:none}
+.composer-fb-actions{display:flex;gap:18px;padding-top:10px;margin-top:10px;border-top:1px solid var(--border);font-size:13px;color:var(--text-dim)}
 .composer-fb-actions span{cursor:pointer}
+.btn{background:var(--purple-800);border:1px solid var(--border);color:var(--text);padding:8px 16px;border-radius:10px;font-weight:600}
+.btn-accent{background:var(--accent);border:none;color:#fff}
+.btn-sm{padding:6px 12px;font-size:13px}
+
 .post-fb{padding:0;margin-bottom:14px;overflow:hidden}
 .post-fb-head{display:flex;gap:10px;padding:12px 14px 0 14px;align-items:flex-start}
 .post-fb-head img{width:40px;height:40px;border-radius:50%}
 .post-fb-name{font-weight:700}
-.post-fb-time{font-size:12px;color:#b99ecf}
+.post-fb-time{font-size:12px;color:var(--text-dim)}
 .post-fb-menu{margin-left:auto;cursor:pointer;padding:4px 8px;border-radius:8px}
 .post-fb-menu:hover{background:rgba(255,255,255,.06)}
 .post-fb-body{padding:10px 14px;white-space:pre-wrap}
 .post-fb-media{width:100%;max-height:520px;object-fit:cover;background:#1d102c;display:block}
-.post-fb-counts{display:flex;justify-content:space-between;padding:8px 14px;font-size:12px;color:#b99ecf;border-bottom:1px solid rgba(255,255,255,.08)}
+.post-fb-counts{display:flex;justify-content:space-between;padding:8px 14px;font-size:12px;color:var(--text-dim);border-bottom:1px solid var(--border)}
 .post-fb-actions{display:flex;padding:4px 8px}
-.post-fb-actions button{flex:1;background:transparent;border:none;color:#b99ecf;padding:9px;border-radius:8px;cursor:pointer;font-weight:600;font-family:inherit}
+.post-fb-actions button{flex:1;background:transparent;border:none;color:var(--text-dim);padding:9px;border-radius:8px;cursor:pointer;font-weight:600}
 .post-fb-actions button:hover{background:rgba(255,255,255,.06)}
-.post-fb-actions button.liked{color:#4a8cff}
+.post-fb-actions button.liked{color:var(--accent)}
 
+/* Comment Sheet */
 .comment-sheet{position:fixed;inset:0;background:var(--purple-950);z-index:92;display:flex;flex-direction:column;transform:translateY(100%);transition:.3s}
 .comment-sheet.open{transform:translateY(0)}
 .cs-head{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--border)}
@@ -75,23 +114,24 @@ body.sidebar-open{overflow:hidden!important}
 .comment-item{display:flex;gap:8px;font-size:14px}
 .comment-item img{width:32px;height:32px;border-radius:50%;margin-top:2px}
 .comment-body{flex:1}
-.comment-bubble{background:#3b2058;padding:8px 12px;border-radius:18px;display:inline-block}
+.comment-bubble{background:var(--purple-800);padding:8px 12px;border-radius:18px;display:inline-block}
 .comment-name{font-weight:600;font-size:13px}
 .comment-text{white-space:pre-wrap}
-.comment-actions{display:flex;gap:16px;font-size:12px;color:#b99ecf;margin:4px 0 8px 12px}
+.comment-actions{display:flex;gap:16px;font-size:12px;color:var(--text-dim);margin:4px 0 8px 12px}
 .comment-actions span{cursor:pointer;font-weight:600}
 .comment-actions span:hover{text-decoration:underline}
-.comment-actions.liked{color:#4a8cff}
+.comment-actions.liked{color:var(--accent)}
 .reply-wrap{margin-left:40px;border-left:2px solid rgba(255,255,255,.1);padding-left:8px}
-.view-replies{color:#b99ecf;font-size:13px;font-weight:600;margin:6px 0 0 44px;cursor:pointer}
+.view-replies{color:var(--text-dim);font-size:13px;font-weight:600;margin:6px 0 0 44px;cursor:pointer}
 .view-replies:hover{text-decoration:underline}
 .comment-composer{display:flex;gap:8px;align-items:center}
 .comment-composer img{width:32px;height:32px;border-radius:50%}
-.comment-input-box{flex:1;background:#3b2058;border-radius:18px;padding:8px 12px;display:flex;align-items:center}
-.comment-input-box input{flex:1;background:transparent;border:none;outline:none;color:#f4e9ff}
-.comment-input-box button{background:transparent;border:none;color:#4a8cff;cursor:pointer;font-weight:700;padding:0 4px;font-size:18px}
-.comment-as{font-size:11px;color:#b99ecf;text-align:right;margin:-4px 12px 4px 0}
+.comment-input-box{flex:1;background:var(--purple-800);border-radius:18px;padding:8px 12px;display:flex;align-items:center}
+.comment-input-box input{flex:1;background:transparent;border:none;outline:none;color:var(--text)}
+.comment-input-box button{background:transparent;border:none;color:var(--accent);cursor:pointer;font-weight:700;padding:0 4px;font-size:18px}
+.comment-as{font-size:11px;color:var(--text-dim);text-align:right;margin:-4px 12px 4px 0}
 
+/* Post menu sheet */
 .post-sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:90;display:none}
 .post-sheet-backdrop.open{display:block}
 .post-sheet{position:fixed;left:0;right:0;bottom:0;background:#f7f2fb;color:#241236;border-radius:18px 18px 0 0;z-index:91;padding:12px 14px 24px;max-width:620px;margin:0 auto;transform:translateY(100%);transition:.25s}
@@ -103,6 +143,8 @@ body.sidebar-open{overflow:hidden!important}
 .sheet-item b{display:block}
 .sheet-item small{color:#6b5b7a}
 .sheet-sep{height:8px;background:#ece6f2;margin:8px -14px;border-radius:12px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#2a1b40;border:1px solid var(--border);padding:12px 20px;border-radius:10px;z-index:99;display:none}
+.toast.show{display:block}
 </style>
 </head>
 <body>
@@ -129,7 +171,6 @@ body.sidebar-open{overflow:hidden!important}
 
 <main class="main">
 <div class="fb-wrap">
-
   <div class="stories-row" id="storiesRow">
     <div class="story-fb add" onclick="document.getElementById('storyFile').click()">
       <div><div class="story-add-btn">+</div>Create<br>story</div>
@@ -152,7 +193,6 @@ body.sidebar-open{overflow:hidden!important}
   </div>
 
   <div id="feed"></div>
-
 </div>
 </main>
 </div>
@@ -182,17 +222,14 @@ body.sidebar-open{overflow:hidden!important}
     <div class="sheet-item" onclick="postAction('save')"><div class="si">🔖</div><div><b>Save post</b><small>Add this to your saved items.</small></div></div>
     <div class="sheet-item" onclick="postAction('edit')"><div class="si">✏️</div><div><b>Edit post</b></div></div>
     <div class="sheet-item" onclick="postAction('privacy')"><div class="si">👥</div><div><b>Edit Privacy</b></div></div>
-    <div class="sheet-item" onclick="postAction('notif')"><div class="si">🔕</div><div><b>Turn off notifications for this post</b></div></div>
+    <div class="sheet-item" onclick="postAction('notif')"><div class="si">🔕</div><b>Turn off notifications for this post</b></div></div>
     <div class="sheet-item" onclick="postAction('copy')"><div class="si">🔗</div><div><b>Copy link</b></div></div>
     <div class="sheet-sep"></div>
-    <div class="sheet-item" onclick="postAction('hide')"><div class="si">✖️</div><div><b>Hide from profile</b><small>This post may still appear elsewhere.</small></div></div>
+    <div class="sheet-item" onclick="postAction('hide')"><div class="si">✖️</div><b>Hide from profile</b><small>This post may still appear elsewhere.</small></div></div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="assets/js/supabase-client.js"></script>
-<script src="assets/js/app.js"></script>
 <script>
 const BLANK='assets/img/avatar-blank.png'
 if(!localStorage.getItem('puu_userid')) localStorage.setItem('puu_userid', 'User#' + Math.floor(1000 + Math.random() * 9000))
@@ -224,6 +261,11 @@ if(window.innerWidth <= 768){
   sidebar.classList.remove('open')
   sideOverlay.classList.remove('show')
   document.body.classList.remove('sidebar-open')
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2000)
 }
 
 let stories = JSON.parse(localStorage.getItem('puu_stories_fb')||'[]')
@@ -292,11 +334,7 @@ function postStatus(){
   const input=document.getElementById('statusInput')
   const text=input.value.trim()
   if(!text &&!postMediaUrl){showToast('Write something or add a photo');return}
-  posts.unshift({
-    name:myName, avatar:myAvatar, text,
-    media: postMediaUrl, mediaType: postMediaType,
-    ts: Date.now(), likes:0, liked:false, shares:0, comments:[]
-  })
+  posts.unshift({name:myName, avatar:myAvatar, text,media: postMediaUrl, mediaType: postMediaType,ts: Date.now(), likes:0, liked:false, shares:0, comments:[]})
   save(); input.value=''; clearMedia(); renderFeed(); showToast('Posted')
 }
 function likePost(i){posts[i].liked=!posts[i].liked; posts[i].likes+= posts[i].liked?1:-1; save(); renderFeed()}
@@ -331,10 +369,7 @@ function renderComments(){
             ${c.likes? `<span>👍 ${c.likes}</span>`:''}
           </div>
           <div id="reply-box-${idx}" style="display:none"></div>
-          ${c.replies && c.replies.length? 
-            `<div class="view-replies" onclick="toggleReplies(this)">View ${c.replies.length} replies</div>
-             <div class="reply-wrap" style="display:none">${renderReplies(c.replies,idx)}</div>` : ''
-          }
+          ${c.replies && c.replies.length? `<div class="view-replies" onclick="toggleReplies(this)">View ${c.replies.length} replies</div><div class="reply-wrap" style="display:none">${renderReplies(c.replies,idx)}</div>` : ''}
         </div>
       </div>
     </div>
