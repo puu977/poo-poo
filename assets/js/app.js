@@ -76,3 +76,15 @@ function openMenu(i){ showToast('Menu •••') }
 function share(i){ showToast('Bagikan') }
 
 document.addEventListener('DOMContentLoaded', renderFeed)
+document.addEventListener('DOMContentLoaded', renderFeed)
+
+// Tutup sidebar kalau klik di luar
+document.addEventListener('click', e => {
+  const side = document.getElementById('side')
+  const isHam = e.target.closest('.ham')
+  const isInsideSide = e.target.closest('.side')
+  
+  if (!isHam && !isInsideSide && side?.classList.contains('open')) {
+    side.classList.remove('open')
+  }
+})
