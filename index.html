@@ -2,99 +2,47 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Puu Chat</title>
 <link rel="stylesheet" href="./assets/css/main.css">
+<style>.user::after,.user-main::after{display:none!important}</style>
 </head><body>
 <div class="main-container">
   <div class="navbar">
     <div class="nav-left">
-      <button class="toggle-btn" id="menu"><img src="data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjRTJEM0Y0IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSIyNyIgaGVpZ2h0PSIyNyI+PHBhdGggZD0iTTMgNmgxOHYySDNWNnptMCA1aDE4djJIM3YtMnptMCA1aDE4djJIM3YtMnoiLz48L3N2Zz4="></button>
+      <button class="toggle-btn" id="menu"><img src="data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjRTJEM0Y0IiB2aWV3Qm94PSIwIDAgMjQgMjQiPjxwYXRoIGQ9Ik0zIDZoMTh2MkgzVjZ6bTAgNWgxOHYySDN2LTJ6bTAgNWgxOHYySDN2LTE3eiIvPjwvc3ZnPg=="></button>
       <h2 style="color:#E2D3F4;margin:0;font-weight:600">Puu Chat</h2>
     </div>
-    <div class="nav-right">
-      <div class="search-bar"><img src="data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMzMyRjU0IiB2aWV3Qm94PSIwIDAgMjQgMjQiPjxwYXRoIGQ9Ik0xNS41IDE0aC0uN2wtLjMtLjNhNi41IDYuNSAwIDEgMCAuOTguOThsLjMuMy4wIC43IDEuNSAxLjV2LjdsLTMuNS0zLjV6bS02IDBBNC41IDQuNSAwIDEgMSAxNCA5LjUgNC41IDQuNSAwIDAgMSA5LjUgMTR6Ii8+PC9zdmc+"><input placeholder="Cari..."></div>
-      <div class="user" id="myAvatar"></div>
-    </div>
+    <div class="nav-right"><div class="search-bar"><input placeholder="Cari..."></div><div class="user" id="av"></div></div>
   </div>
-
   <div class="bottom-sec">
-    <div class="side-menu" id="side">
-      <div class="search-bar"><input placeholder="Cari..."></div>
-      <ul>
-        <li><a href="index.html" class="active">Home</a></li>
-        <li><a href="chat.html">Chat</a></li>
-        <li><a href="groups.html">Groups</a></li>
-        <li><a href="server.html">Server</a></li>
-        <li><a href="settings.html">Settings</a></li>
-      </ul>
-      <!-- HAPUS template chat -->
+    <div class="side-menu" id="side"><div class="search-bar"><input placeholder="Cari..."></div>
+      <ul><li><a href="index.html" class="active">Home</a></li><li><a href="chat.html">Chat</a></li><li><a href="groups.html">Groups</a></li><li><a href="settings.html">Settings</a></li></ul>
     </div>
-
     <div class="chat-section">
-      <div class="chat-header">
-        <div class="user-header">
-          <div class="user-main" id="headerAvatar"></div>
-          <h2>Home</h2>
+      <div class="chat-header"><div class="user-header"><div class="user-main" id="av2"></div><h2>Home</h2></div></div>
+      <div class="all-chat" style="padding-top:15px">
+        <div id="stories" style="display:flex;gap:12px;overflow-x:auto;padding-bottom:15px">
+          <div onclick="location='create-post.html?type=story'" style="text-align:center;cursor:pointer">
+            <div style="width:60px;height:60px;border-radius:50%;background:#49426E;border:2px dashed #EEC291;display:flex;align-items:center;justify-content:center;color:#EEC291;font-size:26px">+</div>
+            <p style="color:#E2D3F4;font-size:11px;margin-top:4px">Story</p>
+          </div>
         </div>
-      </div>
-
-      <div class="all-chat" id="feed">
-        <div class="chat-box"><div class="chat-txt"><p>Loading...</p></div></div>
-      </div>
-
-      <div class="chat-type" onclick="location='create-post.html'">
-        <div class="message-type">
-          <input placeholder="udah, gak usah dipikirin, buat status aja😂" readonly>
+        <div class="chat-box" onclick="location='create-post.html'" style="cursor:pointer;background:#3F3B62;margin-bottom:15px">
+          <div style="width:40px;height:40px;border-radius:50%;background:#49426E"></div>
+          <div class="chat-txt"><p style="color:#9386a2">udah, gak usah dipikirin, buat status aja😂</p></div>
         </div>
+        <div id="posts"></div>
       </div>
     </div>
   </div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./assets/js/supabase-client.js"></script>
 <script>
-// === PROFIL BLANK & ID ACAK ===
-if(!localStorage.puu_id){ localStorage.puu_id = 'u_'+Math.random().toString(36).slice(2,9) }
-const myId = localStorage.puu_id;
-const myName = localStorage.puu_name || ''; // kosong = blank
-const myAvatar = localStorage.puu_avatar || ''; // kosong = blank
-
-function blankAvatar(size, border=true){
-  const d=document.createElement('div');
-  d.style.width=size+'px'; d.style.height=size+'px';
-  d.style.borderRadius='50%';
-  d.style.background = myAvatar ? `url(${myAvatar}) center/cover` : '#49426E';
-  d.style.flexShrink='0';
-  if(border) d.style.border='3px solid #EEC291';
-  return d;
-}
-document.getElementById('myAvatar').appendChild(blankAvatar(40));
-document.getElementById('headerAvatar').appendChild(blankAvatar(50));
-
-// hamburger
-document.getElementById('menu').onclick = () => document.getElementById('side').classList.toggle('active');
-
-// feed
-async function load(){
-  if(typeof sb === 'undefined'){
-    document.getElementById('feed').innerHTML = '<div class="chat-box"><div class="chat-txt"><p>Error: cek supabase-client.js</p></div></div>';
-    return;
-  }
-  const {data,error} = await sb.from('posts').select('*').order('created_at',{ascending:false}).limit(20);
-  if(error){document.getElementById('feed').innerHTML = `<div class="chat-box"><div class="chat-txt"><p>${error.message}</p></div></div>`;return}
-  
-  document.getElementById('feed').innerHTML = data.map(p=>{
-    const isMe = p.user_id === myId;
-    return `
-    <div class="chat-box ${isMe?'my-message':''}">
-      <div style="width:40px;height:40px;border-radius:50%;background:#49426E;flex-shrink:0"></div>
-      <div class="chat-txt">
-        <h4>${p.user||'Anonim'} <span>${new Date(p.created_at).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'})}</span></h4>
-        <p>${(p.text||'').replace(/</g,'&lt;')}</p>
-        ${p.media_url?`<img src="${p.media_url}" style="width:100%;margin-top:8px;border-radius:10px;border:none">`:''}
-      </div>
-    </div>`
-  }).join('') || '<div class="chat-box"><div class="chat-txt"><p>Belum ada postingan</p></div></div>';
-}
+if(!localStorage.puu_id)localStorage.puu_id='u_'+Math.random().toString(36).slice(2,9);
+const av=document.createElement('div');av.style.cssText='width:40px;height:40px;border-radius:50%;background:#544F7E;border:3px solid #EEC291';document.getElementById('av').appendChild(av);
+const av2=av.cloneNode();av2.style.width='50px';av2.style.height='50px';document.getElementById('av2').appendChild(av2);
+document.getElementById('menu').onclick=()=>document.getElementById('side').classList.toggle('active');
+async function load(){if(typeof sb==='undefined'){document.getElementById('posts').innerHTML='<p style=color:#fff>Error sb</p>';return}
+const {data}=await sb.from('posts').select('*').order('created_at',{ascending:false}).limit(20);
+document.getElementById('posts').innerHTML=(data||[]).map(p=>`<div class="chat-box"><div style="width:40px;height:40px;border-radius:50%;background:#49426E"></div><div class="chat-txt"><h4>${p.user||'Anonim'} <span>${new Date(p.created_at).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'})}</span></h4><p>${(p.text||'').replace(/</g,'&lt;')}</p>${p.media_url?`<img src="${p.media_url}" style="width:100%;margin-top:8px;border-radius:10px">`:''}</div></div>`).join('')||'<div class="chat-box"><div class="chat-txt"><p>Belum ada postingan</p></div></div>';}
 load();
-</script>
-</body></html>
+</script></body></html>
