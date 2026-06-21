@@ -41,3 +41,6 @@ button,input{background:none;border:none;outline:none}
  .side-menu{position:fixed;left:-260px;top:0;z-index:1000;height:100vh;background:#49426E;width:260px;box-shadow:2px 0 10px rgba(0,0,0,.3)}
  .side-menu.active{left:0}
 }
+.post-actions{display:flex;gap:20px;padding:10px 14px;border-top:1px solid #4a446b;margin-top:8px}
+.act{color:#b8a9d4;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:4px}
+.act.liked{color:#ff6b81}.act b{font-weight:600;color:#E2D3F4}
