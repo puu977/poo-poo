@@ -33,7 +33,7 @@ async function load(){
   const card = document.createElement('div');
   card.className='post-card'; card.id='post-'+p.id;
   card.innerHTML=`
-   ${isMine?`<button class="menu-btn" onclick="menuPost(${p.id},'${(p.content||'').replace(/'/g,"\\'")}')">⋮</button>`:`<button class="skip-btn" onclick="skipPost(${p.id})">✕</button>`}
+   ${isMine?`<button class="menu-btn" onclick="menuPost(${p.id})">⋮</button>`:`<button class="skip-btn" onclick="skipPost(${p.id})">✕</button>`}
    <div class="post-head">
     <div class="ava"></div>
     <div><b>${p.username||'Anonim'}</b><div style="font-size:12px;opacity:.7">${new Date(p.created_at).toLocaleString('id-ID',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</div></div>
@@ -70,7 +70,9 @@ function skipPost(id){
 
 async function menuPost(id,txt){
  const act = prompt('⋮ Menu:\n1. Edit\n2. Hapus\nPilih 1/2');
- if(act==='1'){ const baru = prompt('Edit postingan:',txt); if(baru!==null){ await supa.from('posts').update({content:baru}).eq('id',id); load(); } }
+ async function menuPost(id){
+ location.href = `edit-post.html?id=${id}`;
+}
  if(act==='2'){ if(confirm('Hapus?')){ await supa.from('posts').delete().eq('id',id); load(); } }
 }
 
