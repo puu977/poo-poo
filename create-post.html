@@ -90,9 +90,10 @@ kirim.onclick = async () => {
       image_url = supa.storage.from('posts').getPublicUrl(path).data.publicUrl;
     }
     const {error} = await supa.from('posts').insert({ 
-      content: txt.value.trim(), 
-      image_url,
-      username: myName
+  content: txt.value.trim(), 
+  image_url,
+  username: myName,
+  user_id: myId
     });
     if(error) throw error;
     location.href = 'index.html';
