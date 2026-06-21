@@ -3,47 +3,43 @@
 <title>Buat Postingan</title>
 <link rel="stylesheet" href="./assets/css/main.css">
 <style>
-.buat-area{padding:20px;height:100%;display:flex;flex-direction:column;gap:15px}
-.buat-area textarea{flex:1;background:transparent;border:none;color:#E2D3F4;font-size:18px;resize:none;outline:none}
-.buat-area textarea::placeholder{color:#9386a2}
-.preview img,.preview video{max-width:100%;border-radius:12px;margin-top:10px}
-.top-bar{display:flex;align-items:center;gap:15px;padding:15px 4%;border-bottom:2px solid #544F7E}
+.buat-wrap{height:100vh;display:flex;flex-direction:column;background:#332F54}
+.top-bar{display:flex;align-items:center;gap:15px;padding:14px 4%;background:#332F54}
 .top-bar a{color:#E2D3F4;font-size:28px;text-decoration:none}
 .top-bar h2{color:#E2D3F4;margin:0;font-size:20px}
-.toolbar{display:flex;gap:16px;padding:12px 4%;border-top:2px solid #544F7E;background:#3F3B62;overflow-x:auto}
-.tool-btn{background:none;border:none;color:#E2D3F4;display:flex;align-items:center;gap:6px;white-space:nowrap;cursor:pointer;font-size:14px;padding:6px 0}
+.buat-area{flex:1;padding:18px;overflow-y:auto}
+.buat-area textarea{width:100%;height:200px;background:transparent;border:none;color:#E2D3F4;font-size:18px;resize:none;outline:none}
+.toolbar{display:flex;gap:14px;padding:10px 4%;background:#3F3B62;border-top:1px solid #544F7E;border-bottom:1px solid #544F7E;overflow-x:auto}
+.tool{color:#E2D3F4;background:none;border:none;font-size:13px;white-space:nowrap;display:flex;align-items:center;gap:5px;padding:6px 10px;border-radius:8px}
+.tool:active{background:#544F7E}
+.kirim-bar{padding:12px 4%;background:#332F54;text-align:right}
+#kirim{background:#EEC291;color:#332F54;padding:10px 28px;border-radius:12px;font-weight:700;border:none}
 </style>
 </head><body>
-<div class="main-container">
+<div class="buat-wrap">
   <div class="top-bar"><a href="index.html">×</a><h2>Postingan Baru</h2></div>
-  
-  <div class="bottom-sec" style="padding:0;height:calc(76.5vh - 60px)">
-    <div class="chat-section" style="width:100%;height:100%;display:flex;flex-direction:column">
-      <div class="buat-area" style="flex:1">
-        <div style="display:flex;gap:12px;align-items:center">
-          <div id="ava" style="width:45px;height:45px;border-radius:50%;background:#49426E;border:2px solid #EEC291"></div>
-          <div><p id="nama" style="color:#E2D3F4;font-weight:500;margin:0">Anonim</p>
-          <select id="priv" style="background:#3F3B62;color:#E2D3F4;border:none;padding:2px 8px;border-radius:6px;font-size:12px;margin-top:3px"><option>Publik</option><option>Teman</option><option>Hanya saya</option></select></div>
-        </div>
-        <textarea id="txt" placeholder="Apa yang Anda pikirkan?" autofocus></textarea>
-        <div class="preview" id="prev"></div>
-      </div>
 
-      <!-- COMPONENT TOOLBAR -->
-      <div id="post-toolbar" class="toolbar">
-        <button class="tool-btn" data-act="live">🔴 Siaran Langsung</button>
-        <button class="tool-btn" data-act="foto">🖼️ Foto/Video</button>
-        <button class="tool-btn" data-act="lokasi">📍 Lokasi</button>
-        <button class="tool-btn" data-act="aktivitas">😊 Perasaan</button>
-        <button class="tool-btn" data-act="tagar"># Tagar</button>
-        <button class="tool-btn" data-act="musik">🎵 Musik</button>
-      </div>
-
-      <div class="chat-type" style="justify-content:flex-end;padding:12px 4%;background:#332F54">
-        <button id="kirim" style="background:#EEC291;color:#332F54;padding:10px 26px;border-radius:12px;font-weight:700;border:none;opacity:.5;cursor:pointer">KIRIM</button>
-      </div>
+  <div class="buat-area">
+    <div style="display:flex;gap:12px;align-items:center;margin-bottom:15px">
+      <div id="ava" style="width:44px;height:44px;border-radius:50%;background:#49426E;border:2px solid #EEC291"></div>
+      <div><p id="nama" style="color:#E2D3F4;margin:0;font-weight:500">Anonim</p>
+      <select id="priv" style="background:#3F3B62;color:#E2D3F4;border:none;padding:3px 8px;border-radius:6px;font-size:12px;margin-top:4px"><option>Publik</option><option>Teman</option><option>Hanya saya</option></select></div>
     </div>
+    <textarea id="txt" placeholder="Apa yang Anda pikirkan?"></textarea>
+    <div id="prev" style="margin-top:10px"></div>
   </div>
+
+  <!-- INI FITURNYA -->
+  <div class="toolbar" id="toolbar">
+    <button class="tool" data-a="live">🔴 Siaran</button>
+    <button class="tool" data-a="foto">🖼️ Foto</button>
+    <button class="tool" data-a="lokasi">📍 Lokasi</button>
+    <button class="tool" data-a="main">🎮 Main</button>
+    <button class="tool" data-a="tagar"># Tagar</button>
+    <button class="tool" data-a="musik">🎵 Musik</button>
+  </div>
+
+  <div class="kirim-bar"><button id="kirim" disabled>KIRIM</button></div>
 </div>
 
 <input type="file" id="fImg" accept="image/*,video/*" hidden>
@@ -52,42 +48,23 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./assets/js/supabase-client.js"></script>
 <script>
-// === COMPONENT LOGIC (pisah dari HTML) ===
-if(!localStorage.puu_id) localStorage.puu_id='u_'+Math.random().toString(36).slice(2,9);
-const myId=localStorage.puu_id, myName=localStorage.puu_name||'Anonim', myAvatar=localStorage.puu_avatar||'';
-document.getElementById('nama').textContent=myName;
-if(myAvatar) document.getElementById('ava').style.background=`url(${myAvatar}) center/cover`;
+const myId=localStorage.puu_id||(localStorage.puu_id='u_'+Math.random().toString(36).slice(2,9));
+document.getElementById('nama').textContent=localStorage.puu_name||'Anonim';
+const txt=document.getElementById('txt'),kirim=document.getElementById('kirim'),prev=document.getElementById('prev'),fImg=document.getElementById('fImg');
+let file=null; const upd=()=>{kirim.disabled=!(txt.value.trim()||file);kirim.style.opacity=kirim.disabled?.5:1}; txt.oninput=upd;
 
-const txt=document.getElementById('txt'), kirim=document.getElementById('kirim'), prev=document.getElementById('prev'), fImg=document.getElementById('fImg'), fMus=document.getElementById('fMus');
-let fileMedia=null;
-
-function cek(){const ada=txt.value.trim()||fileMedia;kirim.style.opacity=ada?1:.5;kirim.disabled=!ada}
-txt.oninput=cek;
-
-// Toolbar actions
-document.querySelectorAll('.tool-btn').forEach(b=>b.onclick=()=>{
-  const a=b.dataset.act;
-  if(a==='foto') fImg.click();
-  if(a==='musik') fMus.click();
-  if(a==='lokasi') navigator.geolocation?.getCurrentPosition(p=>{txt.value+=`\n📍 ${p.coords.latitude.toFixed(4)},${p.coords.longitude.toFixed(4)} `;cek()});
-  if(a==='aktivitas'){const v=prompt('Lagi apa?'); if(v){txt.value+=`\n😊 sedang ${v} `;cek()}}
-  if(a==='tagar'){const t=prompt('Tagar:'); if(t){txt.value+=` #${t.replace(/\s/g,'')} `;cek()}}
-  if(a==='live'){alert('Siaran langsung belum aktif, pilih video dulu'); fImg.click()}
-});
-
-fImg.onchange=e=>{fileMedia=e.target.files[0];prev.innerHTML=fileMedia.type.startsWith('video')?`<video src="${URL.createObjectURL(fileMedia)}" controls style="max-height:280px"></video>`:`<img src="${URL.createObjectURL(fileMedia)}">`;cek()}
-fMus.onchange=e=>{prev.innerHTML+=`<p style="color:#EEC291">🎵 ${e.target.files[0].name}</p>`}
-
-kirim.onclick=async()=>{
- if(kirim.disabled)return;
- kirim.disabled=true;kirim.textContent='Mengirim...';
- try{
-  let url=null;
-  if(fileMedia){const p=`posts/${Date.now()}_${fileMedia.name}`;await sb.storage.from('posts').upload(p,fileMedia);url=sb.storage.from('posts').getPublicUrl(p).data.publicUrl}
-  await sb.from('posts').insert({user_id:myId,user:myName,text:txt.value.trim(),media_url:url,privacy:priv.value});
-  location='index.html';
- }catch(e){alert(e.message);kirim.disabled=false;kirim.textContent='KIRIM';}
+document.getElementById('toolbar').onclick=e=>{
+ const a=e.target.closest('.tool')?.dataset.a; if(!a) return;
+ if(a==='foto') fImg.click();
+ if(a==='lokasi') navigator.geolocation.getCurrentPosition(p=>{txt.value+=`\n📍 ${p.coords.latitude.toFixed(4)},${p.coords.longitude.toFixed(4)} `;upd()});
+ if(a==='main'){const g=prompt('Lagi main apa?'); if(g){txt.value+=`\n🎮 sedang bermain ${g} `;upd()}}
+ if(a==='tagar'){const t=prompt('Tagar:'); if(t){txt.value+=` #${t} `;upd()}}
+ if(a==='live'){alert('Live: rekam video dulu'); fImg.click()}
+ if(a==='musik') document.getElementById('fMus').click();
 };
-cek();
+fImg.onchange=e=>{file=e.target.files[0];prev.innerHTML=file.type.startsWith('video')?`<video src="${URL.createObjectURL(file)}" controls style="width:100%;border-radius:10px"></video>`:`<img src="${URL.createObjectURL(file)}" style="width:100%;border-radius:10px">`;upd()};
+
+kirim.onclick=async()=>{kirim.disabled=true;kirim.textContent='...';let url=null;if(file){const p=`posts/${Date.now()}_${file.name}`;await sb.storage.from('posts').upload(p,file);url=sb.storage.from('posts').getPublicUrl(p).data.publicUrl} await sb.from('posts').insert({user_id:myId,user:localStorage.puu_name||'Anonim',text:txt.value,media_url:url});location='index.html'};
+upd();
 </script>
 </body></html>
