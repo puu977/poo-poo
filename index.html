@@ -3,55 +3,58 @@
 <title>Puu Puu</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/js/supabase-client.js"></script>
-<style>body{margin:0;background:#2d2650;color:#E2D3F4;font-family:system-ui}#nav{position:fixed;top:0;left:-250px;width:230px;height:100%;background:#1f1b3a;transition:.3s;z-index:100;padding-top:60px}#nav.o{left:0}#ov{display:none;position:fixed;inset:0;background:#0006;z-index:98}#ov.s{display:block}</style>
+<script src="assets/js/app.js" defer></script>
+<link rel="stylesheet" href="assets/css/main.css">
+<style>
+:root{--bg:#2d2650;--card:#4a4175;--top:#332F54;--txt:#E2D3F4;--gold:#EEC291}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI}
+.top{position:fixed;top:0;left:0;right:0;height:56px;background:var(--top);display:flex;align-items:center;gap:12px;padding:0 14px;z-index:40;box-shadow:0 2px 6px #0003}
+.hamb{width:26px;height:26px;cursor:pointer;object-fit:contain}
+.sidebar{position:fixed;top:0;left:-260px;width:250px;height:100%;background:#1f1b3a;transition:.25s;z-index:50;padding-top:60px}
+.sidebar.open{left:0}
+.sidebar a{display:flex;align-items:center;gap:14px;padding:14px 22px;color:var(--txt);text-decoration:none;font-size:15px;border-left:3px solid transparent}
+.sidebar a:hover{background:#2a234d;border-left-color:var(--gold)}
+.sidebar a img{width:22px;height:22px;object-fit:contain;opacity:.9}
+.overlay{display:none;position:fixed;inset:0;background:#0006;z-index:45}
+.overlay.show{display:block}
+.wrap{max-width:720px;margin:auto;padding-top:68px}
+.stories{display:flex;gap:12px;overflow:auto;padding:12px;scrollbar-width:none}
+.stories::-webkit-scrollbar{display:none}
+.story{flex:0 0 72px;text-align:center;cursor:pointer}
+.story .ava{width:64px;height:64px;border-radius:50%;background:#5a5180;border:3px solid var(--gold);background-size:cover;background-position:center;margin:auto}
+.story.add .ava{display:flex;align-items:center;justify-content:center;font-size:26px;border-style:dashed;background:#4a4175;border-color:#8a7fb0}
+.story span{font-size:12px;display:block;margin-top:5px;opacity:.9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.post{background:var(--card);margin:12px;border-radius:16px;padding:14px;position:relative;box-shadow:0 4px 10px #0002}
+.head{display:flex;gap:10px;align-items:center}
+.ava-sm{width:40px;height:40px;border-radius:50%;background:#5a5180;flex-shrink:0}
+.name{color:var(--gold);font-weight:600}
+.time{font-size:12px;opacity:.7}
+.menu{position:absolute;top:8px;right:10px;background:none;border:0;color:var(--txt);font-size:22px;cursor:pointer;padding:4px}
+.content{margin:8px 0;white-space:pre-wrap;line-height:1.45}
+.img{width:100%;border-radius:12px;margin-top:8px;max-height:520px;object-fit:cover;display:block}
+.actions{display:flex;gap:24px;margin-top:10px;padding-top:8px;border-top:1px solid #5a518055}
+.actions button{background:none;border:0;color:var(--txt);cursor:pointer;display:flex;align-items:center;gap:6px;font-size:14px}
+.actions button.liked{color:#ff6b81}
+.actions button b{font-weight:500}
+</style>
 </head><body>
-<div style="position:fixed;top:0;left:0;right:0;height:56px;background:#332F54;display:flex;align-items:center;gap:12px;padding:0 14px;z-index:99">
- <img src="assets/icons/menu.png" onclick="nav.classList.toggle('o');ov.classList.toggle('s')" style="width:26px">
- <b>Puu Puu</b>
-</div>
-<div id="nav"><a href="index.html" style="display:block;padding:14px;color:#E2D3F4;text-decoration:none">🏠 Feed</a><a href="create-post.html" style="display:block;padding:14px;color:#E2D3F4;text-decoration:none">➕ Post</a></div>
-<div id="ov" onclick="nav.classList.remove('o');ov.classList.remove('s')"></div>
-
-<div style="padding-top:70px;max-width:700px;margin:auto">
- <div id="stories" style="display:flex;gap:10px;overflow:auto;padding:10px"></div>
- <div id="feed" style="padding:0 0 40px"><p style="text-align:center;opacity:.6">Loading...</p></div>
+<div class="top">
+  <img src="assets/icons/menu.png" class="hamb" onclick="toggleNav()" alt="menu">
+  <b style="font-size:18px">Puu Puu</b>
 </div>
 
-<script>
-const myId = localStorage.puu_id || (localStorage.puu_id = 'u_'+Math.random().toString(36).slice(2,9));
+<div class="sidebar" id="nav">
+  <a href="index.html"><img src="assets/icons/home.png" alt=""> Feed</a>
+  <a href="chat.html"><img src="assets/icons/chat.png" alt=""> Chat</a>
+  <a href="group.html"><img src="assets/icons/group.png" alt=""> Group</a>
+  <a href="server.html"><img src="assets/icons/server.png" alt=""> Server</a>
+  <a href="setting.html"><img src="assets/icons/setting.png" alt=""> Setting</a>
+  <div style="position:absolute;bottom:18px;left:22px;right:22px;font-size:12px;opacity:.5">© 2025 Puu Puu</div>
+</div>
+<div class="overlay" id="ov" onclick="toggleNav()"></div>
 
-async function load(){
-  const {data:posts, error} = await supa.from('posts').select('*').order('created_at',{ascending:false});
-  if(error){ feed.innerHTML = '<p style="color:#f88;padding:20px">Error: '+error.message+'</p>'; return }
-
-  let liked = new Set();
-  try{ const {data:l}=await supa.from('post_likes').select('post_id').eq('user_id',myId); liked=new Set((l||[]).map(x=>x.post_id)); }catch(e){}
-
-  stories.innerHTML = '<div onclick="location.href=\'create-post.html\'" style="text-align:center"><div style="width:62px;height:62px;border-radius:50%;border:2px dashed #EEC291;display:flex;align-items:center;justify-content:center">+</div><div style="font-size:12px">Kamu</div></div>' + (posts||[]).filter(p=>p.image_url).slice(0,10).map(p=>`<div style="text-align:center"><img src="${p.image_url}" style="width:62px;height:62px;border-radius:50%;border:2px solid #EEC291;object-fit:cover"><div style="font-size:11px">${p.username||'Anon'}</div></div>`).join('');
-
-  feed.innerHTML = (posts||[]).map(p=>`
-  <div style="background:#4a4175;margin:12px;border-radius:14px;padding:12px">
-    <div style="display:flex;gap:8px"><div style="width:36px;height:36px;border-radius:50%;background:#5a5180"></div><div><b style="color:#EEC291">${p.username||'Anonim'}</b><div style="font-size:12px;opacity:.7">${new Date(p.created_at).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'})}</div></div></div>
-    <div style="margin:8px 0;white-space:pre-wrap">${p.content||''}</div>
-    ${p.image_url?`<img src="${p.image_url}" style="width:100%;border-radius:10px">`:''}
-    <div style="display:flex;gap:20px;margin-top:8px;padding-top:6px;border-top:1px solid #5a5180">
-      <span onclick="likePost(${p.id},this)" style="color:${liked.has(p.id)?'#ff6b81':'#E2D3F4'};cursor:pointer">♥ ${p.likes_count||0}</span>
-      <span onclick="location.href='comment.html?id=${p.id}'" style="cursor:pointer">💬</span>
-      <span onclick="sharePost(${p.id},this)" style="cursor:pointer">↗ ${p.shares_count||0}</span>
-    </div>
-  </div>`).join('') || '<p style="text-align:center;opacity:.5">Belum ada postingan</p>';
-}
-
-async function likePost(id,el){
-  const curr = parseInt(el.textContent.match(/\d+/)[0]||0);
-  const {data} = await supa.from('post_likes').select().eq('post_id',id).eq('user_id',myId).maybeSingle();
-  if(data){ await supa.from('post_likes').delete().eq('post_id',id).eq('user_id',myId); el.style.color='#E2D3F4'; el.textContent='♥ '+(curr-1); await supa.from('posts').update({likes_count:curr-1}).eq('id',id); }
-  else { await supa.from('post_likes').insert({post_id:id,user_id:myId}); el.style.color='#ff6b81'; el.textContent='♥ '+(curr+1); await supa.from('posts').update({likes_count:curr+1}).eq('id',id); }
-}
-
-async function sharePost(id,el){
-  try{ await navigator.share({title:'Puu Puu',url:location.href+'?p='+id}); const curr=parseInt(el.textContent.match(/\d+/)[0]||0)+1; el.textContent='↗ '+curr; await supa.from('posts').update({shares_count:curr}).eq('id',id); }catch(e){}
-}
-
-load();
-</script></body></html>
+<div class="wrap">
+  <div class="stories" id="stories"></div>
+  <div id="feed"></div>
+</div>
+</body></html>
