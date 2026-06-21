@@ -5,90 +5,71 @@
 <style>
 body{background:#332F54}
 .header{position:sticky;top:0;background:#49426E;padding:14px 16px;display:flex;align-items:center;gap:12px;z-index:10}
-.header a{color:#E2D3F4;font-size:20px}
-.header h3{color:#E2D3F4;margin:0}
+.header a{color:#E2D3F4;font-size:20px}.header h3{color:#E2D3F4;margin:0}
 .wrap{padding:12px 12px 80px;max-width:700px;margin:0 auto}
 .comment{background:#3F3B62;border-radius:12px;padding:12px;margin-bottom:10px}
 .top{display:flex;justify-content:space-between;align-items:center}
-.name{color:#EEC291;font-weight:600;font-size:14px}
-.time{color:#9386a2;font-size:11px}
+.name{color:#EEC291;font-weight:600;font-size:14px}.time{color:#9386a2;font-size:11px}
 .text{color:#DDD9D0;margin:6px 0;white-space:pre-wrap;word-break:break-word}
-.act{display:flex;gap:18px;margin-top:6px}
-.act span{color:#b8a9d4;font-size:13px;cursor:pointer}
-.like.liked{color:#ff6b81!important}
-.edited{color:#9386a2;font-size:11px;margin-left:6px}
-.reply{margin-left:28px;margin-top:8px;border-left:2px solid #4a446b;padding-left:10px}
+.act{display:flex;gap:16px;margin-top:6px;flex-wrap:wrap}.act span{color:#b8a9d4;font-size:13px;cursor:pointer}
+.like.liked{color:#ff6b81!important}.edited{color:#9386a2;font-size:11px;margin-left:6px}
+.reply-wrap{margin-left:20px;margin-top:8px;border-left:2px solid #4a446b;padding-left:10px}
 .input-bar{position:fixed;bottom:0;left:0;right:0;background:#49426E;padding:10px 12px;display:flex;gap:8px}
 .input-bar input{flex:1;background:#3F3B62;border-radius:20px;padding:10px 14px;color:#E2D3F4;font-size:14px}
 .input-bar button{background:#EEC291;color:#332F54;border:none;border-radius:20px;padding:0 18px;font-weight:600}
-.edit-box{display:flex;gap:6px;margin-top:6px}
-.edit-box input{flex:1;background:#332F54;border:1px solid #544F7E;border-radius:8px;padding:6px 8px;color:#E2D3F4;font-size:13px}
+.edit-box{display:flex;gap:6px;margin-top:6px}.edit-box input{flex:1;background:#332F54;border:1px solid #544F7E;border-radius:8px;padding:6px 8px;color:#E2D3F4;font-size:13px}
 .edit-box button{background:#EEC291;color:#332F54;border:none;border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600}
 </style>
 </head><body>
 <div class="header"><a href="index.html">←</a><h3>Komentar</h3></div>
 <div class="wrap" id="list"></div>
-<div class="input-bar">
-  <input id="txt" placeholder="Tulis komentar...">
-  <button id="send">Kirim</button>
-</div>
+<div class="input-bar"><input id="txt" placeholder="Tulis komentar..."><button id="send">Kirim</button></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./assets/js/supabase-client.js"></script>
 <script>
-const params=new URLSearchParams(location.search);
-const postId=params.get('id');
+const params=new URLSearchParams(location.search); const postId=params.get('id');
+if(!postId){alert('Buka dari feed');location.href='index.html'}
 if(!localStorage.puu_id)localStorage.puu_id='u_'+Math.random().toString(36).slice(2,9);
-if(!localStorage.puu_name)localStorage.puu_name='Anonim';
-const me=localStorage.puu_name;
-const liked=JSON.parse(localStorage.liked_c||'{}');
-let replyTo=null;
+if(!localStorage.puu_name)localStorage.puu_name='nama'+Math.floor(Math.random()*999); // contoh: nama123
+const me=localStorage.puu_name; const liked=JSON.parse(localStorage.liked_c||'{}'); let replyTo=null;
 
 async function load(){
-  const {data}=await sb.from('comments').select('*').eq('post_id',postId).order('created_at',{ascending:true});
-  const list=document.getElementById('list');
-  const parents=data.filter(c=>!c.parent_id);
-  list.innerHTML=parents.map(p=>render(p,data)).join('')||'<p style="color:#9386a2;text-align:center;margin-top:40px">Belum ada komentar</p>';
+  const {data,error}=await sb.from('comments').select('*').eq('post_id',postId).order('created_at',{ascending:true});
+  if(error){console.error(error);return}
+  document.getElementById('list').innerHTML=buildTree(data,null,data).join('')||'<p style="color:#9386a2;text-align:center;margin-top:40px">Belum ada komentar</p>';
 }
-function render(c,all){
-  const t=new Date(c.created_at).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
-  const isL=!!liked[c.id];
-  const isMine=c.username===me;
-  const replies=all.filter(r=>r.parent_id===c.id);
-  return `<div class="comment" id="c${c.id}">
-    <div class="top"><span class="name">${c.username}${c.edited?'<span class="edited">edited✓</span>':''}</span><span class="time">${t}</span></div>
-    <div class="text" id="t${c.id}">${(c.text||'').replace(/</g,'&lt;')}</div>
-    <div class="act">
-      <span class="like ${isL?'liked':''}" onclick="likeC(${c.id},this)" data-l="${c.likes||0}">${isL?'❤️':'🤍'} ${c.likes||0}</span>
-      <span onclick="balas(${c.id},'${c.username}')">↩️ Balas</span>
-      ${isMine?`<span onclick="editC(${c.id})">✏️ Edit</span>`:''}
-    </div>
-    <div id="e${c.id}"></div>
-    ${replies.map(r=>`<div class="reply">${render(r,[])}</div>`).join('')}
-  </div>`;
+function buildTree(all,parentId,data){
+  return all.filter(c=>c.parent_id===parentId).map(c=>{
+    const t=new Date(c.created_at).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+    const isL=!!liked[c.id]; const isMine=c.username===me;
+    const children=buildTree(all,c.id,data);
+    return `<div class="comment" id="c${c.id}">
+      <div class="top"><span class="name">@${c.username}${c.edited?'<span class="edited">edited✓</span>':''}</span><span class="time">${t}</span></div>
+      <div class="text" id="t${c.id}">${(c.text||'').replace(/</g,'&lt;')}</div>
+      <div class="act">
+        <span class="like ${isL?'liked':''}" onclick="likeC(${c.id},this)" data-l="${c.likes||0}">${isL?'❤️':'🤍'} ${c.likes||0}</span>
+        <span onclick="balas(${c.id},'${c.username}')">↩️ Balas</span>
+        ${isMine?`<span onclick="editC(${c.id})">✏️ Edit</span><span onclick="hapusC(${c.id})" style="color:#ff7b7b">🗑️ Hapus</span>`:''}
+      </div>
+      <div id="e${c.id}"></div>
+      ${children.length?`<div class="reply-wrap">${children.join('')}</div>`:''}
+    </div>`;
+  });
 }
-async function likeC(id,el){
-  const l=!!liked[id];let n=+el.dataset.l||0;n=l?n-1:n+1;liked[id]=!l;localStorage.liked_c=JSON.stringify(liked);
-  el.dataset.l=n;el.classList.toggle('liked',!l);el.innerHTML=`${!l?'❤️':'🤍'} ${n}`;
-  await sb.from('comments').update({likes:n}).eq('id',id);
-}
-function balas(id,name){replyTo=id;document.getElementById('txt').placeholder=`Balas @${name}...`;document.getElementById('txt').focus()}
-function editC(id){
-  const txt=document.getElementById('t'+id).innerText;
-  document.getElementById('e'+id).innerHTML=`<div class="edit-box"><input id="i${id}" value="${txt.replace(/"/g,'&quot;')}"><button onclick="saveE(${id})">Simpan</button><button onclick="cancelE(${id})" style="background:#666;color:#fff">Batal</button></div>`;
-  document.getElementById('i'+id).focus();
-}
-async function saveE(id){
-  const v=document.getElementById('i'+id).value.trim();if(!v)return;
-  await sb.from('comments').update({text:v,edited:true}).eq('id',id);
-  load();
-}
-function cancelE(id){document.getElementById('e'+id).innerHTML='';}
+async function likeC(id,el){const l=!!liked[id];let n=+el.dataset.l||0;n=l?n-1:n+1;liked[id]=!l;localStorage.liked_c=JSON.stringify(liked);el.dataset.l=n;el.classList.toggle('liked',!l);el.innerHTML=`${!l?'❤️':'🤍'} ${n}`;await sb.from('comments').update({likes:n}).eq('id',id)}
+function balas(id,name){replyTo=id;const i=document.getElementById('txt');i.placeholder=`Balas @${name}...`;i.focus()}
+function editC(id){const txt=document.getElementById('t'+id).innerText;document.getElementById('e'+id).innerHTML=`<div class="edit-box"><input id="i${id}" value="${txt.replace(/"/g,'&quot;')}"><button onclick="saveE(${id})">Simpan</button><button onclick="cancelE(${id})" style="background:#666;color:#fff">Batal</button></div>`}
+async function saveE(id){const v=document.getElementById('i'+id).value.trim();if(!v)return;const {error}=await sb.from('comments').update({text:v,edited:true}).eq('id',id);if(error)alert(error.message);else load()}
+function cancelE(id){document.getElementById('e'+id).innerHTML=''}
+async function hapusC(id){if(!confirm('Hapus komentar ini?'))return;const {error}=await sb.from('comments').delete().eq('id',id);if(error)alert(error.message);else load()}
+
 document.getElementById('send').onclick=async()=>{
-  const v=document.getElementById('txt').value.trim();if(!v)return;
-  await sb.from('comments').insert({post_id:postId,parent_id:replyTo,text:v,username:me,likes:0,edited:false});
-  document.getElementById('txt').value='';replyTo=null;document.getElementById('txt').placeholder='Tulis komentar...';load();
+  const btn=document.getElementById('send'),inp=document.getElementById('txt');const v=inp.value.trim();if(!v)return;
+  btn.disabled=true;btn.textContent='...';
+  const {error}=await sb.from('comments').insert({post_id:postId,parent_id:replyTo,text:v,username:me,likes:0,edited:false});
+  btn.disabled=false;btn.textContent='Kirim';
+  if(error){alert('GAGAL: '+error.message)}else{inp.value='';replyTo=null;inp.placeholder='Tulis komentar...';load()}
 };
-load();
-setInterval(load,5000);
+load();setInterval(load,5000);
 </script></body></html>
