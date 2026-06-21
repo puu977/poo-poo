@@ -1,78 +1,28 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Puu Chat</title>
-  <link rel="stylesheet" href="assets/css/main.css">
-</head>
-<body>
-  <header class="top">
-    <button class="ham" id="menuBtn">☰</button>
-    <div class="logo">Puu <span>Chat</span></div>
-    <div class="search"><input placeholder="Cari..."></div>
-  </header>
+<!DOCTYPE html><html lang="id"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Puu Chat</title>
+<link rel="stylesheet" href="assets/css/main.css">
+</head><body>
+<div id="header"></div>
+<div class="wrap">
+  <div id="sidebar"></div>
+  <main class="main">
+    <div id="makepost"></div>
+    <div id="feed"></div>
+  </main>
+</div>
 
-  <div class="wrap">
-    <aside class="sidebar" id="sidebar">
-      <a class="item active">Home</a>
-      <a class="item">Chat</a>
-      <a class="item">Groups</a>
-      <a class="item">Server</a>
-      <a class="item">Settings</a>
-    </aside>
-
-    <main class="main">
-      <div class="card" id="makePost">udah, gak usah dipikirin, buat status aja😂</div>
-      <div id="feed"></div>
-    </main>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="assets/js/supabase.js"></script>
-  <script>
-    // 1. sidebar
-    const sidebar = document.getElementById('sidebar');
-    document.getElementById('menuBtn').onclick = () => sidebar.classList.toggle('open');
-    document.addEventListener('click', e => {
-      if (sidebar.classList.contains('open') && !e.target.closest('.sidebar') && e.target.id !== 'menuBtn') {
-        sidebar.classList.remove('open');
-      }
-    });
-
-    // 2. feed real
-    async function load() {
-      const { data, error } = await sb.from('posts').select('*').order('created_at', { ascending: false });
-      if (error) { document.getElementById('feed').innerHTML = `<div class="card">Error: ${error.message}</div>`; return; }
-      if (!data.length) { document.getElementById('feed').innerHTML = `<div class="card" style="text-align:center;color:#666">Belum ada postingan</div>`; return; }
-      
-      document.getElementById('feed').innerHTML = data.map(p => `
-        <div class="post">
-          <div class="post-h">
-            <div class="avatar"></div>
-            <div>
-              <div class="name">${p.user}</div>
-              <div class="time">${new Date(p.created_at).toLocaleString('id-ID')} ${p.feeling ? '• ' + p.feeling : ''} ${p.location ? '• 📍' : ''}</div>
-            </div>
-          <div class="post-b">
-            ${p.text || ''}
-            ${p.media_url ? `<img src="${p.media_url}" style="width:100%;margin-top:8px;border-radius:8px">` : ''}
-            ${p.music_url ? `<audio controls src="${p.music_url}" style="width:100%;margin-top:8px"></audio>` : ''}
-          </div>
-          <div class="post-f" style="display:flex;border-top:1px solid #eee">
-            <button style="flex:1;padding:10px;border:none;background:none">Suka</button>
-            <button style="flex:1;padding:10px;border:none;background:none">Komentar</button>
-            <button style="flex:1;padding:10px;border:none;background:none">Bagikan</button>
-          </div>
-        </div>
-      `).join('');
-    }
-    
-    load();
-    // auto refresh tiap 5 detik
-    setInterval(load, 5000);
-
-    document.getElementById('makePost').onclick = () => location = 'create-post.html';
-  </script>
-</body>
-</html>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/supabase.js"></script>
+<script>
+async function load(id,file){document.getElementById(id).innerHTML=await (await fetch(file)).text();}
+Promise.all([
+  load('header','components/comp-header.html'),
+  load('sidebar','components/comp-sidebar.html'),
+  load('makepost','components/comp-make-post.html')
+]).then(()=>{
+  const s=document.createElement('script'); s.src='assets/js/comp-js-sidebar.js'; document.body.appendChild(s);
+  const f=document.createElement('script'); f.src='assets/js/comp-js-feed.js'; document.body.appendChild(f);
+  document.getElementById('makepost').onclick=()=>location='create-post.html';
+});
+</script></body></html>
