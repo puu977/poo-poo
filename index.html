@@ -1,24 +1,31 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>Puu Chat</title>
 <link rel="stylesheet" href="assets/css/main.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/js/supabase-client.js"></script>
 <style>
-.post-feed{width:100%}
-.post-card{background:#49426E;border:2px solid #544F7E;border-radius:15px;padding:15px;margin:0 0 15px}
-.post-card.head{display:flex;gap:12px;align-items:center}
-.post-card.head img{width:40px;border-radius:50%;border:3px solid #EEC291}
-.post-card.head b{color:#EEC291}
+/* full screen fix */
+body{padding:0!important;background:#332F54!important}
+.main-container{max-width:100%!important;width:100%!important;min-height:100vh!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+.bottom-sec{height:calc(100vh - 60px)!important;padding:0!important}
+.chat-section{border-radius:0!important}
+.all-chat{padding:12px 4%!important;height:100%!important;overflow-y:auto}
+
+/* feed style nyatu sama CSS lu */
+.post-card{background:#49426E;border:2px solid #544F7E;border-radius:15px;padding:15px;margin-bottom:12px}
+.post-card .head{display:flex;gap:12px;align-items:center}
+.post-card .head img{width:40px;border-radius:50%;border:3px solid #EEC291}
+.post-card .head b{color:#EEC291}
 .post-card p{color:#DDD9D0;margin:10px 0;white-space:pre-wrap}
-.post-card img.post-img{width:100%;border-radius:12px;margin-top:8px;max-height:400px;object-fit:cover}
-.post-actions{display:flex;gap:20px;margin-top:10px}
-.post-actions button{background:none;border:none;color:#E2D3F4;cursor:pointer;font-size:14px}
-.composer{background:#332F54;padding:15px;border-radius:15px;margin-bottom:15px}
-.composer textarea{width:100%;background:#49426E;border:2px solid #544F7E;color:#E2D3F4;padding:10px;border-radius:10px;resize:none}
-.composer.btn{background:#EEC291;color:#332F54;padding:8px 16px;border-radius:10px;font-weight:600;margin-top:8px;cursor:pointer;border:none}
+.post-card img.post-img{width:100%;border-radius:12px;margin-top:8px}
+.post-actions{display:flex;gap:20px;margin-top:8px}
+.post-actions button{background:none;border:none;color:#E2D3F4;font-size:14px;cursor:pointer}
+
+.create-box{background:#49426E;border:2px solid #544F7E;border-radius:15px;padding:14px;color:#9386a2;margin-bottom:12px;cursor:pointer}
+.create-box span{margin-left:8px}
 </style>
 </head>
 <body>
@@ -26,12 +33,9 @@
   <div class="navbar">
     <div class="nav-left">
       <button class="toggle-btn" onclick="document.querySelector('.side-menu').classList.toggle('active')"><img src="assets/menu.png"></button>
-      <img src="assets/logo.png" class="main-logo" alt="Puu">
+      <img src="assets/logo.png" class="main-logo">
     </div>
-    <div class="nav-right">
-      <div class="search-bar"><input placeholder="Cari..."><img src="assets/search.png"></div>
-      <div class="user"><img src="assets/avatar.png"></div>
-    </div>
+    <div class="nav-right"><div class="user"><img src="assets/avatar.png"></div></div>
   </div>
 
   <div class="bottom-sec">
@@ -46,34 +50,30 @@
     </div>
 
     <div class="chat-section">
-      <div class="chat-header">
-        <div class="user-header"><div class="user-main"><img src="assets/avatar.png"></div><h2>Feed</h2></div>
-      </div>
-
+      <div class="chat-header"><div class="user-header"><div class="user-main"><img src="assets/avatar.png"></div><h2>Feed</h2></div></div>
+      
       <div class="all-chat">
-        <div class="post-feed">
-          <div class="composer">
-            <textarea id="content" rows="2" placeholder="apa yang anda pikirkan.?"></textarea>
-            <input type="file" id="img" accept="image/*" hidden
-            <button class="btn" onclick="img.click()">🖼️ Gambar</button>
-            <button class="btn" onclick="posting()">Posting</button>
-          </div>
-          <div id="feed"></div>
+        <!-- INI YANG KLIK KE CREATE-POST -->
+        <div class="create-box" onclick="location.href='create-post.html'">
+          🖼️ <span>apa yang anda pikirkan.?</span>
+          <div style="margin-top:8px;font-size:13px;color:#E2D3F4">📷 Gambar • Posting</div>
         </div>
+
+        <div id="feed"></div>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-const feedEl = document.getElementById('feed');
+const feed = document.getElementById('feed');
 
 async function render(){
-  const { data } = await supa.from('posts').select('*').order('created_at',{ascending:false});
-  feedEl.innerHTML = '';
+  const {data} = await supa.from('posts').select('*').order('created_at',{ascending:false});
+  feed.innerHTML = '';
   data.forEach(p=>{
-    feedEl.innerHTML += `<div class="post-card">
-      <div class="head"><img src="assets/avatar.png"><div><b>${p.username||'Anonim'}</b><br><span style="font-size:12px;color:#9386a2">${new Date(p.created_at).toLocaleString('id-ID')}</span></div></div>
+    feed.innerHTML += `<div class="post-card">
+      <div class="head"><img src="assets/avatar.png"><div><b>${p.username||'Anonim'}</b><div style="font-size:12px;color:#9386a2">${new Date(p.created_at).toLocaleString('id-ID')}</div></div></div>
       ${p.content?`<p>${p.content}</p>`:''}
       ${p.image_url?`<img class="post-img" src="${p.image_url}">`:''}
       <div class="post-actions">
@@ -85,23 +85,11 @@ async function render(){
   });
 }
 
-async function posting(){
-  const c = content.value.trim();
-  const f = img.files[0]; let url = null;
-  if(f){ const n = Date.now()+'-'+f.name; await supa.storage.from('posts').upload(n,f); url = supa.storage.from('posts').getPublicUrl(n).data.publicUrl; }
-  if(!c &&!url) return;
-  await supa.from('posts').insert({username:'Anonim',content:c,image_url:url,likes:0,shares:0});
-  content.value=''; img.value='';
-}
+async function like(id,c){ await supa.from('posts').update({likes:c+1}).eq('id',id) }
+async function share(id,c){ await supa.from('posts').update({shares:c+1}).eq('id',id) }
 
-async function like(id,cur){ await supa.from('posts').update({likes:cur+1}).eq('id',id); }
-async function share(id,cur){ await supa.from('posts').update({shares:cur+1}).eq('id',id); }
-
-// REALTIME - ini yang bikin gak dummy
-supa.channel('posts-realtime')
- .on('postgres_changes',{event:'*',schema:'public',table:'posts'}, payload=>{ render(); })
- .subscribe();
-
+// REALTIME
+supa.channel('feed-rt').on('postgres_changes',{event:'*',schema:'public',table:'posts'},render).subscribe();
 render();
 </script>
 </body>
