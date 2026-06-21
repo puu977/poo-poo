@@ -35,13 +35,11 @@
         <select id="priv"><option>Publik</option><option>Teman</option><option>Hanya saya</option></select>
       </div>
     </div>
-
     <textarea id="txt" placeholder="Apa yang Anda pikirkan?"></textarea>
     <div id="prev"></div>
   </div>
 
   <div class="toolbar" id="toolbar">
-    <button class="tool" data-a="live">🔴 Siaran</button>
     <button class="tool" data-a="foto">🖼️ Foto</button>
     <button class="tool" data-a="lokasi">📍 Lokasi</button>
     <button class="tool" data-a="main">🎮 Main</button>
@@ -52,7 +50,6 @@
 </div>
 
 <input type="file" id="fImg" accept="image/*,video/*" hidden>
-<input type="file" id="fMus" accept="audio/*" hidden>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./assets/js/supabase-client.js"></script>
@@ -62,19 +59,17 @@ const myName = localStorage.puu_name || 'Anonim';
 document.getElementById('nama').textContent = myName;
 if(localStorage.puu_avatar) document.getElementById('ava').style.backgroundImage = `url(${localStorage.puu_avatar})`;
 
-const txt = document.getElementById('txt'), kirim = document.getElementById('kirim'), prev = document.getElementById('prev'), fImg = document.getElementById('fImg');
-let file = null, mentions = [];
+const txt = document.getElementById('txt'), kirim = document.getElementById('kirim'), prev = document.getElementById('prev'), fImg = document.getElementById('fImg'), priv = document.getElementById('priv');
+let file = null;
 const upd = () => kirim.disabled = !(txt.value.trim() || file);
 txt.oninput = upd;
 
 document.getElementById('toolbar').onclick = e => {
   const a = e.target.closest('.tool')?.dataset.a; if(!a) return;
   if(a==='foto') fImg.click();
-  if(a==='musik') document.getElementById('fMus').click();
-  if(a==='live'){ fImg.click(); }
   if(a==='lokasi') navigator.geolocation?.getCurrentPosition(p=>{ txt.value += `\n📍 ${p.coords.latitude.toFixed(4)},${p.coords.longitude.toFixed(4)} `; upd(); });
   if(a==='main'){ const g = prompt('Lagi main apa?'); if(g){ txt.value += `\n🎮 sedang bermain ${g} `; upd(); } }
-  if(a==='tagar'){ const u = prompt('Tag teman (tanpa @)'); if(u){ txt.value += ` @${u.trim()} `; mentions.push(u.trim()); upd(); } }
+  if(a==='tagar'){ const u = prompt('Tag teman'); if(u){ txt.value += ` @${u.trim()} `; upd(); } }
 };
 
 fImg.onchange = e => {
@@ -83,16 +78,25 @@ fImg.onchange = e => {
   prev.innerHTML = file.type.startsWith('video') ? `<video src="${url}" controls></video>` : `<img src="${url}">`;
   upd();
 };
-document.getElementById('fMus').onchange = e => { const f=e.target.files[0]; if(f) prev.innerHTML += `<p style="color:#EEC291;font-size:13px">🎵 ${f.name}</p>`; };
 
 kirim.onclick = async () => {
   kirim.disabled = true; kirim.textContent = '...';
   try{
-    let url = null;
-    if(file){ const p = `posts/${Date.now()}_${file.name}`; await sb.storage.from('posts').upload(p,file); url = sb.storage.from('posts').getPublicUrl(p).data.publicUrl; }
-    await sb.from('posts').insert({ user_id:myId, user:myName, text:txt.value.trim(), media_url:url, privacy:priv.value, mentions });
+    let image_url = null;
+    if(file){ 
+      const path = `posts/${Date.now()}_${file.name}`;
+      const {error:upErr} = await supa.storage.from('posts').upload(path, file);
+      if(upErr) throw upErr;
+      image_url = supa.storage.from('posts').getPublicUrl(path).data.publicUrl;
+    }
+    const {error} = await supa.from('posts').insert({ 
+      content: txt.value.trim(), 
+      image_url,
+      username: myName
+    });
+    if(error) throw error;
     location.href = 'index.html';
-  }catch(err){ alert(err.message); kirim.textContent='KIRIM'; upd(); }
+  }catch(err){ alert('Gagal: '+err.message); kirim.textContent='KIRIM'; upd(); }
 };
 upd();
 </script>
