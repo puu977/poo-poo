@@ -2,52 +2,75 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Puu Chat</title>
 <link rel="stylesheet" href="./assets/css/main.css">
+<style>
+:root{--bg:#332F54;--card:#3F3B62;--bar:#49426E;--accent:#EEC291}
+body{background:var(--bg);margin:0;color:#E2D3F4;font-family:system-ui}
+.header{position:sticky;top:0;background:var(--bar);padding:14px 16px;display:flex;align-items:center;gap:12px;z-index:10}
+.header h1{margin:0;font-size:20px;color:#E2D3F4}
+.wrap{max-width:700px;margin:0 auto;padding:12px 12px 80px}
+.create{background:var(--card);border-radius:14px;padding:12px;margin-bottom:14px}
+.create textarea{width:100%;background:#2e2a4d;border:none;border-radius:10px;padding:10px;color:#E2D3F4;min-height:60px;resize:none;font-size:15px}
+.create.row{display:flex;gap:8px;margin-top:8px;align-items:center}
+.create button{background:var(--accent);color:var(--bg);border:none;border-radius:10px;padding:8px 14px;font-weight:700}
+.create.icon{font-size:22px;color:#b8a9d4;cursor:pointer}
+.post{background:var(--card);border-radius:14px;padding:0;margin-bottom:14px;overflow:hidden}
+.post-head{display:flex;gap:10px;padding:12px 12px 0;align-items:center}
+.avatar{width:36px;height:36px;border-radius:50%;background:#544F7E}
+.name{font-weight:600;color:var(--accent);font-size:14px}.time{font-size:11px;color:#9386a2}
+.post-text{padding:8px 12px;white-space:pre-wrap;word-break:break-word}
+.post-img{width:100%;max-height:500px;object-fit:contain;background:#000}
+.post-actions{display:flex;justify-content:space-around;border-top:1px solid #544F7E}
+.post-actions span{flex:1;text-align:center;padding:12px 0;color:#b8a9d4;font-size:14px;cursor:pointer}
+.post-actions span b{margin-left:4px;color:#E2D3F4}.liked{color:#ff6b81!important}
+</style>
 </head><body>
-<div class="main-container">
-  <div class="navbar">
-    <div class="nav-left"><button class="toggle-btn" id="menu">☰</button><h2>Puu Chat</h2></div>
-  </div>
-  <div class="bottom-sec">
-    <div class="side-menu" id="side">
-      <ul>
-        <li><a href="index.html" class="active">Feed</a></li>
-        <li><a href="chat.html">Chat</a></li>
-        <li><a href="grup.html">Grup</a></li>
-        <li><a href="server.html">Server</a></li>
-        <li><a href="setting.html">Setting</a></li>
-      </ul>
-    </div>
-    <div class="chat-section">
-      <div class="all-chat">
-        <div id="stories"></div>
-        <div class="chat-box" onclick="location='post.html'" style="cursor:pointer">
-          <div></div><div class="chat-txt"><p style="color:#9386a2">udah, gak usah dipikirin, buat status aja😂</p></div>
-        </div>
-        <div id="posts"></div>
-      </div>
+<div class="header"><span style="font-size:24px">☰</span><h1>Puu Chat</h1></div>
+<div class="wrap">
+  <div class="create">
+    <textarea id="txt" placeholder="Apa yang kamu pikirkan?"></textarea>
+    <div class="row">
+      <span class="icon" onclick="img.click()">🖼️</span><input type="file" id="img" hidden accept="image/*">
+      <span style="flex:1"></span>
+      <button id="postBtn">Posting</button>
     </div>
   </div>
+  <div id="feed"></div>
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./assets/js/supabase-client.js"></script>
 <script>
-if(!localStorage.puu_id)localStorage.puu_id='u_'+Math.random().toString(36).slice(2,9);
-if(!localStorage.puu_name)localStorage.puu_name='Anonim';
-const liked=JSON.parse(localStorage.liked||'{}');
-const menu=document.getElementById('menu'),side=document.getElementById('side');
-const overlay=document.createElement('div');overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;display:none';document.body.appendChild(overlay);
-function toggle(){side.classList.toggle('active');overlay.style.display=side.classList.contains('active')?'block':'none'}
-menu.onclick=toggle;overlay.onclick=toggle;
+if(!localStorage.puu_name)localStorage.puu_name='Anonim'+Math.floor(Math.random()*900+100);
+const me=localStorage.puu_name; const liked=JSON.parse(localStorage.liked_posts||'{}');
+const txt=document.getElementById('txt'), img=document.getElementById('img'), btn=document.getElementById('postBtn');
 
-async function like(id,el){const l=!!liked[id];let c=+el.dataset.likes||0;c=l?c-1:c+1;liked[id]=!l;localStorage.liked=JSON.stringify(liked);el.dataset.likes=c;el.classList.toggle('liked',!l);el.innerHTML=!l?`❤️ <b>${c}</b>`:`🤍`;await sb.from('posts').update({likes:c}).eq('id',id)}
-function share(id){const u=location.href.split('#')[0]+'#post-'+id;navigator.share?navigator.share({title:'Puu Chat',url:u}):(navigator.clipboard.writeText(u),alert('Link disalin!'))}
+btn.onclick=async()=>{
+  const t=txt.value.trim(), f=img.files[0]; if(!t&&!f)return;
+  btn.disabled=true; let url=null;
+  if(f){const p=`posts/${Date.now()}_${f.name}`; await sb.storage.from('comment-files').upload(p,f); url=sb.storage.from('comment-files').getPublicUrl(p).data.publicUrl}
+  await sb.from('posts').insert({username:me,content:t,image_url:url,likes:0,shares:0});
+  txt.value='';img.value='';btn.disabled=false;load();
+};
 
 async function load(){
   const {data}=await sb.from('posts').select('*').order('created_at',{ascending:false}).limit(50);
-  const stories=data.filter(d=>d.type==='story');
-  document.getElementById('stories').innerHTML=`<div onclick="location='story.html'" style="text-align:center"><div style="width:62px;height:62px;border-radius:50%;border:2px dashed #EEC291;display:flex;align-items:center;justify-content:center;font-size:28px;color:#EEC291">+</div><p style="color:#E2D3F4;font-size:11px;margin-top:4px">Buat</p></div>`+stories.map(s=>`<div style="text-align:center"><img src="${s.media_url}" onclick="window.open('${s.media_url}')"><p style="color:#E2D3F4;font-size:11px;margin-top:4px">${s.username}</p></div>`).join('');
-  const posts=data.filter(d=>d.type!=='story');
-  document.getElementById('posts').innerHTML=posts.map(p=>{const t=new Date(p.created_at),l=!!liked[p.id];return`<div id="post-${p.id}" class="chat-box"><div></div><div class="chat-txt"><h4>${p.username}<span style="opacity:.7;font-size:12px">${t.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'})}</span></h4><p>${(p.text||'').replace(/</g,'&lt;')}</p>${p.media_url?`<img src="${p.media_url}" class="post-img">`:''}<div class="action"><span class="like ${l?'liked':''}" data-likes="${p.likes||0}" onclick="like(${p.id},this)">${l?`❤️ <b>${p.likes||0}</b>`:`🤍`}</span><span onclick="location='comment.html?id=${p.id}'">Komentar</span><span onclick="share(${p.id})">Bagikan</span></div></div></div>`}).join('');
+  const feed=document.getElementById('feed'); feed.innerHTML='';
+  for(const p of data){
+    const {count}=await sb.from('comments').select('*',{count:'exact',head:true}).eq('post_id',p.id);
+    const isL=!!liked[p.id];
+    feed.innerHTML+=`<div class="post">
+      <div class="post-head"><div class="avatar"></div><div><div class="name">${p.username}</div><div class="time">${new Date(p.created_at).toLocaleString('id-ID')}</div></div></div>
+      ${p.content?`<div class="post-text">${p.content.replace(/</g,'&lt;')}</div>`:''}
+      ${p.image_url?`<img src="${p.image_url}" class="post-img">`:''}
+      <div class="post-actions">
+        <span onclick="like(${p.id},this)" class="${isL?'liked':''}">${isL?'❤️':'🤍'} <b>${p.likes||0}</b></span>
+        <span onclick="location='comment.html?id=${p.id}'">💬 <b>${count||0}</b> Komentar</span>
+        <span onclick="share(${p.id})">↗️ <b>${p.shares||0}</b> Bagikan</span>
+      </div>
+    </div>`;
+  }
 }
-load();
+async function like(id,el){const l=!!liked[id];let n=parseInt(el.querySelector('b').textContent);n=l?n-1:n+1;liked[id]=!l;localStorage.liked_posts=JSON.stringify(liked);el.querySelector('b').textContent=n;el.classList.toggle('liked',!l);el.innerHTML=`${!l?'❤️':'🤍'} <b>${n}</b>`;await sb.from('posts').update({likes:n}).eq('id',id)}
+async function share(id){const url=location.origin+location.pathname.replace('index.html','')+`post.html?id=${id}`;const {data}=await sb.from('posts').select('shares').eq('id',id).single();await sb.from('posts').update({shares:(data.shares||0)+1}).eq('id',id);if(navigator.share)navigator.share({title:'Puu Chat',url});else{navigator.clipboard.writeText(url);alert('Link disalin')};load()}
+load();setInterval(load,8000);
 </script></body></html>
