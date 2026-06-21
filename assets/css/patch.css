@@ -1,40 +1,51 @@
-/* patch.css - JANGAN EDIT main.css */
+/* patch.css v4 - FIX POSTINGAN DOANG */
 .user::after,.user-main::after{display:none!important}
 
-/* biar feed bisa scroll lagi */
+/* 1. Bikin feed tingginya bener */
 .all-chat{
+  height:auto!important;
+  max-height:calc(100vh - 180px)!important;
   overflow-y:auto!important;
-  overflow-x:hidden!important;
-  max-height:calc(100vh - 110px)!important;
+  padding-bottom:80px!important;
 }
 
-/* gambar full, gak kepotong */
-.chat-box{overflow:visible!important}
-.post-img{
+/* 2. Postingan full width, gak dibatesin 60% */
+.chat-section .chat-box,
+#posts .chat-box{
   width:100%!important;
+  max-width:100%!important;
   height:auto!important;
   max-height:none!important;
-  object-fit:contain!important;
-  border-radius:12px!important;
-  background:#000!important;
-  margin-top:8px!important;
-  display:block!important;
+  overflow:visible!important;
 }
 
-/* action bar like komen share */
-.action{
-  display:flex!important;
-  gap:28px!important;
-  margin-top:10px!important;
-  padding-top:8px!important;
-  border-top:1px solid #4a446b!important;
+/* 3. INI PALING PENTING - bunuh max-height 600px di main.css */
+.chat-section .chat-box img.post-img,
+#posts .chat-box img{
+  width:100%!important;
+  height:auto!important;
+  max-height:none!important; /* <-- lawan yang 600px */
+  object-fit:contain!important;
+  border-radius:12px!important;
+  display:block!important;
+  margin:8px 0!important;
+  background:#000!important;
+  border:none!important;
 }
-.action span{
-  cursor:pointer!important;
-  color:#b8a9d4!important;
-  font-size:15px!important;
-  display:flex!important;
-  align-items:center!important;
-  gap:6px!important;
+
+/* 4. Avatar tetep bulet */
+.chat-box > img:first-child,
+.chat-box > div:first-child{
+  width:40px!important;
+  height:40px!important;
+  border-radius:50%!important;
+  flex-shrink:0!important;
 }
+
+/* 5. Action bar */
+.action{display:flex!important;gap:24px!important;margin-top:10px!important;padding-top:8px!important;border-top:1px solid #4a446b!important}
+.action span{color:#b8a9d4!important;cursor:pointer!important}
 .like.liked{color:#ff6b81!important}
+
+/* 6. Story tetep bulet */
+#stories img{width:62px!important;height:62px!important;border-radius:50%!important;object-fit:cover!important}
