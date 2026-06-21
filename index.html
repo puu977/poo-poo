@@ -1,76 +1,81 @@
-<!DOCTYPE html><html lang="id"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Puu Chat</title>
-<link rel="stylesheet" href="./assets/css/main.css">
+<link rel="stylesheet" href="assets/css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/supabase-client.js"></script>
 <style>
-:root{--bg:#332F54;--card:#3F3B62;--bar:#49426E;--accent:#EEC291}
-body{background:var(--bg);margin:0;color:#E2D3F4;font-family:system-ui}
-.header{position:sticky;top:0;background:var(--bar);padding:14px 16px;display:flex;align-items:center;gap:12px;z-index:10}
-.header h1{margin:0;font-size:20px;color:#E2D3F4}
-.wrap{max-width:700px;margin:0 auto;padding:12px 12px 80px}
-.create{background:var(--card);border-radius:14px;padding:12px;margin-bottom:14px}
-.create textarea{width:100%;background:#2e2a4d;border:none;border-radius:10px;padding:10px;color:#E2D3F4;min-height:60px;resize:none;font-size:15px}
-.create.row{display:flex;gap:8px;margin-top:8px;align-items:center}
-.create button{background:var(--accent);color:var(--bg);border:none;border-radius:10px;padding:8px 14px;font-weight:700}
-.create.icon{font-size:22px;color:#b8a9d4;cursor:pointer}
-.post{background:var(--card);border-radius:14px;padding:0;margin-bottom:14px;overflow:hidden}
-.post-head{display:flex;gap:10px;padding:12px 12px 0;align-items:center}
-.avatar{width:36px;height:36px;border-radius:50%;background:#544F7E}
-.name{font-weight:600;color:var(--accent);font-size:14px}.time{font-size:11px;color:#9386a2}
-.post-text{padding:8px 12px;white-space:pre-wrap;word-break:break-word}
-.post-img{width:100%;max-height:500px;object-fit:contain;background:#000}
-.post-actions{display:flex;justify-content:space-around;border-top:1px solid #544F7E}
-.post-actions span{flex:1;text-align:center;padding:12px 0;color:#b8a9d4;font-size:14px;cursor:pointer}
-.post-actions span b{margin-left:4px;color:#E2D3F4}.liked{color:#ff6b81!important}
+body{margin:0;font-family:sans-serif;background:#2e2151;color:#e8d7ff}
+header{background:#3d2a70;padding:12px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10}
+#menuBtn{font-size:26px;background:none;border:none;color:#e8d7ff;cursor:pointer}
+.container{max-width:600px;margin:16px auto;padding:0 12px}
+.card{background:#3d2a70;border-radius:14px;padding:12px;margin-bottom:16px}
+textarea{width:100%;background:#241841;border:none;color:#fff;padding:10px;border-radius:8px}
+.btn{background:#f5c07a;color:#241841;border:none;padding:8px 16px;border-radius:20px;font-weight:700;cursor:pointer;margin-top:8px}
+#sidebar{position:fixed;left:-250px;top:0;width:230px;height:100%;background:#1c113a;padding:20px;transition:.3s;z-index:99}
+#sidebar.open{left:0}
+#sidebar a{color:#e8d7ff;text-decoration:none;display:block;padding:10px 0}
+#overlay{position:fixed;inset:0;background:#0007;display:none;z-index:98}
+#overlay.show{display:block}
+.actions{display:flex;justify-content:space-around;border-top:1px solid #241841;margin-top:8px;padding-top:8px}
+.actions button{background:none;border:none;color:#e8d7ff;cursor:pointer}
+img.post-img{width:100%;border-radius:10px;margin-top:8px}
 </style>
-</head><body>
-<div class="header"><span style="font-size:24px">☰</span><h1>Puu Chat</h1></div>
-<div class="wrap">
-  <div class="create">
-    <textarea id="txt" placeholder="Apa yang kamu pikirkan?"></textarea>
-    <div class="row">
-      <span class="icon" onclick="img.click()">🖼️</span><input type="file" id="img" hidden accept="image/*">
-      <span style="flex:1"></span>
-      <button id="postBtn">Posting</button>
-    </div>
-  </div>
-  <div id="feed"></div>
+</head>
+<body>
+<header><button id="menuBtn">☰</button><h1 style="margin:0;font-size:20px">Puu Chat</h1></header>
+<div id="sidebar"><a href="index.html">Beranda</a><a href="#">Profil</a></div>
+<div id="overlay"></div>
+
+<div class="container">
+ <div class="card">
+  <textarea id="content" rows="3" placeholder="Tulis status..."></textarea>
+  <input type="file" id="img" accept="image/*" hidden>
+  <button class="btn" onclick="img.click()">🖼️</button>
+  <button class="btn" onclick="posting()">Posting</button>
+ </div>
+ <div id="feed"></div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="./assets/js/supabase-client.js"></script>
 <script>
-if(!localStorage.puu_name)localStorage.puu_name='Anonim'+Math.floor(Math.random()*900+100);
-const me=localStorage.puu_name; const liked=JSON.parse(localStorage.liked_posts||'{}');
-const txt=document.getElementById('txt'), img=document.getElementById('img'), btn=document.getElementById('postBtn');
+// PENTING: di supabase-client.js lu harus export variabel bernama 'supa'
+// contoh isi supabase-client.js:
+// const supa = supabase.createClient('URL','KEY');
 
-btn.onclick=async()=>{
-  const t=txt.value.trim(), f=img.files[0]; if(!t&&!f)return;
-  btn.disabled=true; let url=null;
-  if(f){const p=`posts/${Date.now()}_${f.name}`; await sb.storage.from('comment-files').upload(p,f); url=sb.storage.from('comment-files').getPublicUrl(p).data.publicUrl}
-  await sb.from('posts').insert({username:me,content:t,image_url:url,likes:0,shares:0});
-  txt.value='';img.value='';btn.disabled=false;load();
-};
+const menuBtn=document.getElementById('menuBtn'),sidebar=document.getElementById('sidebar'),overlay=document.getElementById('overlay');
+menuBtn.onclick=()=>{sidebar.classList.toggle('open');overlay.classList.toggle('show')};
+overlay.onclick=()=>{sidebar.classList.remove('open');overlay.classList.remove('show')};
 
 async function load(){
-  const {data}=await sb.from('posts').select('*').order('created_at',{ascending:false}).limit(50);
-  const feed=document.getElementById('feed'); feed.innerHTML='';
-  for(const p of data){
-    const {count}=await sb.from('comments').select('*',{count:'exact',head:true}).eq('post_id',p.id);
-    const isL=!!liked[p.id];
-    feed.innerHTML+=`<div class="post">
-      <div class="post-head"><div class="avatar"></div><div><div class="name">${p.username}</div><div class="time">${new Date(p.created_at).toLocaleString('id-ID')}</div></div></div>
-      ${p.content?`<div class="post-text">${p.content.replace(/</g,'&lt;')}</div>`:''}
-      ${p.image_url?`<img src="${p.image_url}" class="post-img">`:''}
-      <div class="post-actions">
-        <span onclick="like(${p.id},this)" class="${isL?'liked':''}">${isL?'❤️':'🤍'} <b>${p.likes||0}</b></span>
-        <span onclick="location='comment.html?id=${p.id}'">💬 <b>${count||0}</b> Komentar</span>
-        <span onclick="share(${p.id})">↗️ <b>${p.shares||0}</b> Bagikan</span>
-      </div>
-    </div>`;
-  }
+ const {data:posts}=await supa.from('posts').select('*').order('created_at',{ascending:false});
+ const feed=document.getElementById('feed');feed.innerHTML='';
+ for(const p of posts){
+  const {count}=await supa.from('comments').select('*',{count:'exact',head:true}).eq('post_id',p.id);
+  feed.innerHTML+=`<div class="card">
+   <div><b>${p.username||'Anonim'}</b> <small style="opacity:.6">${new Date(p.created_at).toLocaleString('id-ID')}</small></div>
+   ${p.content?`<p>${p.content}</p>`:''}
+   ${p.image_url?`<img class="post-img" src="${p.image_url}">`:''}
+   <div class="actions">
+    <button onclick="like(${p.id},${p.likes||0})">❤️ ${p.likes||0}</button>
+    <button onclick="location='comment.html?id=${p.id}'">💬 ${count||0}</button>
+    <button onclick="share(${p.id},${p.shares||0})">↗️ ${p.shares||0}</button>
+   </div>
+  </div>`;
+ }
 }
-async function like(id,el){const l=!!liked[id];let n=parseInt(el.querySelector('b').textContent);n=l?n-1:n+1;liked[id]=!l;localStorage.liked_posts=JSON.stringify(liked);el.querySelector('b').textContent=n;el.classList.toggle('liked',!l);el.innerHTML=`${!l?'❤️':'🤍'} <b>${n}</b>`;await sb.from('posts').update({likes:n}).eq('id',id)}
-async function share(id){const url=location.origin+location.pathname.replace('index.html','')+`post.html?id=${id}`;const {data}=await sb.from('posts').select('shares').eq('id',id).single();await sb.from('posts').update({shares:(data.shares||0)+1}).eq('id',id);if(navigator.share)navigator.share({title:'Puu Chat',url});else{navigator.clipboard.writeText(url);alert('Link disalin')};load()}
-load();setInterval(load,8000);
-</script></body></html>
+async function posting(){
+ const content=document.getElementById('content').value.trim();
+ const file=document.getElementById('img').files[0];let image_url=null;
+ if(file){const n=Date.now()+'-'+file.name;await supa.storage.from('posts').upload(n,file);image_url=supa.storage.from('posts').getPublicUrl(n).data.publicUrl;}
+ if(!content&&!image_url)return alert('Isi dulu');
+ await supa.from('posts').insert({username:'Anonim',content,image_url});
+ content.value='';img.value='';load();
+}
+async function like(id,c){await supa.from('posts').update({likes:c+1}).eq('id',id);load();}
+async function share(id,c){await supa.from('posts').update({shares:c+1}).eq('id',id);load();}
+load();
+</script>
+</body>
+</html>
