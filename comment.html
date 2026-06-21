@@ -1,38 +1,50 @@
 <!DOCTYPE html><html lang="id"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Komentar</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Komentar - PooPoo</title>
 <link rel="stylesheet" href="./assets/css/main.css">
 <style>
-body{background:#332F54}
-.header{position:sticky;top:0;background:#49426E;padding:14px 16px;display:flex;align-items:center;gap:12px}
-.header h3{color:#E2D3F4;margin:0}
-.wrap{padding:12px 12px 90px;max-width:700px;margin:0 auto}
-.comment{background:#3F3B62;border-radius:12px;padding:12px;margin-bottom:10px}
-.name{color:#EEC291;font-weight:600}.time{color:#9386a2;font-size:11px;float:right}
-.text{color:#DDD9D0;margin:6px 0;white-space:pre-wrap}
-.act{display:flex;gap:14px;margin-top:6px}.act span{color:#b8a9d4;font-size:13px;cursor:pointer}
-.reply-wrap{margin-left:18px;border-left:2px solid #4a446b;padding-left:10px;margin-top:8px}
-.file{display:block;margin-top:6px}.file img{max-width:200px;border-radius:8px}.file a{color:#EEC291;font-size:13px}
-.input-bar{position:fixed;bottom:0;left:0;right:0;background:#49426E;padding:8px;display:flex;align-items:center;gap:6px}
-.input-wrap{flex:1;background:#3F3B62;border-radius:24px;display:flex;align-items:center;padding:0 8px}
-.input-wrap input{flex:1;background:transparent;border:none;padding:12px 6px;color:#E2D3F4;font-size:14px;outline:none}
-.icon{font-size:22px;padding:6px;color:#b8a9d4;cursor:pointer}
-.send{background:#EEC291;color:#332F54;border:none;border-radius:20px;padding:10px 18px;font-weight:700}
+:root{--bg:#332F54;--card:#3F3B62;--bar:#49426E;--accent:#EEC291;--text:#E2D3F4}
+body{background:var(--bg);margin:0;font-family:system-ui}
+.header{position:sticky;top:0;background:var(--bar);padding:14px 16px;display:flex;align-items:center;gap:12px;z-index:10}
+.header a{color:var(--text);text-decoration:none;font-size:20px}.header h3{color:var(--text);margin:0;font-size:18px}
+.wrap{padding:12px 12px 110px;max-width:700px;margin:0 auto}
+.comment{background:var(--card);border-radius:14px;padding:12px;margin-bottom:10px}
+.top{display:flex;justify-content:space-between}
+.name{color:var(--accent);font-weight:600;font-size:14px}.time{color:#9386a2;font-size:11px}
+.text{color:#DDD9D0;margin:6px 0;white-space:pre-wrap;word-break:break-word;font-size:14px}
+.act{display:flex;gap:14px;margin-top:6px;flex-wrap:wrap}.act span{color:#b8a9d4;font-size:13px;cursor:pointer;user-select:none}
+.act span:hover{opacity:.8}
+.reply-wrap{margin-left:16px;border-left:2px solid #544F7E;padding-left:10px;margin-top:8px}
+.file{margin-top:8px;display:block}.file img{max-width:220px;max-height:220px;border-radius:10px;display:block}
+.file a{color:var(--accent);font-size:13px;text-decoration:none;background:#2e2a4d;padding:6px 10px;border-radius:8px;display:inline-block}
+.edited{color:#9386a2;font-size:11px;margin-left:6px}
+
+/* INPUT BAR - FIX KEPOTONG */
+.input-bar{position:fixed;bottom:0;left:0;right:0;background:var(--bar);padding:8px 8px calc(8px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:6px;z-index:100;box-shadow:0 -2px 10px rgba(0,0,0,.2)}
+.input-wrap{flex:1;min-width:0;background:var(--card);border-radius:24px;display:flex;align-items:center;padding:0 4px}
+.input-wrap input{flex:1;min-width:0;background:transparent;border:none;padding:12px 6px;color:var(--text);font-size:15px;outline:none}
+.icon{font-size:22px;padding:6px 4px;color:#b8a9d4;cursor:pointer;flex-shrink:0}
+.send{background:var(--accent);color:var(--bg);border:none;border-radius:20px;padding:10px 16px;font-weight:700;flex-shrink:0;white-space:nowrap;font-size:14px}
 .send:disabled{opacity:.5}
-.sticker{position:fixed;bottom:60px;left:10px;right:10px;background:#3F3B62;border-radius:12px;padding:10px;display:none;grid-template-columns:repeat(8,1fr);gap:8px;max-height:180px;overflow:auto}
-.sticker span{font-size:24px;text-align:center;cursor:pointer}
+
+/* STICKER */
+.sticker{position:fixed;bottom:70px;left:8px;right:8px;background:var(--card);border-radius:14px;padding:10px;display:none;grid-template-columns:repeat(8,1fr);gap:8px;max-height:200px;overflow:auto;z-index:99;box-shadow:0 -4px 20px rgba(0,0,0,.3)}
+.sticker span{font-size:26px;text-align:center;cursor:pointer;padding:4px}
+.preview{position:fixed;bottom:70px;left:8px;right:8px;background:var(--card);padding:8px 12px;border-radius:12px;color:var(--text);font-size:13px;display:none;align-items:center;justify-content:space-between}
 </style>
 </head><body>
-<div class="header"><a href="index.html" style="color:#E2D3F4">←</a><h3>Komentar</h3></div>
+<div class="header"><a href="index.html">←</a><h3>Komentar</h3></div>
 <div class="wrap" id="list"></div>
 
 <div class="sticker" id="stik"></div>
+<div class="preview" id="prev"><span id="prevtxt"></span><span onclick="clearFile()" style="color:#ff7b7b;cursor:pointer">✕</span></div>
+
 <div class="input-bar">
   <div class="input-wrap">
     <span class="icon" onclick="toggleStik()">😊</span>
-    <input id="txt" placeholder="Tulis komentar...">
-    <span class="icon" onclick="document.getElementById('file').click()">📎</span>
-    <input type="file" id="file" hidden accept="image/*,.zip,.rar,.pdf,.txt,.mp4">
+    <input id="txt" placeholder="Tulis komentar..." autocomplete="off">
+    <span class="icon" onclick="file.click()">📎</span>
+    <input type="file" id="file" hidden accept="image/*,video/*,.zip,.rar,.pdf,.txt,.doc,.docx">
   </div>
   <button class="send" id="send">Kirim</button>
 </div>
@@ -40,39 +52,45 @@ body{background:#332F54}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./assets/js/supabase-client.js"></script>
 <script>
-const params=new URLSearchParams(location.search);const postId=params.get('id');
-if(!postId)location.href='index.html';
-if(!localStorage.puu_name)localStorage.puu_name='Anonim'+Math.floor(Math.random()*999);
-const me=localStorage.puu_name;let replyTo=null;const liked=JSON.parse(localStorage.liked_c||'{}');
-const stik=['😂','😭','❤️','🔥','👍','🙏','😍','🥲','🤣','😎','💀','🗿','😁','🥳','😅','🤔','🙄','😡','👀','✨','💯','🙌','🤝','🎉','😴','🤤','🤡','😇','🥺','😱','👌','💔'];
-document.getElementById('stik').innerHTML=stik.map(s=>`<span onclick="addStik('${s}')">${s}</span>`).join('');
-function toggleStik(){const e=document.getElementById('stik');e.style.display=e.style.display==='grid'?'none':'grid'}
-function addStik(s){document.getElementById('txt').value+=s;toggleStik()}
+const postId=new URLSearchParams(location.search).get('id'); if(!postId)location.href='index.html';
+if(!localStorage.puu_name)localStorage.puu_name='Anonim'+Math.floor(Math.random()*900+100);
+const me=localStorage.puu_name; let replyTo=null; const liked=JSON.parse(localStorage.liked_c||'{}');
+const file=document.getElementById('file'), prev=document.getElementById('prev'), prevtxt=document.getElementById('prevtxt');
+
+const emojis=['😂','😭','❤️','🔥','👍','🙏','😍','🥲','🤣','😎','💀','🗿','😁','🥳','😅','🤔','🙄','😡','👀','✨','💯','🙌','🤝','🎉','😴','🤤','🤡','😇','🥺','😱','👌','💔','😋','😬','🤭','🫶','🙃','🥹','😑','😮'];
+document.getElementById('stik').innerHTML=emojis.map(e=>`<span onclick="addEmo('${e}')">${e}</span>`).join('');
+function toggleStik(){const s=document.getElementById('stik');s.style.display=s.style.display==='grid'?'none':'grid';prev.style.display='none'}
+function addEmo(e){txt.value+=e;toggleStik();txt.focus()}
+file.onchange=()=>{if(file.files[0]){prevtxt.textContent='📦 '+file.files[0].name;prev.style.display='flex';document.getElementById('stik').style.display='none'}}
+function clearFile(){file.value='';prev.style.display='none'}
 
 async function load(){
-  const {data}=await sb.from('comments').select('*').eq('post_id',postId).order('created_at',{ascending:true});
-  document.getElementById('list').innerHTML=build(data,null).join('')||'<p style="color:#9386a2;text-align:center;margin-top:40px">Belum ada komentar</p>';
+  const {data,error}=await sb.from('comments').select('*').eq('post_id',postId).order('created_at',{ascending:true});
+  if(error){console.error(error);return}
+  document.getElementById('list').innerHTML=build(data,null).join('')||`<p style="color:#9386a2;text-align:center;margin-top:40px">Jadi yang pertama komen</p>`;
 }
 function build(all,parent){
   return all.filter(c=>c.parent_id===parent).map(c=>{
     const t=new Date(c.created_at).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
-    const isL=!!liked[c.id];const mine=c.username===me;const kids=build(all,c.id);
-    let file='';if(c.file_url){file=c.file_type?.startsWith('image')?`<a class="file" href="${c.file_url}" target="_blank"><img src="${c.file_url}"></a>`:`<a class="file" href="${c.file_url}" target="_blank">📦 ${c.file_type||'file'}</a>`}
-    return `<div class="comment"><div><span class="name">@${c.username}</span><span class="time">${t}${c.edited?' • edited':''}</span></div><div class="text">${(c.text||'').replace(/</g,'&lt;')}</div>${file}<div class="act"><span onclick="likeC(${c.id},this)" data-l="${c.likes||0}" class="${isL?'':' '}" style="color:${isL?'#ff6b81':'#b8a9d4'}">${isL?'❤️':'🤍'} ${c.likes||0}</span><span onclick="balas(${c.id},'${c.username}')">↩️ Balas</span>${mine?`<span onclick="editC(${c.id})">✏️ Edit</span><span onclick="hapusC(${c.id})" style="color:#ff7b7b">🗑️ Hapus</span>`:''}</div><div id="e${c.id}"></div>${kids.length?`<div class="reply-wrap">${kids.join('')}</div>`:''}</div>`;
+    const isL=!!liked[c.id]; const mine=c.username===me; const kids=build(all,c.id);
+    let f=''; if(c.file_url){f=c.file_type?.startsWith('image')?`<a class="file" href="${c.file_url}" target="_blank"><img src="${c.file_url}" loading="lazy"></a>`:c.file_type?.startsWith('video')?`<a class="file" href="${c.file_url}" target="_blank"><video src="${c.file_url}" style="max-width:220px;border-radius:10px" controls></video></a>`:`<a class="file" href="${c.file_url}" target="_blank">📎 ${c.file_url.split('/').pop()}</a>`}
+    return `<div class="comment"><div class="top"><span class="name">@${c.username}${c.edited?'<span class="edited">edited</span>':''}</span><span class="time">${t}</span></div><div class="text">${(c.text||'').replace(/</g,'&lt;')}</div>${f}<div class="act"><span onclick="likeC(${c.id},this)" data-l="${c.likes||0}" style="color:${isL?'#ff6b81':'#b8a9d4'}">${isL?'❤️':'🤍'} ${c.likes||0}</span><span onclick="balas(${c.id},'${c.username}')">↩️ Balas</span>${mine?`<span onclick="editC(${c.id},'${(c.text||'').replace(/'/g,"\\'")}')">✏️ Edit</span><span onclick="hapusC(${c.id})" style="color:#ff7b7b">🗑️ Hapus</span>`:''}</div><div id="e${c.id}"></div>${kids.length?`<div class="reply-wrap">${kids.join('')}</div>`:''}</div>`;
   });
 }
 async function likeC(id,el){const l=!!liked[id];let n=+el.dataset.l||0;n=l?n-1:n+1;liked[id]=!l;localStorage.liked_c=JSON.stringify(liked);el.dataset.l=n;el.innerHTML=`${!l?'❤️':'🤍'} ${n}`;el.style.color=!l?'#ff6b81':'#b8a9d4';await sb.from('comments').update({likes:n}).eq('id',id)}
-function balas(id,name){replyTo=id;document.getElementById('txt').placeholder=`Balas @${name}...`;document.getElementById('txt').focus()}
-async function editC(id){const t=prompt('Edit komentar:');if(!t)return;await sb.from('comments').update({text:t,edited:true}).eq('id',id);load()}
-async function hapusC(id){if(!confirm('Hapus?'))return;await sb.from('comments').delete().eq('id',id);load()}
+function balas(id,name){replyTo=id;txt.placeholder=`Balas @${name}...`;txt.focus();window.scrollTo(0,document.body.scrollHeight)}
+async function editC(id,old){const n=prompt('Edit komentar:',old);if(n===null)return;await sb.from('comments').update({text:n,edited:true}).eq('id',id);load()}
+async function hapusC(id){if(!confirm('Hapus komentar ini?'))return;await sb.from('comments').delete().eq('id',id);load()}
 
-document.getElementById('send').onclick=async()=>{
-  const btn=document.getElementById('send'),inp=document.getElementById('txt'),f=document.getElementById('file').files[0];
-  const text=inp.value.trim();if(!text &&!f)return;
-  btn.disabled=true;btn.textContent='...';let url=null,type=null;
-  if(f){const path=`${Date.now()}_${f.name}`;const up=await sb.storage.from('comment-files').upload(path,f);if(up.error){alert(up.error.message);btn.disabled=false;btn.textContent='Kirim';return}url=sb.storage.from('comment-files').getPublicUrl(path).data.publicUrl;type=f.type||'file'}
-  const {error}=await sb.from('comments').insert({post_id:postId,parent_id:replyTo,text,username:me,file_url:url,file_type:type});
-  btn.disabled=false;btn.textContent='Kirim';if(error){alert(error.message)}else{inp.value='';document.getElementById('file').value='';replyTo=null;inp.placeholder='Tulis komentar...';load()}
+const txt=document.getElementById('txt'), send=document.getElementById('send');
+send.onclick=async()=>{
+  const text=txt.value.trim(), f=file.files[0]; if(!text&&!f)return;
+  send.disabled=true;send.textContent='...'; let url=null,type=null;
+  if(f){const p=`${me}/${Date.now()}_${f.name}`; const up=await sb.storage.from('comment-files').upload(p,f,{upsert:false}); if(up.error){alert('Upload gagal: '+up.error.message);send.disabled=false;send.textContent='Kirim';return} url=sb.storage.from('comment-files').getPublicUrl(p).data.publicUrl; type=f.type}
+  const {error}=await sb.from('comments').insert({post_id:postId,parent_id:replyTo,text:text,username:me,file_url:url,file_type:type});
+  send.disabled=false;send.textContent='Kirim'; if(error)alert(error.message); else{txt.value='';clearFile();replyTo=null;txt.placeholder='Tulis komentar...';load()}
 };
-load();setInterval(load,4000);
+txt.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send.click()}});
+
+load(); setInterval(load,5000);
 </script></body></html>
