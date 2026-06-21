@@ -1,21 +1,19 @@
 <!DOCTYPE html><html lang="id"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Puu puu</title>
+<title>Puu Puu</title>
 <link rel="stylesheet" href="./assets/css/main.css">
 <link rel="stylesheet" href="./assets/css/patch.css">
 </head><body>
 <div class="main-container">
-  <div class="navbar"><div class="nav-left"><button class="toggle-btn" id="menu">☰</button><h2 style="color:#E2D3F4;margin:0">Puu Chat</h2></div><div class="nav-right"><div class="user" id="av"></div></div></div>
+  <div class="navbar"><div class="nav-left"><button class="toggle-btn" id="menu">☰</button><h2 style="color:#E2D3F4;margin:0">Puu Chat</h2></div><div class="nav-right"><div class="user"></div></div></div>
   <div class="bottom-sec">
-    <div class="side-menu" id="side">
-      <ul>
-        <li><a href="index.html" class="active">Feed</a></li>
-        <li><a href="chat.html">Chat</a></li>
-        <li><a href="grup.html">Grup</a></li>
-        <li><a href="server.html">Server</a></li>
-        <li><a href="setting.html">Setting</a></li>
-      </ul>
-    </div>
+    <div class="side-menu" id="side"><ul>
+      <li><a href="index.html" class="active">Feed</a></li>
+      <li><a href="chat.html">Chat</a></li>
+      <li><a href="grup.html">Grup</a></li>
+      <li><a href="server.html">Server</a></li>
+      <li><a href="setting.html">Setting</a></li>
+    </ul></div>
     <div class="chat-section"><div class="all-chat" style="padding-top:15px">
       <div id="stories" style="display:flex;gap:12px;overflow-x:auto;padding:0 12px 15px"></div>
       <div class="chat-box" onclick="location='post.html'" style="cursor:pointer;background:#3F3B62;margin:0 12px 15px"><div style="width:40px;height:40px;border-radius:50%;background:#49426E"></div><div class="chat-txt"><p style="color:#9386a2">udah, gak usah dipikirin, buat status aja😂</p></div></div>
@@ -40,30 +38,24 @@ async function toggleLike(id,el){
   el.innerHTML=!isLiked?`❤️ <b>${current}</b>`:`🤍`;
   await sb.from('posts').update({likes:current}).eq('id',id);
 }
-function sharePost(id){const url=location.origin+location.pathname+'#post-'+id;if(navigator.share)?navigator.share({title:'Puu Chat',url}):(navigator.clipboard.writeText(url),alert('Link disalin!'))}
-
+function sharePost(id){
+  const url=location.origin+location.pathname+'#post-'+id;
+  if(navigator.share){navigator.share({title:'Puu Chat',url})}
+  else{navigator.clipboard.writeText(url);alert('Link disalin!')}
+}
 async function load(){
-  const now=new Date().toISOString();
-  const {data}=await sb.from('posts').select('*').or(`expires_at.is.null,expires_at.gt.${now}`).order('created_at',{ascending:false}).limit(100);
-  const stories=data.filter(d=>d.type==='story');
-  document.getElementById('stories').innerHTML=`<div onclick="location='story.html'" style="text-align:center;cursor:pointer;flex-shrink:0"><div style="width:62px;height:62px;border-radius:50%;border:2px dashed #EEC291;display:flex;align-items:center;justify-content:center;font-size:28px;color:#EEC291">+</div><p style="color:#E2D3F4;font-size:11px;margin:5px 0 0">Buat</p></div>`+stories.map(s=>`<div style="text-align:center;flex-shrink:0" onclick="window.open('${s.media_url}','_blank')"><img src="${s.media_url}" style="width:62px;height:62px;border-radius:50%;border:3px solid #EEC291;object-fit:cover"><p style="color:#E2D3F4;font-size:11px;margin:5px 0 0">${s.username}</p></div>`).join('');
-  const posts=data.filter(d=>d.type!=='story');
-  document.getElementById('posts').innerHTML=posts.map(p=>{
-    const t=new Date(p.created_at);const isLiked=!!liked[p.id];
-    return `<div id="post-${p.id}" class="chat-box" style="align-items:flex-start;margin-bottom:14px;background:#3F3B62">
-      <div style="width:40px;height:40px;border-radius:50%;background:#49426E;flex-shrink:0"></div>
-      <div class="chat-txt" style="width:100%">
-        <h4 style="display:flex;justify-content:space-between">${p.username}<span style="opacity:.7;font-size:12px">${t.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'})}</span></h4>
-        <p style="white-space:pre-wrap;word-break:break-word">${(p.text||'').replace(/</g,'&lt;')}</p>
-        ${p.media_url?`<img src="${p.media_url}" class="post-img" ondblclick="toggleLike(${p.id},this.parentNode.querySelector('.like'))">`:''}
-        <div class="action">
-          <span class="like ${isLiked?'liked':''}" data-likes="${p.likes||0}" onclick="toggleLike(${p.id},this)">${isLiked?`❤️ <b>${p.likes||0}</b>`:`🤍`}</span>
-          <span onclick="location='comment.html?id=${p.id}'">Komentar</span>
-          <span onclick="sharePost(${p.id})">Bagikan</span>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
+  try{
+    const now=new Date().toISOString();
+    const {data,error}=await sb.from('posts').select('*').or(`expires_at.is.null,expires_at.gt.${now}`).order('created_at',{ascending:false}).limit(100);
+    if(error){console.log(error);return}
+    const stories=data.filter(d=>d.type==='story');
+    document.getElementById('stories').innerHTML=`<div onclick="location='story.html'" style="text-align:center;cursor:pointer;flex-shrink:0"><div style="width:62px;height:62px;border-radius:50%;border:2px dashed #EEC291;display:flex;align-items:center;justify-content:center;font-size:28px;color:#EEC291">+</div><p style="color:#E2D3F4;font-size:11px;margin:5px 0 0">Buat</p></div>`+stories.map(s=>`<div style="text-align:center;flex-shrink:0" onclick="window.open('${s.media_url}','_blank')"><img src="${s.media_url}" style="width:62px;height:62px;border-radius:50%;border:3px solid #EEC291;object-fit:cover"><p style="color:#E2D3F4;font-size:11px;margin:5px 0 0">${s.username}</p></div>`).join('');
+    const posts=data.filter(d=>d.type!=='story');
+    document.getElementById('posts').innerHTML=posts.map(p=>{
+      const t=new Date(p.created_at);const isLiked=!!liked[p.id];
+      return `<div id="post-${p.id}" class="chat-box" style="align-items:flex-start;margin-bottom:14px;background:#3F3B62"><div style="width:40px;height:40px;border-radius:50%;background:#49426E;flex-shrink:0"></div><div class="chat-txt" style="width:100%"><h4 style="display:flex;justify-content:space-between">${p.username}<span style="opacity:.7;font-size:12px">${t.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'})}</span></h4><p style="white-space:pre-wrap;word-break:break-word">${(p.text||'').replace(/</g,'&lt;')}</p>${p.media_url?`<img src="${p.media_url}" class="post-img" ondblclick="toggleLike(${p.id},this.parentNode.querySelector('.like'))">`:''}<div class="action"><span class="like ${isLiked?'liked':''}" data-likes="${p.likes||0}" onclick="toggleLike(${p.id},this)">${isLiked?`❤️ <b>${p.likes||0}</b>`:`🤍`}</span><span onclick="location='comment.html?id=${p.id}'">💬 Komentar</span><span onclick="sharePost(${p.id})">↗️ Bagikan</span></div></div></div>`;
+    }).join('');
+  }catch(e){console.log(e)}
 }
 load();setInterval(load,10000);
 </script></body></html>
