@@ -2,84 +2,64 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Puu Chat</title>
 <link rel="stylesheet" href="./assets/css/main.css">
-<style>.user::after,.user-main::after{display:none!important}</style>
-</head><body>
+<style>
+.user::after,.user-main::after{display:none!important}
+.post-img{width:100%;height:auto;max-height:none!important;border-radius:12px;background:#000;margin-top:8px;display:block}
+.action{display:flex;gap:24px;margin-top:10px;padding-top:8px;border-top:1px solid #4a446b}
+.action span{cursor:pointer;color:#b8a9d4;font-size:14px;display:flex;align-items:center;gap:6px}
+.action.liked{color:#ff6b81}
+</style></head><body>
 <div class="main-container">
-  <div class="navbar">
-    <div class="nav-left">
-      <button class="toggle-btn" id="menu"><img src="data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjRTJEM0Y0IiB2aWV3Qm94PSIwIDAgMjQgMjQiPjxwYXRoIGQ9Ik0zIDZoMTh2MkgzVjZ6bTAgNWgxOHYySDN2LTJ6bTAgNWgxOHYySDN2LTJ6Ii8+PC9zdmc+"></button>
-      <h2 style="color:#E2D3F4;margin:0;font-weight:600">Puu Chat</h2>
-    </div>
-    <div class="nav-right"><div class="search-bar"><input placeholder="Cari..."></div><div class="user" id="av"></div></div>
-  </div>
+  <div class="navbar"><div class="nav-left"><button class="toggle-btn" id="menu">☰</button><h2 style="color:#E2D3F4;margin:0">Puu Chat</h2></div><div class="nav-right"><div class="user" id="av"></div></div></div>
   <div class="bottom-sec">
-    <div class="side-menu" id="side"><div class="search-bar"><input placeholder="Cari..."></div>
-      <ul><li><a href="index.html" class="active">Home</a></li><li><a href="chat.html">Chat</a></li><li><a href="groups.html">Groups</a></li><li><a href="settings.html">Settings</a></li></ul>
-    </div>
-    <div class="chat-section">
-      <div class="chat-header"><div class="user-header"><div class="user-main" id="av2"></div><h2>Home</h2></div></div>
-      <div class="all-chat" style="padding-top:15px">
-        <!-- STORIES -->
-        <div id="stories" style="display:flex;gap:12px;overflow-x:auto;padding:0 12px 15px"></div>
-        
-        <!-- BUAT POST -->
-        <div class="chat-box" onclick="location='post.html'" style="cursor:pointer;background:#3F3B62;margin:0 12px 15px">
-          <div id="myAva" style="width:40px;height:40px;border-radius:50%;background:#49426E;flex-shrink:0"></div>
-          <div class="chat-txt"><p style="color:#9386a2">udah, gak usah dipikirin, buat status aja😂</p></div>
-        </div>
-        
-        <!-- POSTS -->
-        <div id="posts" style="padding:0 12px"></div>
-      </div>
-    </div>
+    <div class="side-menu" id="side"><ul><li><a href="index.html" class="active">Home</a></li><li><a href="chat.html">Chat</a></li></ul></div>
+    <div class="chat-section"><div class="all-chat" style="padding-top:15px">
+      <div id="stories" style="display:flex;gap:12px;overflow-x:auto;padding:0 12px 15px"></div>
+      <div class="chat-box" onclick="location='post.html'" style="cursor:pointer;background:#3F3B62;margin:0 12px 15px"><div id="myAva" style="width:40px;height:40px;border-radius:50%;background:#49426E"></div><div class="chat-txt"><p style="color:#9386a2">udah, gak usah dipikirin, buat status aja😂</p></div></div>
+      <div id="posts" style="padding:0 12px 80px"></div>
+    </div></div>
   </div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./assets/js/supabase-client.js"></script>
 <script>
-// user setup
-if(!localStorage.puu_id) localStorage.puu_id='u_'+Math.random().toString(36).slice(2,9);
-if(!localStorage.puu_name) localStorage.puu_name='Anonim';
-const av = document.createElement('div'); av.style.cssText='width:100%;height:100%;border-radius:50%;background:#544F7E';
-if(localStorage.puu_avatar) av.style.background=`url(${localStorage.puu_avatar}) center/cover`;
-document.getElementById('av').appendChild(av.cloneNode(true));
-document.getElementById('av2').appendChild(av.cloneNode(true));
-document.getElementById('myAva').style.background = av.style.background;
+if(!localStorage.puu_id)localStorage.puu_id='u_'+Math.random().toString(36).slice(2,9);
+if(!localStorage.puu_name)localStorage.puu_name='Anonim';
+const myId=localStorage.puu_id; const liked=JSON.parse(localStorage.liked||'{}');
 document.getElementById('menu').onclick=()=>document.getElementById('side').classList.toggle('active');
 
+async function toggleLike(id,el){
+  const isLiked = liked[id];
+  const newCount = (parseInt(el.dataset.likes)||0) + (isLiked?-1:1);
+  await sb.from('posts').update({likes:newCount}).eq('id',id);
+  liked[id]=!isLiked; localStorage.liked=JSON.stringify(liked);
+  el.classList.toggle('liked',!isLiked); el.querySelector('b').textContent=newCount;
+}
+function sharePost(id,text){ const url=location.origin+location.pathname+'#post-'+id; if(navigator.share){navigator.share({title:'Puu Chat',text,url})}else{ navigator.clipboard.writeText(url); alert('Link disalin!')} }
+
 async function load(){
-  const now = new Date().toISOString();
-  const {data,error} = await sb.from('posts').select('*').or(`expires_at.is.null,expires_at.gt.${now}`).order('created_at',{ascending:false}).limit(100);
-  if(error){console.log(error);return}
-  
-  // STORIES (type='story')
-  const stories = data.filter(d=>d.type==='story');
-  document.getElementById('stories').innerHTML = `
-    <div onclick="location='story.html'" style="text-align:center;cursor:pointer;flex-shrink:0">
-      <div style="width:62px;height:62px;border-radius:50%;background:#332F54;border:2px dashed #EEC291;display:flex;align-items:center;justify-content:center;color:#EEC291;font-size:28px">+</div>
-      <p style="color:#E2D3F4;font-size:11px;margin:5px 0 0">Buat</p>
-    </div>` + stories.map(s=>`
-    <div style="text-align:center;flex-shrink:0" onclick="window.open('${s.media_url}','_blank')">
-      <img src="${s.media_url}" style="width:62px;height:62px;border-radius:50%;border:3px solid #EEC291;object-fit:cover;background:#000">
-      <p style="color:#E2D3F4;font-size:11px;margin:5px 0 0;max-width:65px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.username}</p>
-    </div>`).join('');
-  
-  // POSTS (type='post' atau null)
-  const posts = data.filter(d=>d.type!=='story');
-  document.getElementById('posts').innerHTML = posts.length ? posts.map(p=>{
-    const t = new Date(p.created_at);
-    return `<div class="chat-box" style="align-items:flex-start;margin-bottom:12px;background:#3F3B62">
+  const now=new Date().toISOString();
+  const {data}=await sb.from('posts').select('*').or(`expires_at.is.null,expires_at.gt.${now}`).order('created_at',{ascending:false}).limit(100);
+  const stories=data.filter(d=>d.type==='story');
+  document.getElementById('stories').innerHTML=`<div onclick="location='story.html'" style="text-align:center;cursor:pointer;flex-shrink:0"><div style="width:62px;height:62px;border-radius:50%;border:2px dashed #EEC291;display:flex;align-items:center;justify-content:center;font-size:28px;color:#EEC291">+</div><p style="color:#E2D3F4;font-size:11px;margin:5px 0 0">Buat</p></div>`+stories.map(s=>`<div style="text-align:center;flex-shrink:0" onclick="window.open('${s.media_url}','_blank')"><img src="${s.media_url}" style="width:62px;height:62px;border-radius:50%;border:3px solid #EEC291;object-fit:cover"><p style="color:#E2D3F4;font-size:11px;margin:5px 0 0">${s.username}</p></div>`).join('');
+
+  const posts=data.filter(d=>d.type!=='story');
+  document.getElementById('posts').innerHTML=posts.map(p=>{
+    const t=new Date(p.created_at); const isLiked=liked[p.id];
+    return `<div id="post-${p.id}" class="chat-box" style="align-items:flex-start;margin-bottom:14px;background:#3F3B62">
       <div style="width:40px;height:40px;border-radius:50%;background:#49426E;flex-shrink:0"></div>
       <div class="chat-txt" style="width:100%">
-        <h4 style="display:flex;justify-content:space-between">${p.username} <span style="font-weight:400;opacity:.7;font-size:12px">${t.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'})}</span></h4>
+        <h4 style="display:flex;justify-content:space-between">${p.username}<span style="opacity:.7;font-size:12px">${t.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'})}</span></h4>
         <p style="white-space:pre-wrap;word-break:break-word">${(p.text||'').replace(/</g,'&lt;')}</p>
-        ${p.media_url?`<img src="${p.media_url}" style="width:100%;margin-top:8px;border-radius:10px;max-height:420px;object-fit:contain;background:#000">`:''}
+        ${p.media_url?`<img src="${p.media_url}" class="post-img" ondblclick="toggleLike(${p.id},this.nextElementSibling.querySelector('.like'))">`:''}
+        <div class="action">
+          <span class="like ${isLiked?'liked':''}" data-likes="${p.likes||0}" onclick="toggleLike(${p.id},this)">${isLiked?'❤️':'🤍'} <b>${p.likes||0}</b></span>
+          <span onclick="location='comment.html?id=${p.id}'">💬 Komentar</span>
+          <span onclick="sharePost(${p.id},'${(p.text||'').slice(0,30)}')">↗️ Bagikan</span>
+        </div>
       </div>
     </div>`;
-  }).join('') : '<p style="color:#9386a2;text-align:center;padding:30px">Belum ada postingan</p>';
+  }).join('');
 }
-load();
-setInterval(load,8000);
-</script>
-</body></html>
+load(); setInterval(load,10000);
+</script></body></html>
