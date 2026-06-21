@@ -1,32 +1,31 @@
 <!DOCTYPE html><html lang="id"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Puu Chat</title>
 <link rel="stylesheet" href="./assets/css/main.css">
-<style>
-/* FIX LANGSUNG - gak perlu patch.css */
-.user::after,.user-main::after{display:none!important}
-.chat-section.chat-box img{max-height:none!important;height:auto!important;width:100%!important;object-fit:contain!important;background:#000!important;border-radius:12px!important;margin-top:8px!important}
-#posts.chat-box{width:100%!important;max-width:100%!important}
-.action{display:flex!important;gap:24px!important;margin-top:10px!important;padding-top:8px!important;border-top:1px solid #4a446b!important}
-.action span{color:#b8a9d4!important;cursor:pointer!important}
-.like.liked{color:#ff6b81!important}
-</style>
 </head><body>
 <div class="main-container">
-  <div class="navbar"><div class="nav-left"><button class="toggle-btn" id="menu">☰</button><h2 style="color:#E2D3F4;margin:0">Puu Chat</h2></div><div class="nav-right"><div class="user"></div></div></div>
+  <div class="navbar">
+    <div class="nav-left"><button class="toggle-btn" id="menu">☰</button><h2>Puu Chat</h2></div>
+  </div>
   <div class="bottom-sec">
-    <div class="side-menu" id="side"><ul>
-      <li><a href="index.html" class="active">Feed</a></li>
-      <li><a href="chat.html">Chat</a></li>
-      <li><a href="grup.html">Grup</a></li>
-      <li><a href="server.html">Server</a></li>
-      <li><a href="setting.html">Setting</a></li>
-    </ul></div>
-    <div class="chat-section"><div class="all-chat" style="padding-top:15px">
-      <div id="stories" style="display:flex;gap:12px;overflow-x:auto;padding:0 12px 15px"></div>
-      <div class="chat-box" onclick="location='post.html'" style="cursor:pointer;background:#3F3B62;margin:0 12px 15px;width:calc(100% - 24px)"><div style="width:40px;height:40px;border-radius:50%;background:#49426E"></div><div class="chat-txt"><p style="color:#9386a2">udah, gak usah dipikirin, buat status aja😂</p></div></div>
-      <div id="posts" style="padding:0 12px 80px"></div>
-    </div></div>
+    <div class="side-menu" id="side">
+      <ul>
+        <li><a href="index.html" class="active">Feed</a></li>
+        <li><a href="chat.html">Chat</a></li>
+        <li><a href="grup.html">Grup</a></li>
+        <li><a href="server.html">Server</a></li>
+        <li><a href="setting.html">Setting</a></li>
+      </ul>
+    </div>
+    <div class="chat-section">
+      <div class="all-chat">
+        <div id="stories"></div>
+        <div class="chat-box" onclick="location='post.html'" style="cursor:pointer">
+          <div></div><div class="chat-txt"><p style="color:#9386a2">udah, gak usah dipikirin, buat status aja😂</p></div>
+        </div>
+        <div id="posts"></div>
+      </div>
+    </div>
   </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -35,29 +34,20 @@
 if(!localStorage.puu_id)localStorage.puu_id='u_'+Math.random().toString(36).slice(2,9);
 if(!localStorage.puu_name)localStorage.puu_name='Anonim';
 const liked=JSON.parse(localStorage.liked||'{}');
-document.getElementById('menu').onclick=()=>document.getElementById('side').classList.toggle('active');
+const menu=document.getElementById('menu'),side=document.getElementById('side');
+const overlay=document.createElement('div');overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;display:none';document.body.appendChild(overlay);
+function toggle(){side.classList.toggle('active');overlay.style.display=side.classList.contains('active')?'block':'none'}
+menu.onclick=toggle;overlay.onclick=toggle;
 
-async function toggleLike(id,el){
-  const isLiked=!!liked[id]; let c=parseInt(el.dataset.likes)||0;
-  c=isLiked?Math.max(0,c-1):c+1; liked[id]=!isLiked; localStorage.liked=JSON.stringify(liked);
-  el.dataset.likes=c; el.classList.toggle('liked',!isLiked); el.innerHTML=!isLiked?`❤️ <b>${c}</b>`:`🤍`;
-  await sb.from('posts').update({likes:c}).eq('id',id);
-}
-function sharePost(id){const u=location.origin+location.pathname+'#post-'+id; if(navigator.share){navigator.share({title:'Puu Chat',url:u})}else{navigator.clipboard.writeText(u);alert('Link disalin!')}}
+async function like(id,el){const l=!!liked[id];let c=+el.dataset.likes||0;c=l?c-1:c+1;liked[id]=!l;localStorage.liked=JSON.stringify(liked);el.dataset.likes=c;el.classList.toggle('liked',!l);el.innerHTML=!l?`❤️ <b>${c}</b>`:`🤍`;await sb.from('posts').update({likes:c}).eq('id',id)}
+function share(id){const u=location.href.split('#')[0]+'#post-'+id;navigator.share?navigator.share({title:'Puu Chat',url:u}):(navigator.clipboard.writeText(u),alert('Link disalin!'))}
 
 async function load(){
-  // HAPUS FILTER EXPIRES_AT - ini biang kerok kosong
-  const {data,error}=await sb.from('posts').select('*').order('created_at',{ascending:false}).limit(50);
-  if(error){console.error(error);document.getElementById('posts').innerHTML='<p style="color:#fff;padding:20px">Error: '+error.message+'</p>';return}
-
+  const {data}=await sb.from('posts').select('*').order('created_at',{ascending:false}).limit(50);
   const stories=data.filter(d=>d.type==='story');
-  document.getElementById('stories').innerHTML=`<div onclick="location='story.html'" style="text-align:center;cursor:pointer;flex-shrink:0"><div style="width:62px;height:62px;border-radius:50%;border:2px dashed #EEC291;display:flex;align-items:center;justify-content:center;font-size:28px;color:#EEC291">+</div><p style="color:#E2D3F4;font-size:11px;margin:5px 0 0">Buat</p></div>`+stories.map(s=>`<div style="text-align:center;flex-shrink:0"><img src="${s.media_url}" onclick="window.open('${s.media_url}')" style="width:62px;height:62px;border-radius:50%;border:3px solid #EEC291;object-fit:cover"><p style="color:#E2D3F4;font-size:11px;margin:5px 0 0">${s.username}</p></div>`).join('');
-
+  document.getElementById('stories').innerHTML=`<div onclick="location='story.html'" style="text-align:center"><div style="width:62px;height:62px;border-radius:50%;border:2px dashed #EEC291;display:flex;align-items:center;justify-content:center;font-size:28px;color:#EEC291">+</div><p style="color:#E2D3F4;font-size:11px;margin-top:4px">Buat</p></div>`+stories.map(s=>`<div style="text-align:center"><img src="${s.media_url}" onclick="window.open('${s.media_url}')"><p style="color:#E2D3F4;font-size:11px;margin-top:4px">${s.username}</p></div>`).join('');
   const posts=data.filter(d=>d.type!=='story');
-  document.getElementById('posts').innerHTML=posts.map(p=>{
-    const t=new Date(p.created_at); const isLiked=!!liked[p.id];
-    return `<div id="post-${p.id}" class="chat-box" style="align-items:flex-start;margin-bottom:14px;background:#3F3B62;width:100%"><div style="width:40px;height:40px;border-radius:50%;background:#49426E;flex-shrink:0"></div><div class="chat-txt" style="width:100%"><h4 style="display:flex;justify-content:space-between">${p.username}<span style="opacity:.7;font-size:12px">${t.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'})}</span></h4><p style="white-space:pre-wrap;word-break:break-word">${(p.text||'').replace(/</g,'&lt;')}</p>${p.media_url?`<img src="${p.media_url}" class="post-img">`:''}<div class="action"><span class="like ${isLiked?'liked':''}" data-likes="${p.likes||0}" onclick="toggleLike(${p.id},this)">${isLiked?`❤️ <b>${p.likes||0}</b>`:`🤍`}</span><span onclick="location='comment.html?id=${p.id}'">Komentar</span><span onclick="sharePost(${p.id})">Bagikan</span></div></div></div>`;
-  }).join('');
+  document.getElementById('posts').innerHTML=posts.map(p=>{const t=new Date(p.created_at),l=!!liked[p.id];return`<div id="post-${p.id}" class="chat-box"><div></div><div class="chat-txt"><h4>${p.username}<span style="opacity:.7;font-size:12px">${t.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'})}</span></h4><p>${(p.text||'').replace(/</g,'&lt;')}</p>${p.media_url?`<img src="${p.media_url}" class="post-img">`:''}<div class="action"><span class="like ${l?'liked':''}" data-likes="${p.likes||0}" onclick="like(${p.id},this)">${l?`❤️ <b>${p.likes||0}</b>`:`🤍`}</span><span onclick="location='comment.html?id=${p.id}'">Komentar</span><span onclick="share(${p.id})">Bagikan</span></div></div></div>`}).join('');
 }
 load();
 </script></body></html>
