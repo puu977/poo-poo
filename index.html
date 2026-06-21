@@ -103,7 +103,7 @@ async function load(){
 .like.liked{color:#ff6b81!important}
 
 /* 6. Story tetep bulet */
-#stories img{width:62px!important;height:62px!important;border-radius:50%!important;object-fit:cover!important}'}<div class="action"><span class="like ${isLiked?'liked':''}" data-likes="${p.likes||0}" onclick="toggleLike(${p.id},this)">${isLiked?`❤️ <b>${p.likes||0}</b>`:``}</span><span onclick="location='comment.html?id=${p.id}'">Komentar</span><span onclick="sharePost(${p.id})">Bagikan</span></div></div></div>`;
+#stories img{width:62px!important;height:62px!important;border-radius:50%!important;object-fit:cover!important}'}<div class="action"><span class="like ${isLiked?'liked':'🤍'}" data-likes="${p.likes||0}" onclick="toggleLike(${p.id},this)">${isLiked?`❤️ <b>${p.likes||0}</b>`:``}</span><span onclick="location='comment.html?id=${p.id}'">Komentar</span><span onclick="sharePost(${p.id})">Bagikan</span></div></div></div>`;
     }).join('');
   }catch(e){console.log(e)}
 }
