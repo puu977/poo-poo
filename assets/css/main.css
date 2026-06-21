@@ -114,7 +114,8 @@ button,input {
     right: 0;
     border-radius: 50%;
 }
-
+/* matiin titik hijau dummy */
+.user::after, .user-main::after { display: none !important; }
 .bottom-sec {
     width: 100%;
     height: 76.5vh;
