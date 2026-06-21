@@ -1,42 +1,51 @@
 <!DOCTYPE html><html lang="id"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>Buat Postingan</title>
 <link rel="stylesheet" href="./assets/css/main.css">
 <style>
-.buat-wrap{height:100vh;display:flex;flex-direction:column;background:#332F54}
-.top-bar{display:flex;align-items:center;gap:15px;padding:14px 4%;background:#332F54}
-.top-bar a{color:#E2D3F4;font-size:28px;text-decoration:none}
-.top-bar h2{color:#E2D3F4;margin:0;font-size:20px}
-.buat-area{flex:1;padding:18px;overflow-y:auto}
-.buat-area textarea{width:100%;height:200px;background:transparent;border:none;color:#E2D3F4;font-size:18px;resize:none;outline:none}
-.toolbar{display:flex;gap:14px;padding:10px 4%;background:#3F3B62;border-top:1px solid #544F7E;border-bottom:1px solid #544F7E;overflow-x:auto}
-.tool{color:#E2D3F4;background:none;border:none;font-size:13px;white-space:nowrap;display:flex;align-items:center;gap:5px;padding:6px 10px;border-radius:8px}
-.tool:active{background:#544F7E}
-.kirim-bar{padding:12px 4%;background:#332F54;text-align:right}
-#kirim{background:#EEC291;color:#332F54;padding:10px 28px;border-radius:12px;font-weight:700;border:none}
+*{box-sizing:border-box} html,body{margin:0;height:100%;background:#332F54;color:#E2D3F4;font-family:system-ui}
+.buat-wrap{height:100dvh;display:flex;flex-direction:column}
+.top-bar{display:flex;align-items:center;gap:12px;padding:12px 14px}
+.top-bar a{color:#E2D3F4;font-size:26px;text-decoration:none}
+.top-bar h2{margin:0;font-size:18px;font-weight:600}
+.buat-area{flex:1;padding:14px;overflow-y:auto;display:flex;flex-direction:column;gap:12px}
+.info{display:flex;gap:10px;align-items:center}
+#ava{width:42px;height:42px;border-radius:50%;background:#49426E;border:2px solid #EEC291;flex-shrink:0;background-size:cover;background-position:center}
+#nama{margin:0;font-weight:500;font-size:15px}
+#priv{background:#3F3B62;color:#E2D3F4;border:none;padding:4px 8px;border-radius:6px;font-size:12px;margin-top:4px}
+#txt{flex:1;min-height:120px;background:transparent;border:none;color:#E2D3F4;font-size:16px;resize:none;outline:none;width:100%}
+#txt::placeholder{color:#8a7ca3}
+#prev img,#prev video{width:100%;max-height:260px;object-fit:contain;border-radius:12px;background:#000;margin-top:8px;display:block}
+.toolbar{display:flex;gap:6px;padding:8px 10px;background:#3F3B62;border-top:1px solid #544F7E;overflow-x:auto}
+.toolbar::-webkit-scrollbar{display:none}
+.tool{flex-shrink:0;background:#4a446b;color:#E2D3F4;border:none;padding:7px 12px;border-radius:20px;font-size:12px}
+.kirim-bar{padding:10px 12px;background:#332F54;border-top:1px solid #544F7E;text-align:right}
+#kirim{background:#EEC291;color:#332F54;padding:9px 26px;border-radius:10px;font-weight:700;border:none;font-size:14px;opacity:.5}
+#kirim:enabled{opacity:1}
 </style>
 </head><body>
 <div class="buat-wrap">
   <div class="top-bar"><a href="index.html">×</a><h2>Postingan Baru</h2></div>
 
   <div class="buat-area">
-    <div style="display:flex;gap:12px;align-items:center;margin-bottom:15px">
-      <div id="ava" style="width:44px;height:44px;border-radius:50%;background:#49426E;border:2px solid #EEC291"></div>
-      <div><p id="nama" style="color:#E2D3F4;margin:0;font-weight:500">Anonim</p>
-      <select id="priv" style="background:#3F3B62;color:#E2D3F4;border:none;padding:3px 8px;border-radius:6px;font-size:12px;margin-top:4px"><option>Publik</option><option>Teman</option><option>Hanya saya</option></select></div>
+    <div class="info">
+      <div id="ava"></div>
+      <div>
+        <p id="nama">Anonim</p>
+        <select id="priv"><option>Publik</option><option>Teman</option><option>Hanya saya</option></select>
+      </div>
     </div>
+
     <textarea id="txt" placeholder="Apa yang Anda pikirkan?"></textarea>
-    <div id="prev" style="margin-top:10px"></div>
+    <div id="prev"></div>
   </div>
 
-  <!-- INI FITURNYA -->
   <div class="toolbar" id="toolbar">
     <button class="tool" data-a="live">🔴 Siaran</button>
     <button class="tool" data-a="foto">🖼️ Foto</button>
     <button class="tool" data-a="lokasi">📍 Lokasi</button>
     <button class="tool" data-a="main">🎮 Main</button>
-    <button class="tool" data-a="tagar"># Tagar</button>
-    <button class="tool" data-a="musik">🎵 Musik</button>
+    <button class="tool" data-a="tagar">@ Tag</button>
   </div>
 
   <div class="kirim-bar"><button id="kirim" disabled>KIRIM</button></div>
@@ -48,23 +57,43 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./assets/js/supabase-client.js"></script>
 <script>
-const myId=localStorage.puu_id||(localStorage.puu_id='u_'+Math.random().toString(36).slice(2,9));
-document.getElementById('nama').textContent=localStorage.puu_name||'Anonim';
-const txt=document.getElementById('txt'),kirim=document.getElementById('kirim'),prev=document.getElementById('prev'),fImg=document.getElementById('fImg');
-let file=null; const upd=()=>{kirim.disabled=!(txt.value.trim()||file);kirim.style.opacity=kirim.disabled?.5:1}; txt.oninput=upd;
+const myId = localStorage.puu_id || (localStorage.puu_id='u_'+Math.random().toString(36).slice(2,9));
+const myName = localStorage.puu_name || 'Anonim';
+document.getElementById('nama').textContent = myName;
+if(localStorage.puu_avatar) document.getElementById('ava').style.backgroundImage = `url(${localStorage.puu_avatar})`;
 
-document.getElementById('toolbar').onclick=e=>{
- const a=e.target.closest('.tool')?.dataset.a; if(!a) return;
- if(a==='foto') fImg.click();
- if(a==='lokasi') navigator.geolocation.getCurrentPosition(p=>{txt.value+=`\n📍 ${p.coords.latitude.toFixed(4)},${p.coords.longitude.toFixed(4)} `;upd()});
- if(a==='main'){const g=prompt('Lagi main apa?'); if(g){txt.value+=`\n🎮 sedang bermain ${g} `;upd()}}
- if(a==='tagar'){const t=prompt('Tagar:'); if(t){txt.value+=` #${t} `;upd()}}
- if(a==='live'){alert('Live: rekam video dulu'); fImg.click()}
- if(a==='musik') document.getElementById('fMus').click();
+const txt = document.getElementById('txt'), kirim = document.getElementById('kirim'), prev = document.getElementById('prev'), fImg = document.getElementById('fImg');
+let file = null, mentions = [];
+const upd = () => kirim.disabled = !(txt.value.trim() || file);
+txt.oninput = upd;
+
+document.getElementById('toolbar').onclick = e => {
+  const a = e.target.closest('.tool')?.dataset.a; if(!a) return;
+  if(a==='foto') fImg.click();
+  if(a==='musik') document.getElementById('fMus').click();
+  if(a==='live'){ fImg.click(); }
+  if(a==='lokasi') navigator.geolocation?.getCurrentPosition(p=>{ txt.value += `\n📍 ${p.coords.latitude.toFixed(4)},${p.coords.longitude.toFixed(4)} `; upd(); });
+  if(a==='main'){ const g = prompt('Lagi main apa?'); if(g){ txt.value += `\n🎮 sedang bermain ${g} `; upd(); } }
+  if(a==='tagar'){ const u = prompt('Tag teman (tanpa @)'); if(u){ txt.value += ` @${u.trim()} `; mentions.push(u.trim()); upd(); } }
 };
-fImg.onchange=e=>{file=e.target.files[0];prev.innerHTML=file.type.startsWith('video')?`<video src="${URL.createObjectURL(file)}" controls style="width:100%;border-radius:10px"></video>`:`<img src="${URL.createObjectURL(file)}" style="width:100%;border-radius:10px">`;upd()};
 
-kirim.onclick=async()=>{kirim.disabled=true;kirim.textContent='...';let url=null;if(file){const p=`posts/${Date.now()}_${file.name}`;await sb.storage.from('posts').upload(p,file);url=sb.storage.from('posts').getPublicUrl(p).data.publicUrl} await sb.from('posts').insert({user_id:myId,user:localStorage.puu_name||'Anonim',text:txt.value,media_url:url});location='index.html'};
+fImg.onchange = e => {
+  file = e.target.files[0]; if(!file) return;
+  const url = URL.createObjectURL(file);
+  prev.innerHTML = file.type.startsWith('video') ? `<video src="${url}" controls></video>` : `<img src="${url}">`;
+  upd();
+};
+document.getElementById('fMus').onchange = e => { const f=e.target.files[0]; if(f) prev.innerHTML += `<p style="color:#EEC291;font-size:13px">🎵 ${f.name}</p>`; };
+
+kirim.onclick = async () => {
+  kirim.disabled = true; kirim.textContent = '...';
+  try{
+    let url = null;
+    if(file){ const p = `posts/${Date.now()}_${file.name}`; await sb.storage.from('posts').upload(p,file); url = sb.storage.from('posts').getPublicUrl(p).data.publicUrl; }
+    await sb.from('posts').insert({ user_id:myId, user:myName, text:txt.value.trim(), media_url:url, privacy:priv.value, mentions });
+    location.href = 'index.html';
+  }catch(err){ alert(err.message); kirim.textContent='KIRIM'; upd(); }
+};
 upd();
 </script>
 </body></html>
