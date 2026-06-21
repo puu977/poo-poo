@@ -1,0 +1,12 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Komentar</title>
+<style>body{margin:0;background:#332F54;color:#E2D3F4;font-family:system-ui;display:flex;flex-direction:column;height:100dvh}.h{padding:14px;background:#3F3B62;display:flex;gap:10px;align-items:center}.h a{color:#E2D3F4;text-decoration:none;font-size:24px}#list{flex:1;overflow-y:auto;padding:12px}.c{background:#3F3B62;padding:10px;border-radius:10px;margin-bottom:8px}.b{display:flex;gap:8px;padding:10px;background:#3F3B62}input{flex:1;padding:10px;border:none;border-radius:20px;background:#4a446b;color:#fff}button{background:#EEC291;border:none;padding:0 18px;border-radius:20px;font-weight:700}</style></head><body>
+<div class="h"><a href="index.html">←</a><b>Komentar</b></div>
+<div id="list"></div>
+<div class="b"><input id="t" placeholder="Tulis komentar..."><button id="k">Kirim</button></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./assets/js/supabase-client.js"></script>
+<script>
+const id=new URLSearchParams(location.search).get('id'); const name=localStorage.puu_name||'Anonim';
+async function load(){const {data}=await sb.from('comments').select('*').eq('post_id',id).order('created_at'); document.getElementById('list').innerHTML=data.map(c=>`<div class="c"><b>${c.username}</b><p style="margin:4px 0">${c.text}</p></div>`).join('')||'<p style="opacity:.6;text-align:center">Belum ada komentar</p>'}
+document.getElementById('k').onclick=async()=>{const v=t.value.trim();if(!v)return; await sb.from('comments').insert({post_id:id,username:name,text:v}); t.value=''; load()}; load();
+</script></body></html>
