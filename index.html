@@ -1,167 +1,52 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Puu Chat</title>
+<!DOCTYPE html><html lang="id"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Puu Puu</title>
 <link rel="stylesheet" href="assets/css/main.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/js/supabase-client.js"></script>
-<style>
-/* FIX LAYOUT HP + MATIIN TITIK IJO */
-body{padding:0!important;background:#332F54!important;margin:0}
-.main-container{max-width:100%!important;width:100%!important;min-height:100vh!important;border:0!important;border-radius:0!important;box-shadow:none!important}
-.navbar{padding:10px 4%!important;height:56px;display:flex;align-items:center;justify-content:space-between;background:#332F54!important;border-bottom:1px solid #3f3b62}
-.nav-left,.nav-right{display:flex;align-items:center;gap:12px}
-.toggle-btn{background:none;border:none;padding:0;cursor:pointer}
-.toggle-btn img{width:26px;height:26px}
-.main-logo{height:28px;width:auto}
-.user img{width:36px;height:36px;border-radius:50%;border:2px solid #EEC291;cursor:pointer}
-.user::after{display:none!important} /* matiin titik ijo */
-
-.bottom-sec{height:calc(100vh - 56px)!important;padding:0!important;gap:0}
-.side-menu{background:#332F54!important}
-.chat-section{border-radius:0!important;background:#332F54!important}
-.all-chat{padding:0!important;height:100%!important;overflow-y:auto}
-
-/* FEED */
-.feed-wrap{padding:12px 4%}
-.story-bar{display:flex;gap:12px;overflow-x:auto;padding:8px 0 14px;scrollbar-width:none}
-.story-bar::-webkit-scrollbar{display:none}
-.story-item{text-align:center;min-width:68px;cursor:pointer}
-.story-item .ring{width:60px;height:60px;border-radius:50%;padding:2px;background:linear-gradient(45deg,#EEC291,#E2D3F4);display:flex;align-items:center;justify-content:center}
-.story-item .ring img{width:100%;height:100%;border-radius:50%;object-fit:cover;border:3px solid #332F54;background:#49426E}
-.story-item.add .ring{background:#49426E;border:2px dashed #EEC291;font-size:28px;color:#EEC291}
-.story-item span{font-size:11px;color:#E2D3F4;display:block;margin-top:4px;max-width:68px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-
-.create-box{background:#49426E;border:2px solid #544F7E;border-radius:14px;padding:12px 14px;color:#9386a2;margin-bottom:14px;cursor:pointer;display:flex;align-items:center;gap:10px}
-.create-box img{width:36px;height:36px;border-radius:50%;border:2px solid #EEC291}
-
-.post-card{background:#49426E;border:2px solid #544F7E;border-radius:16px;padding:14px;margin-bottom:12px}
-.post-head{display:flex;gap:10px;align-items:center}
-.post-head img{width:40px;height:40px;border-radius:50%;border:2px solid #EEC291}
-.post-head b{color:#EEC291;font-size:15px}
-.post-head .time{font-size:12px;color:#9386a2}
-.post-card p{color:#DDD9D0;margin:10px 0 0;white-space:pre-wrap;line-height:1.4}
-.post-card img.post-img{width:100%;border-radius:12px;margin-top:10px;max-height:420px;object-fit:cover}
-.post-actions{display:flex;gap:24px;margin-top:12px;padding-top:10px;border-top:1px solid #544F7E}
-.post-actions button{background:none;border:none;color:#E2D3F4;font-size:14px;display:flex;align-items:center;gap:6px;cursor:pointer;opacity:.9}
-</style>
-</head>
-<body>
-<div class="main-container">
-  <!-- NAVBAR PAKAI GAMBAR -->
-  <div class="navbar">
-    <div class="nav-left">
-      <button class="toggle-btn" onclick="document.querySelector('.side-menu').classList.toggle('active')">
-        <img src="assets/menu.png" alt="menu">
-      </button>
-      <img src="assets/logo.png" class="main-logo" alt="Puu">
-    </div>
-    <div class="nav-right">
-      <div class="user" onclick="location='profil.html'">
-        <img src="assets/avatar.png" alt="profil">
-      </div>
-    </div>
+</head><body>
+<header class="top-bar">
+  <div class="brand"><img src="assets/logo.png" class="logo"><span>Puu Puu</span></div>
+  <div class="actions">
+    <button class="icon-btn" onclick="location.href='search.html'"><img src="assets/search.png"></button>
+    <button class="icon-btn" onclick="location.href='chat.html'"><img src="assets/chat.png"></button>
+    <a href="profil.html" class="user"><img src="assets/avatar.png"></a>
   </div>
+</header>
 
-  <div class="bottom-sec">
-    <div class="side-menu">
-      <ul>
-        <li><img src="assets/feed.png"><a href="index.html" class="active">Feed</a></li>
-        <li><img src="assets/chat.png"><a href="chat.html">Chat</a></li>
-        <li><img src="assets/group.png"><a href="group.html">Group</a></li>
-        <li><img src="assets/server.png"><a href="server.html">Server</a></li>
-        <li><img src="assets/settings.png"><a href="settings.html">Settings</a></li>
-      </ul>
-    </div>
+<main class="bottom-sec">
+  <div id="debug" style="position:fixed;top:60px;left:0;right:0;background:#111;color:#0f0;padding:6px;font-size:11px;z-index:999;max-height:80px;overflow:auto"></div>
+  <div id="feed" style="margin-top:90px;width:100%"></div>
+</main>
 
-    <div class="chat-section">
-      <div class="all-chat">
-        <div class="feed-wrap">
-          
-          <!-- STORY 24 JAM -->
-          <div class="story-bar" id="storyBar">
-            <div class="story-item add" onclick="location='story.html'">
-              <div class="ring">+</div>
-              <span>Buat</span>
-            </div>
-          </div>
-
-          <!-- CREATE POST -->
-          <div class="create-box" onclick="location='create-post.html'">
-            <img src="assets/avatar.png" alt="">
-            <span>apa yang anda pikirkan.?</span>
-          </div>
-
-          <!-- FEED -->
-          <div id="feed"></div>
-
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- OVERLAY BUAT TUTUP MENU -->
-<div id="overlay" onclick="document.querySelector('.side-menu').classList.remove('active')" style="display:none;position:fixed;inset:0;background:#0005;z-index:999"></div>
+<nav class="bot-nav">
+  <a href="index.html" class="active"><img src="assets/home.png"></a>
+  <a href="create-post.html"><img src="assets/plus.png"></a>
+  <a href="video.html"><img src="assets/video.png"></a>
+  <a href="profil.html"><img src="assets/user.png"></a>
+</nav>
 
 <script>
-// toggle overlay
-const sideMenu = document.querySelector('.side-menu');
-const overlay = document.getElementById('overlay');
-const observer = new MutationObserver(()=> overlay.style.display = sideMenu.classList.contains('active') ? 'block' : 'none');
-observer.observe(sideMenu,{attributes:true});
-
 const feedEl = document.getElementById('feed');
-const storyBar = document.getElementById('storyBar');
+const debug = document.getElementById('debug');
 
 async function loadFeed(){
-  const { data } = await supa.from('posts').select('*').order('created_at',{ascending:false});
-  feedEl.innerHTML = '';
+ debug.textContent = 'connecting...';
+ try{
+  const { data, error } = await supa.from('posts').select('*').order('id',{ascending:false}).limit(20);
+  if(error){ debug.textContent = 'ERROR: '+error.message; return; }
+  debug.textContent = 'OK! '+data.length+' post ketemu';
+  feedEl.innerHTML='';
   data.forEach(p=>{
-    feedEl.innerHTML += `
-    <div class="post-card">
-      <div class="post-head">
-        <img src="assets/avatar.png">
-        <div>
-          <b>${p.username||'Anonim'}</b>
-          <div class="time">${new Date(p.created_at).toLocaleString('id-ID',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
-        </div>
-      </div>
-      ${p.content?`<p>${p.content}</p>`:''}
-      ${p.image_url?`<img class="post-img" src="${p.image_url}" loading="lazy">`:''}
-      <div class="post-actions">
-        <button onclick="like(${p.id},${p.likes||0})">❤️ ${p.likes||0}</button>
-        <button onclick="location='comment.html?id=${p.id}'">💬</button>
-        <button onclick="share(${p.id},${p.shares||0})">↗️ ${p.shares||0}</button>
-      </div>
+    const txt = p.content || p.text || '';
+    feedEl.innerHTML += `<div class="post-card">
+      <div class="post-head"><img src="assets/avatar.png"><div><b>${p.username||'Anonim'}</b><div class="time">#${p.id}</div></div></div>
+      ${txt?`<p>${txt}</p>`:''}
     </div>`;
   });
+ }catch(e){ debug.textContent = 'JS ERR: '+e.message; }
 }
-
-async function loadStories(){
-  const since = new Date(Date.now() - 24*60*60*1000).toISOString();
-  const { data } = await supa.from('stories').select('*').gte('created_at',since).order('created_at',{ascending:false});
-  storyBar.querySelectorAll('.story-item:not(.add)').forEach(e=>e.remove());
-  data.forEach(s=>{
-    storyBar.innerHTML += `
-    <div class="story-item" onclick="location='story.html?id=${s.id}'">
-      <div class="ring"><img src="${s.media_url}" alt=""></div>
-      <span>${s.username||'Anon'}</span>
-    </div>`;
-  });
-}
-
-async function like(id,cur){ await supa.from('posts').update({likes:cur+1}).eq('id',id) }
-async function share(id,cur){ await supa.from('posts').update({shares:cur+1}).eq('id',id) }
-
-supa.channel('puu')
-  .on('postgres_changes',{event:'*',schema:'public',table:'posts'}, loadFeed)
-  .on('postgres_changes',{event:'*',schema:'public',table:'stories'}, loadStories)
-  .subscribe();
-
-loadFeed(); loadStories();
+loadFeed();
+supa.channel('posts').on('postgres_changes',{event:'*',schema:'public',table:'posts'},loadFeed).subscribe();
 </script>
-</body>
-</html>
+</body></html>
