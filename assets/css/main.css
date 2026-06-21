@@ -548,3 +548,23 @@ button,input {
         margin-left: 5%;
     }
 }
+/* FIX POST IMAGE BIAR GA LONJONG */
+.chat-section .chat-box img {
+  width: 100% !important;
+  height: auto !important;
+  max-height: 600px !important;
+  object-fit: contain !important;
+  border-radius: 12px !important;
+  display: block !important;
+  margin-top: 8px !important;
+  background: #000 !important;
+  border: none !important;
+}
+
+/* biar story tetap bulat, post tetap kotak */
+#stories img {
+  width: 62px !important;
+  height: 62px !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+}
