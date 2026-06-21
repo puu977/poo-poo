@@ -1,41 +1,56 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Puu Chat</title>
 <link rel="stylesheet" href="assets/css/main.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/js/supabase-client.js"></script>
 <style>
-/* full screen fix */
-body{padding:0!important;background:#332F54!important}
+/* OVERRIDE BIAR PAS HP - jangan ubah main.css */
+body{padding:0!important;background:#332F54!important;margin:0}
 .main-container{max-width:100%!important;width:100%!important;min-height:100vh!important;border:0!important;border-radius:0!important;box-shadow:none!important}
-.bottom-sec{height:calc(100vh - 60px)!important;padding:0!important}
-.chat-section{border-radius:0!important}
-.all-chat{padding:12px 4%!important;height:100%!important;overflow-y:auto}
+.navbar{padding:12px 4%!important;height:56px}
+.bottom-sec{height:calc(100vh - 56px)!important;padding:0!important;gap:0}
+.side-menu ul{margin-top:0}
+.chat-section{border-radius:0!important;background:#332F54!important}
+.all-chat{padding:0!important;height:100%!important;overflow-y:auto}
 
-/* feed style nyatu sama CSS lu */
-.post-card{background:#49426E;border:2px solid #544F7E;border-radius:15px;padding:15px;margin-bottom:12px}
-.post-card .head{display:flex;gap:12px;align-items:center}
-.post-card .head img{width:40px;border-radius:50%;border:3px solid #EEC291}
-.post-card .head b{color:#EEC291}
-.post-card p{color:#DDD9D0;margin:10px 0;white-space:pre-wrap}
-.post-card img.post-img{width:100%;border-radius:12px;margin-top:8px}
-.post-actions{display:flex;gap:20px;margin-top:8px}
-.post-actions button{background:none;border:none;color:#E2D3F4;font-size:14px;cursor:pointer}
+/* Feed */
+.feed-wrap{padding:12px 4%}
+.story-bar{display:flex;gap:12px;overflow-x:auto;padding:8px 0 14px;scrollbar-width:none}
+.story-bar::-webkit-scrollbar{display:none}
+.story-item{text-align:center;min-width:68px;cursor:pointer}
+.story-item .ring{width:60px;height:60px;border-radius:50%;padding:2px;background:linear-gradient(45deg,#EEC291,#E2D3F4)}
+.story-item img{width:100%;height:100%;border-radius:50%;object-fit:cover;border:3px solid #332F54;background:#49426E}
+.story-item.add .ring{background:#49426E;border:2px dashed #EEC291;display:flex;align-items:center;justify-content:center;font-size:28px;color:#EEC291}
+.story-item span{font-size:11px;color:#E2D3F4;display:block;margin-top:4px;max-width:68px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
-.create-box{background:#49426E;border:2px solid #544F7E;border-radius:15px;padding:14px;color:#9386a2;margin-bottom:12px;cursor:pointer}
-.create-box span{margin-left:8px}
+.create-box{background:#49426E;border:2px solid #544F7E;border-radius:14px;padding:12px 14px;color:#9386a2;margin-bottom:14px;cursor:pointer;display:flex;align-items:center;gap:10px}
+.create-box img{width:36px;height:36px;border-radius:50%;border:2px solid #EEC291}
+
+.post-card{background:#49426E;border:2px solid #544F7E;border-radius:16px;padding:14px;margin-bottom:12px}
+.post-head{display:flex;gap:10px;align-items:center}
+.post-head img{width:40px;height:40px;border-radius:50%;border:2px solid #EEC291}
+.post-head b{color:#EEC291;font-size:15px}
+.post-head .time{font-size:12px;color:#9386a2}
+.post-card p{color:#DDD9D0;margin:10px 0 0;white-space:pre-wrap;line-height:1.4}
+.post-card img.post-img{width:100%;border-radius:12px;margin-top:10px;max-height:420px;object-fit:cover}
+.post-actions{display:flex;gap:24px;margin-top:12px;padding-top:10px;border-top:1px solid #544F7E}
+.post-actions button{background:none;border:none;color:#E2D3F4;font-size:14px;display:flex;align-items:center;gap:6px;cursor:pointer;opacity:.9}
 </style>
 </head>
 <body>
 <div class="main-container">
   <div class="navbar">
     <div class="nav-left">
-      <button class="toggle-btn" onclick="document.querySelector('.side-menu').classList.toggle('active')"><img src="assets/menu.png"></button>
-      <img src="assets/logo.png" class="main-logo">
+      <button class="toggle-btn" onclick="document.querySelector('.side-menu').classList.toggle('active')"><img src="assets/menu.png" alt=""></button>
+      <img src="assets/logo.png" class="main-logo" alt="Puu">
     </div>
-    <div class="nav-right"><div class="user"><img src="assets/avatar.png"></div></div>
+    <div class="nav-right">
+      <div class="user"><img src="assets/avatar.png" alt=""></div>
+    </div>
   </div>
 
   <div class="bottom-sec">
@@ -50,32 +65,51 @@ body{padding:0!important;background:#332F54!important}
     </div>
 
     <div class="chat-section">
-      <div class="chat-header"><div class="user-header"><div class="user-main"><img src="assets/avatar.png"></div><h2>Feed</h2></div></div>
-      
       <div class="all-chat">
-        <!-- INI YANG KLIK KE CREATE-POST -->
-        <div class="create-box" onclick="location.href='create-post.html'">
-          🖼️ <span>apa yang anda pikirkan.?</span>
-          <div style="margin-top:8px;font-size:13px;color:#E2D3F4">📷 Gambar • Posting</div>
-        </div>
+        <div class="feed-wrap">
+          
+          <!-- STORY 24 JAM -->
+          <div class="story-bar" id="storyBar">
+            <div class="story-item add" onclick="location='story.html'">
+              <div class="ring">+</div>
+              <span>Buat</span>
+            </div>
+          </div>
 
-        <div id="feed"></div>
+          <!-- CREATE POST -->
+          <div class="create-box" onclick="location='create-post.html'">
+            <img src="assets/avatar.png" alt="">
+            <span>apa yang anda pikirkan.?</span>
+          </div>
+
+          <!-- FEED -->
+          <div id="feed"></div>
+
+        </div>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-const feed = document.getElementById('feed');
+const feedEl = document.getElementById('feed');
+const storyBar = document.getElementById('storyBar');
 
-async function render(){
-  const {data} = await supa.from('posts').select('*').order('created_at',{ascending:false});
-  feed.innerHTML = '';
+async function loadFeed(){
+  const { data } = await supa.from('posts').select('*').order('created_at',{ascending:false});
+  feedEl.innerHTML = '';
   data.forEach(p=>{
-    feed.innerHTML += `<div class="post-card">
-      <div class="head"><img src="assets/avatar.png"><div><b>${p.username||'Anonim'}</b><div style="font-size:12px;color:#9386a2">${new Date(p.created_at).toLocaleString('id-ID')}</div></div></div>
+    feedEl.innerHTML += `
+    <div class="post-card">
+      <div class="post-head">
+        <img src="assets/avatar.png">
+        <div>
+          <b>${p.username||'Anonim'}</b>
+          <div class="time">${new Date(p.created_at).toLocaleString('id-ID',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
+        </div>
+      </div>
       ${p.content?`<p>${p.content}</p>`:''}
-      ${p.image_url?`<img class="post-img" src="${p.image_url}">`:''}
+      ${p.image_url?`<img class="post-img" src="${p.image_url}" loading="lazy">`:''}
       <div class="post-actions">
         <button onclick="like(${p.id},${p.likes||0})">❤️ ${p.likes||0}</button>
         <button onclick="location='comment.html?id=${p.id}'">💬</button>
@@ -85,12 +119,33 @@ async function render(){
   });
 }
 
-async function like(id,c){ await supa.from('posts').update({likes:c+1}).eq('id',id) }
-async function share(id,c){ await supa.from('posts').update({shares:c+1}).eq('id',id) }
+async function loadStories(){
+  const since = new Date(Date.now() - 24*60*60*1000).toISOString();
+  const { data } = await supa.from('stories').select('*').gte('created_at',since).order('created_at',{ascending:false});
+  
+  // hapus story lama (sisain tombol Buat)
+  storyBar.querySelectorAll('.story-item:not(.add)').forEach(e=>e.remove());
+  
+  data.forEach(s=>{
+    storyBar.innerHTML += `
+    <div class="story-item" onclick="location='story.html?id=${s.id}'">
+      <div class="ring"><img src="${s.media_url}" alt=""></div>
+      <span>${s.username||'Anon'}</span>
+    </div>`;
+  });
+}
+
+async function like(id,cur){ await supa.from('posts').update({likes:cur+1}).eq('id',id) }
+async function share(id,cur){ await supa.from('posts').update({shares:cur+1}).eq('id',id) }
 
 // REALTIME
-supa.channel('feed-rt').on('postgres_changes',{event:'*',schema:'public',table:'posts'},render).subscribe();
-render();
+supa.channel('puu-feed')
+  .on('postgres_changes',{event:'*',schema:'public',table:'posts'}, loadFeed)
+  .on('postgres_changes',{event:'*',schema:'public',table:'stories'}, loadStories)
+  .subscribe();
+
+loadFeed();
+loadStories();
 </script>
 </body>
 </html>
