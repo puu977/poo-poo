@@ -1,1 +1,63 @@
-<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Puu Chat</title><link rel="stylesheet" href="assets/css/main.css"></head><body><div id="app"></div><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="assets/js/supabase.js"></script><script src="assets/js/app-index.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Puu Chat</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
+body{background:#f0f2f5}
+.top{display:flex;align-items:center;gap:10px;padding:10px;background:#fff;position:sticky;top:0;z-index:10;border-bottom:1px solid #ddd}
+.logo{font-weight:700;font-size:22px}.logo span{color:#1877f2}
+.search{flex:1}.search input{width:100%;padding:8px 12px;border:none;background:#f0f2f5;border-radius:20px}
+.wrap{display:flex}
+.sidebar{width:240px;background:#fff;height:calc(100vh - 56px);position:sticky;top:56px;padding:10px;display:none}
+.sidebar.open{display:block;position:fixed;z-index:20}
+.sidebar a{display:block;padding:10px;border-radius:8px;text-decoration:none;color:#000}
+.sidebar a.active{background:#e7f3ff;color:#1877f2}
+.main{flex:1;max-width:600px;margin:0 auto;padding:12px;width:100%}
+.card{background:#fff;padding:12px;border-radius:10px;margin-bottom:12px;box-shadow:0 1px 2px rgba(0,0,0,.1);cursor:pointer;color:#666}
+.post{background:#fff;border-radius:10px;padding:12px;margin-bottom:12px;box-shadow:0 1px 2px rgba(0,0,0,.1)}
+.post-h{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.avatar{width:38px;height:38px;border-radius:50%;background:#ddd}
+.name{font-weight:600}.time{font-size:12px;color:#666}
+.post-b img,.post-b video{width:100%;border-radius:8px;margin-top:8px;max-height:500px;object-fit:cover}
+@media(min-width:900px){.sidebar{display:block}}
+</style>
+</head>
+<body>
+<div class="top">
+  <button id="menu" style="font-size:24px;background:none;border:none">☰</button>
+  <div class="logo">Puu <span>Chat</span></div>
+  <div class="search"><input placeholder="Cari..."></div>
+</div>
+<div class="wrap">
+  <aside class="sidebar" id="side">
+    <a class="active">Home</a><a>Chat</a><a>Groups</a><a>Server</a><a>Settings</a>
+  </aside>
+  <main class="main">
+    <div class="card" onclick="location='create-post.html'">udah, gak usah dipikirin, buat status aja😂</div>
+    <div id="feed"></div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPA_URL='ISI_URL_LU'; // ganti
+const SUPA_KEY='ISI_KEY_LU'; // ganti
+const sb=supabase.createClient(SUPA_URL,SUPA_KEY);
+document.getElementById('menu').onclick=()=>document.getElementById('side').classList.toggle('open');
+async function load(){
+  const {data}=await sb.from('posts').select('*').order('created_at',{ascending:false}).limit(20);
+  document.getElementById('feed').innerHTML=(data||[]).map(p=>`
+  <div class="post">
+    <div class="post-h">
+      <img class="avatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='38' height='38'%3E%3Ccircle cx='19' cy='19' r='19' fill='%23ddd'/%3E%3C/svg%3E">
+      <div><div class="name">${p.user||'User'}</div><div class="time">${new Date(p.created_at).toLocaleString('id-ID')}</div></div>
+    </div>
+    <div class="post-b">${p.text||''}${p.media_url?`<img src="${p.media_url}">`:''}${p.music_url?`<audio controls src="${p.music_url}" style="width:100%;margin-top:8px"></audio>`:''}</div>
+  </div>`).join('')||'<div class="post">Belum ada postingan</div>';
+}
+load(); setInterval(load,5000);
+</script>
+</body></html>
