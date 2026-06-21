@@ -3,75 +3,107 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Puu Chat</title>
-<link rel="stylesheet" href="assets/css/style.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/js/supabase-client.js"></script>
 <style>
-body{margin:0;font-family:sans-serif;background:#2e2151;color:#e8d7ff}
-header{background:#3d2a70;padding:12px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10}
-#menuBtn{font-size:26px;background:none;border:none;color:#e8d7ff;cursor:pointer}
-.container{max-width:600px;margin:16px auto;padding:0 12px}
-.card{background:#3d2a70;border-radius:14px;padding:12px;margin-bottom:16px}
-textarea{width:100%;background:#241841;border:none;color:#fff;padding:10px;border-radius:8px}
-.btn{background:#f5c07a;color:#241841;border:none;padding:8px 16px;border-radius:20px;font-weight:700;cursor:pointer;margin-top:8px}
-#sidebar{position:fixed;left:-250px;top:0;width:230px;height:100%;background:#1c113a;padding:20px;transition:.3s;z-index:99}
+/* WARNA ASLI DARI SCREENSHOT LU */
+:root{
+  --bg:#2e2254; /* background luar */
+  --main:#3c2c68; /* card utama */
+  --card:#46357a; /* post card */
+  --input:#3a2a63;
+  --text:#d8cfff;
+  --peach:#f0c28f; /* warna "Anonim" */
+}
+body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif}
+header{background:var(--main);padding:16px;display:flex;align-items:center;gap:14px}
+#menuBtn{font-size:22px;background:none;border:none;color:var(--text)}
+h1{margin:0;font-size:24px;color:#d4c5f7;font-weight:600}
+
+/* sidebar */
+#sidebar{position:fixed;left:-260px;top:0;width:240px;height:100%;background:#22163f;padding:20px 0;transition:.3s;z-index:99}
 #sidebar.open{left:0}
-#sidebar a{color:#e8d7ff;text-decoration:none;display:block;padding:10px 0}
-#overlay{position:fixed;inset:0;background:#0007;display:none;z-index:98}
+#sidebar a{display:block;padding:14px 24px;color:var(--text);text-decoration:none}
+#sidebar a:hover{background:var(--main)}
+#overlay{position:fixed;inset:0;background:#0005;display:none;z-index:98}
 #overlay.show{display:block}
-.actions{display:flex;justify-content:space-around;border-top:1px solid #241841;margin-top:8px;padding-top:8px}
-.actions button{background:none;border:none;color:#e8d7ff;cursor:pointer}
-img.post-img{width:100%;border-radius:10px;margin-top:8px}
+
+.wrap{max-width:420px;margin:0 auto;background:var(--main);min-height:100vh;padding:0 14px;border:8px solid #d8c7f5;border-radius:28px}
+.stories{display:flex;gap:20px;padding:16px 0}
+.story{text-align:center;font-size:13px}
+.story.circle{width:56px;height:56px;border-radius:50%;border:2px dashed var(--peach);display:flex;align-items:center;justify-content:center;margin:auto}
+.status-box{background:var(--card);border-radius:18px;padding:14px;display:flex;gap:10px;align-items:center;margin-bottom:16px}
+.status-box.avatar{width:38px;height:38px;background:var(--input);border-radius:50%}
+.status-box span{opacity:.8}
+
+.post{background:var(--card);border-radius:18px;padding:14px;margin-bottom:16px}
+.post-head{display:flex;justify-content:space-between;align-items:center}
+.post-head b{color:var(--peach);font-size:16px}
+.post-head.time{font-size:13px;opacity:.7}
+.post img{width:100%;border-radius:12px;margin-top:10px}
+.actions{display:flex;gap:20px;margin-top:10px;font-size:14px;opacity:.8}
+.actions button{background:none;border:none;color:var(--text);cursor:pointer}
+textarea{width:100%;background:var(--input);border:none;color:#fff;padding:12px;border-radius:12px;margin-top:10px}
+.btn{background:var(--peach);color:#2e2254;border:none;padding:8px 16px;border-radius:18px;font-weight:600;margin-top:8px;cursor:pointer}
 </style>
 </head>
 <body>
-<header><button id="menuBtn">☰</button><h1 style="margin:0;font-size:20px">Puu Chat</h1></header>
-<div id="sidebar"><a href="index.html">Beranda</a><a href="#">Profil</a></div>
+<div class="wrap">
+<header><button id="menuBtn">☰</button><h1>Puu Chat</h1></header>
+
+<div id="sidebar">
+  <a href="index.html">Feed</a>
+  <a href="chat.html">Chat</a>
+  <a href="group.html">Group</a>
+  <a href="server.html">Server</a>
+  <a href="settings.html">Settings</a>
+</div>
 <div id="overlay"></div>
 
-<div class="container">
- <div class="card">
+<div class="stories">
+  <div class="story"><div class="circle">+</div>Buat</div>
+  <div class="story"><div class="circle" style="border-style:solid;overflow:hidden"><img src="" style="width:100%"></div>Anonim</div>
+</div>
+
+<div class="status-box" onclick="document.getElementById('composer').style.display='block'">
+  <div class="avatar"></div><span>udah, gak usah dipikirin, buat status aja 😂</span>
+</div>
+
+<div id="composer" style="display:none" class="post">
   <textarea id="content" rows="3" placeholder="Tulis status..."></textarea>
   <input type="file" id="img" accept="image/*" hidden>
   <button class="btn" onclick="img.click()">🖼️</button>
   <button class="btn" onclick="posting()">Posting</button>
- </div>
- <div id="feed"></div>
+</div>
+
+<div id="feed"></div>
 </div>
 
 <script>
-// PENTING: di supabase-client.js lu harus export variabel bernama 'supa'
-// contoh isi supabase-client.js:
-// const supa = supabase.createClient('URL','KEY');
-
 const menuBtn=document.getElementById('menuBtn'),sidebar=document.getElementById('sidebar'),overlay=document.getElementById('overlay');
 menuBtn.onclick=()=>{sidebar.classList.toggle('open');overlay.classList.toggle('show')};
 overlay.onclick=()=>{sidebar.classList.remove('open');overlay.classList.remove('show')};
 
 async function load(){
- const {data:posts}=await supa.from('posts').select('*').order('created_at',{ascending:false});
+ const {data}=await supa.from('posts').select('*').order('created_at',{ascending:false});
  const feed=document.getElementById('feed');feed.innerHTML='';
- for(const p of posts){
-  const {count}=await supa.from('comments').select('*',{count:'exact',head:true}).eq('post_id',p.id);
-  feed.innerHTML+=`<div class="card">
-   <div><b>${p.username||'Anonim'}</b> <small style="opacity:.6">${new Date(p.created_at).toLocaleString('id-ID')}</small></div>
-   ${p.content?`<p>${p.content}</p>`:''}
-   ${p.image_url?`<img class="post-img" src="${p.image_url}">`:''}
+ data.forEach(p=>{
+  feed.innerHTML+=`<div class="post">
+   <div class="post-head"><div style="display:flex;gap:10px;align-items:center"><div class="avatar"></div><b>${p.username||'Anonim'}</b></div><div class="time">${new Date(p.created_at).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'})}</div></div>
+   ${p.content?`<p style="margin:10px 0 0">${p.content}</p>`:''}
+   ${p.image_url?`<img src="${p.image_url}">`:''}
    <div class="actions">
     <button onclick="like(${p.id},${p.likes||0})">❤️ ${p.likes||0}</button>
-    <button onclick="location='comment.html?id=${p.id}'">💬 ${count||0}</button>
+    <button onclick="location='comment.html?id=${p.id}'">💬</button>
     <button onclick="share(${p.id},${p.shares||0})">↗️ ${p.shares||0}</button>
    </div>
   </div>`;
- }
+ });
 }
 async function posting(){
- const content=document.getElementById('content').value.trim();
- const file=document.getElementById('img').files[0];let image_url=null;
- if(file){const n=Date.now()+'-'+file.name;await supa.storage.from('posts').upload(n,file);image_url=supa.storage.from('posts').getPublicUrl(n).data.publicUrl;}
- if(!content&&!image_url)return alert('Isi dulu');
- await supa.from('posts').insert({username:'Anonim',content,image_url});
- content.value='';img.value='';load();
+ const c=document.getElementById('content').value.trim();const f=document.getElementById('img').files[0];let url=null;
+ if(f){const n=Date.now()+'-'+f.name;await supa.storage.from('posts').upload(n,f);url=supa.storage.from('posts').getPublicUrl(n).data.publicUrl;}
+ if(!c&&!url)return;await supa.from('posts').insert({username:'Anonim',content:c,image_url:url});document.getElementById('composer').style.display='none';load();
 }
 async function like(id,c){await supa.from('posts').update({likes:c+1}).eq('id',id);load();}
 async function share(id,c){await supa.from('posts').update({shares:c+1}).eq('id',id);load();}
