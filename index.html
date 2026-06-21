@@ -1,5 +1,5 @@
 <!DOCTYPE html><html lang="id"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Puu Chat</title>
 <link rel="stylesheet" href="./assets/css/main.css">
 <style>.user::after,.user-main::after{display:none!important}</style>
@@ -19,15 +19,16 @@
     <div class="chat-section">
       <div class="chat-header"><div class="user-header"><div class="user-main" id="av2"></div><h2>Home</h2></div></div>
       <div class="all-chat" style="padding-top:15px">
-        <div id="stories" style="display:flex;gap:12px;overflow-x:auto;padding:0 12px 15px">
-          <div onclick="location='create-post.html?type=story'" style="text-align:center;cursor:pointer;flex-shrink:0">
-            <div style="width:60px;height:60px;border-radius:50%;background:#49426E;border:2px dashed #EEC291;display:flex;align-items:center;justify-content:center;color:#EEC291;font-size:26px">+</div>
-            <p style="color:#E2D3F4;font-size:11px;margin-top:4px">Story</p>
-          </div>
-        <div class="chat-box" onclick="location='create-post.html'" style="cursor:pointer;background:#3F3B62;margin:0 12px 15px">
+        <!-- STORIES -->
+        <div id="stories" style="display:flex;gap:12px;overflow-x:auto;padding:0 12px 15px"></div>
+        
+        <!-- BUAT POST -->
+        <div class="chat-box" onclick="location='post.html'" style="cursor:pointer;background:#3F3B62;margin:0 12px 15px">
           <div id="myAva" style="width:40px;height:40px;border-radius:50%;background:#49426E;flex-shrink:0"></div>
           <div class="chat-txt"><p style="color:#9386a2">udah, gak usah dipikirin, buat status aja😂</p></div>
         </div>
+        
+        <!-- POSTS -->
         <div id="posts" style="padding:0 12px"></div>
       </div>
     </div>
@@ -37,10 +38,9 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./assets/js/supabase-client.js"></script>
 <script>
-// setup user
+// user setup
 if(!localStorage.puu_id) localStorage.puu_id='u_'+Math.random().toString(36).slice(2,9);
 if(!localStorage.puu_name) localStorage.puu_name='Anonim';
-const myId = localStorage.puu_id, myName = localStorage.puu_name;
 const av = document.createElement('div'); av.style.cssText='width:100%;height:100%;border-radius:50%;background:#544F7E';
 if(localStorage.puu_avatar) av.style.background=`url(${localStorage.puu_avatar}) center/cover`;
 document.getElementById('av').appendChild(av.cloneNode(true));
@@ -48,36 +48,38 @@ document.getElementById('av2').appendChild(av.cloneNode(true));
 document.getElementById('myAva').style.background = av.style.background;
 document.getElementById('menu').onclick=()=>document.getElementById('side').classList.toggle('active');
 
-// load posts
 async function load(){
-  const box = document.getElementById('posts');
-  if(typeof sb==='undefined'){ box.innerHTML='<p style="color:#fff;text-align:center">Error: Supabase belum load</p>'; return }
-  const {data,error} = await sb.from('posts').select('*').order('created_at',{ascending:false}).limit(30);
-  if(error){ box.innerHTML=`<p style="color:#ff6b6b">${error.message}</p>`; return }
-  if(!data.length){ box.innerHTML='<p style="color:#9386a2;text-align:center;padding:20px">Belum ada postingan</p>'; return }
+  const now = new Date().toISOString();
+  const {data,error} = await sb.from('posts').select('*').or(`expires_at.is.null,expires_at.gt.${now}`).order('created_at',{ascending:false}).limit(100);
+  if(error){console.log(error);return}
   
-  box.innerHTML = data.map(p=>{
-    const time = new Date(p.created_at);
-    const jam = time.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
-    const tgl = time.toLocaleDateString('id-ID',{day:'2-digit',month:'short'});
-    return `
-    <div class="chat-box" style="align-items:flex-start;margin-bottom:12px;background:#3F3B62">
-      <div style="width:40px;height:40px;border-radius:50%;background:#49426E;flex-shrink:0;margin-top:2px"></div>
+  // STORIES (type='story')
+  const stories = data.filter(d=>d.type==='story');
+  document.getElementById('stories').innerHTML = `
+    <div onclick="location='story.html'" style="text-align:center;cursor:pointer;flex-shrink:0">
+      <div style="width:62px;height:62px;border-radius:50%;background:#332F54;border:2px dashed #EEC291;display:flex;align-items:center;justify-content:center;color:#EEC291;font-size:28px">+</div>
+      <p style="color:#E2D3F4;font-size:11px;margin:5px 0 0">Buat</p>
+    </div>` + stories.map(s=>`
+    <div style="text-align:center;flex-shrink:0" onclick="window.open('${s.media_url}','_blank')">
+      <img src="${s.media_url}" style="width:62px;height:62px;border-radius:50%;border:3px solid #EEC291;object-fit:cover;background:#000">
+      <p style="color:#E2D3F4;font-size:11px;margin:5px 0 0;max-width:65px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.username}</p>
+    </div>`).join('');
+  
+  // POSTS (type='post' atau null)
+  const posts = data.filter(d=>d.type!=='story');
+  document.getElementById('posts').innerHTML = posts.length ? posts.map(p=>{
+    const t = new Date(p.created_at);
+    return `<div class="chat-box" style="align-items:flex-start;margin-bottom:12px;background:#3F3B62">
+      <div style="width:40px;height:40px;border-radius:50%;background:#49426E;flex-shrink:0"></div>
       <div class="chat-txt" style="width:100%">
-        <h4 style="display:flex;justify-content:space-between;align-items:center">${p.username||'Anonim'} <span style="font-weight:400;opacity:.7;font-size:12px">${jam} • ${tgl}</span></h4>
-        <p style="white-space:pre-wrap;word-break:break-word;margin:6px 0">${(p.text||'').replace(/</g,'&lt;')}</p>
-        ${p.media_url ? (p.media_url.match(/\.mp4|\.mov|\.webm/i) ? 
-          `<video src="${p.media_url}" controls style="width:100%;max-height:420px;border-radius:10px;background:#000;margin-top:8px"></video>` :
-          `<img src="${p.media_url}" style="width:100%;max-height:420px;object-fit:contain;border-radius:10px;background:#000;margin-top:8px">`) : ''}
-        ${p.mentions?.length ? `<p style="color:#EEC291;font-size:12px;margin-top:6px">${p.mentions.map(m=>'@'+m).join(' ')}</p>`:''}
-        <div style="display:flex;gap:18px;margin-top:10px;color:#b8a9d4;font-size:13px">
-          <span>❤️ ${p.likes||0}</span><span>💬</span><span>↗️ Bagikan</span>
-        </div>
+        <h4 style="display:flex;justify-content:space-between">${p.username} <span style="font-weight:400;opacity:.7;font-size:12px">${t.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'})}</span></h4>
+        <p style="white-space:pre-wrap;word-break:break-word">${(p.text||'').replace(/</g,'&lt;')}</p>
+        ${p.media_url?`<img src="${p.media_url}" style="width:100%;margin-top:8px;border-radius:10px;max-height:420px;object-fit:contain;background:#000">`:''}
       </div>
     </div>`;
-  }).join('');
+  }).join('') : '<p style="color:#9386a2;text-align:center;padding:30px">Belum ada postingan</p>';
 }
 load();
-setInterval(load, 5000); // auto refresh tiap 5 detik
+setInterval(load,8000);
 </script>
 </body></html>
