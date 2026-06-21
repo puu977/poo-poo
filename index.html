@@ -1,7 +1,7 @@
 <!DOCTYPE html><html lang="id"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Puu Chat</title>
-<link rel="stylesheet" href="assets/css/main.css">
+<link rel="stylesheet" href="./assets/css/main.css">
 </head><body>
 <div class="main-container">
   <div class="navbar">
@@ -11,7 +11,7 @@
     </div>
     <div class="nav-right">
       <div class="search-bar"><img src="data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMzMyRjU0IiB2aWV3Qm94PSIwIDAgMjQgMjQiPjxwYXRoIGQ9Ik0xNS41IDE0aC0uN2wtLjMtLjNhNi41IDYuNSAwIDEgMCAuOTguOThsLjMuMy4wIC43IDEuNSAxLjV2LjdsLTMuNS0zLjV6bS02IDBBNC41IDQuNSAwIDEgMSAxNCA5LjUgNC41IDQuNSAwIDAgMSA5LjUgMTR6Ii8+PC9zdmc+"><input placeholder="Cari..."></div>
-      <div class="user"><img src="https://i.pravatar.cc/40"></div>
+      <div class="user" id="myAvatar"></div>
     </div>
   </div>
 
@@ -19,23 +19,21 @@
     <div class="side-menu" id="side">
       <div class="search-bar"><input placeholder="Cari..."></div>
       <ul>
-        <li><img src=""><a href="index.html" class="active">Home</a></li>
-        <li><img src=""><a href="chat.html">Chat</a></li>
-        <li><img src=""><a href="groups.html">Groups</a></li>
-        <li><img src=""><a href="settings.html">Settings</a></li>
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="chat.html">Chat</a></li>
+        <li><a href="groups.html">Groups</a></li>
+        <li><a href="server.html">Server</a></li>
+        <li><a href="settings.html">Settings</a></li>
       </ul>
-      <div class="chat-sec">
-        <div class="chat"><img src="https://i.pravatar.cc/35"><p>Template chat</p></div>
-      </div>
+      <!-- HAPUS template chat -->
     </div>
 
     <div class="chat-section">
       <div class="chat-header">
         <div class="user-header">
-          <div class="user-main"><img src="https://i.pravatar.cc/50"></div>
+          <div class="user-main" id="headerAvatar"></div>
           <h2>Home</h2>
         </div>
-        <img class="threedot" src="">
       </div>
 
       <div class="all-chat" id="feed">
@@ -43,39 +41,59 @@
       </div>
 
       <div class="chat-type" onclick="location='create-post.html'">
-        <img src="data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjRTJEM0Y0IiB2aWV3Qm94PSIwIDAgMjQiPjxwYXRoIGQ9Ik0xOSA3bC0xLjQxLTEuNDEtNS4xIDUuMS01LjEtNS4xTDUgN2w3IDcgNy03eiIvPjwvc3ZnPg==">
         <div class="message-type">
           <input placeholder="udah, gak usah dipikirin, buat status aja😂" readonly>
         </div>
-        <img class="send-icon" src="data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjRTJEM0Y0IiB2aWV3Qm94PSIwIDAgMjQiPjxwYXRoIGQ9Ik0yLjAxIDIxTDIzIDEyIDIuMDEgM0wyIDEwbDUgMi01IDJ6Ii8+PC9zdmc+">
       </div>
     </div>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="assets/js/supabase.js"></script>
+<script src="./assets/js/supabase-client.js"></script>
 <script>
-// hamburger FIX
+// === PROFIL BLANK & ID ACAK ===
+if(!localStorage.puu_id){ localStorage.puu_id = 'u_'+Math.random().toString(36).slice(2,9) }
+const myId = localStorage.puu_id;
+const myName = localStorage.puu_name || ''; // kosong = blank
+const myAvatar = localStorage.puu_avatar || ''; // kosong = blank
+
+function blankAvatar(size, border=true){
+  const d=document.createElement('div');
+  d.style.width=size+'px'; d.style.height=size+'px';
+  d.style.borderRadius='50%';
+  d.style.background = myAvatar ? `url(${myAvatar}) center/cover` : '#49426E';
+  d.style.flexShrink='0';
+  if(border) d.style.border='3px solid #EEC291';
+  return d;
+}
+document.getElementById('myAvatar').appendChild(blankAvatar(40));
+document.getElementById('headerAvatar').appendChild(blankAvatar(50));
+
+// hamburger
 document.getElementById('menu').onclick = () => document.getElementById('side').classList.toggle('active');
 
 // feed
 async function load(){
   if(typeof sb === 'undefined'){
-    document.getElementById('feed').innerHTML = '<div class="chat-box"><div class="chat-txt"><h4>Error</h4><p>sb is not defined - cek assets/js/supabase.js</p></div></div>';
+    document.getElementById('feed').innerHTML = '<div class="chat-box"><div class="chat-txt"><p>Error: cek supabase-client.js</p></div></div>';
     return;
   }
   const {data,error} = await sb.from('posts').select('*').order('created_at',{ascending:false}).limit(20);
   if(error){document.getElementById('feed').innerHTML = `<div class="chat-box"><div class="chat-txt"><p>${error.message}</p></div></div>`;return}
-  document.getElementById('feed').innerHTML = data.map(p=>`
-    <div class="chat-box ${p.user==='User'?'my-message':''}">
-      <img src="https://i.pravatar.cc/40">
+  
+  document.getElementById('feed').innerHTML = data.map(p=>{
+    const isMe = p.user_id === myId;
+    return `
+    <div class="chat-box ${isMe?'my-message':''}">
+      <div style="width:40px;height:40px;border-radius:50%;background:#49426E;flex-shrink:0"></div>
       <div class="chat-txt">
-        <h4>${p.user||'User'} <span>${new Date(p.created_at).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'})}</span></h4>
+        <h4>${p.user||'Anonim'} <span>${new Date(p.created_at).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'})}</span></h4>
         <p>${(p.text||'').replace(/</g,'&lt;')}</p>
         ${p.media_url?`<img src="${p.media_url}" style="width:100%;margin-top:8px;border-radius:10px;border:none">`:''}
       </div>
-    </div>`).join('') || '<div class="chat-box"><div class="chat-txt"><p>Belum ada postingan</p></div></div>';
+    </div>`
+  }).join('') || '<div class="chat-box"><div class="chat-txt"><p>Belum ada postingan</p></div></div>';
 }
 load();
 </script>
