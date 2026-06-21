@@ -1,79 +1,81 @@
 <!DOCTYPE html><html lang="id"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Puu Puu</title>
-<link rel="stylesheet" href="assets/css/main.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/js/supabase-client.js"></script>
+<link rel="stylesheet" href="assets/css/main.css">
 <style>
-body{background:#2d2650;margin:0;color:#E2D3F4;font-family:system-ui}
-.top{position:fixed;top:0;left:0;right:0;background:#332F54;padding:12px;display:flex;align-items:center;gap:10px;z-index:10}
-.post-card{background:#4a4175;margin:12px;border-radius:16px;padding:12px;position:relative}
-.post-head{display:flex;gap:10px;align-items:center}
-.ava{width:40px;height:40px;border-radius:50%;background:#666}
-.post-actions{display:flex;gap:20px;margin-top:10px;padding-top:8px;border-top:1px solid #5a5180}
-.btn-act{background:none;border:none;color:#E2D3F4;font-size:14px;display:flex;align-items:center;gap:6px}
-.menu-btn,.skip-btn{position:absolute;top:10px;right:10px;background:none;border:none;color:#E2D3F4;font-size:20px}
-.skip-btn{right:40px}
+:root{--bg:#2d2650;--card:#4a4175;--top:#332F54;--txt:#E2D3F4}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto}
+.top{position:fixed;top:0;left:0;right:0;height:52px;background:var(--top);display:flex;align-items:center;padding:0 14px;z-index:20;font-weight:700}
+.wrap{max-width:680px;margin:0 auto;padding:62px 0 80px}
+.post{position:relative;background:var(--card);margin:12px;border-radius:16px;padding:12px}
+.head{display:flex;gap:10px;align-items:center}
+.ava{width:40px;height:40px;border-radius:50%;background:#5a5180;flex-shrink:0}
+.meta b{color:#EEC291}
+.time{font-size:12px;opacity:.7}
+.menu,.skip{position:absolute;top:6px;background:none;border:none;color:var(--txt);font-size:22px;width:32px;height:32px;cursor:pointer}
+.menu{right:8px}.skip{right:42px}
+.img{width:100%;border-radius:12px;margin-top:8px;max-height:520px;object-fit:cover;display:block}
+.actions{display:flex;gap:28px;margin-top:10px;padding-top:8px;border-top:1px solid #5a5180}
+.actions button{background:none;border:none;color:var(--txt);font-size:14px;display:flex;align-items:center;gap:6px;cursor:pointer}
+.bot{position:fixed;bottom:0;left:0;right:0;height:60px;background:var(--top);display:flex;justify-content:space-around;align-items:center;border-top:1px solid #544F7E;z-index:20}
+.bot a{opacity:.6;display:flex;align-items:center;justify-content:center;width:60px;height:60px}
+.bot a.active{opacity:1}
+.bot img{width:26px;height:26px;object-fit:contain}
+@media(min-width:900px){.post{margin:16px auto}}
 </style>
 </head><body>
-<div class="top"><img src="assets/logo.png" width="28"><b>Puu Puu</b></div>
-<div style="height:60px"></div>
-<div id="feed"></div>
+<div class="top">Puu Puu</div>
+<div class="wrap" id="feed"></div>
+
+<nav class="bot">
+ <a href="index.html" class="active"><img src="assets/icons/home.png" alt="home"></a>
+ <a href="create-post.html"><img src="assets/icons/plus.png" alt="post"></a>
+ <a href="video.html"><img src="assets/icons/video.png" alt="video"></a>
+ <a href="profil.html"><img src="assets/icons/user.png" alt="profil"></a>
+</nav>
 
 <script>
 const myId = localStorage.puu_id || (localStorage.puu_id='u_'+Math.random().toString(36).slice(2,9));
-const feed = document.getElementById('feed');
-let skipped = JSON.parse(localStorage.getItem('skipped')||'[]');
+let skip = JSON.parse(localStorage.getItem('skipped')||'[]');
 
 async function load(){
- const {data} = await supa.from('posts').select('*').order('id',{ascending:false});
- feed.innerHTML='';
- data.filter(p=>!skipped.includes(p.id)).forEach(p=>{
-  const isMine = p.user_id===myId;
-  const card = document.createElement('div');
-  card.className='post-card'; card.id='post-'+p.id;
-  card.innerHTML=`
-   ${isMine?`<button class="menu-btn" onclick="menuPost(${p.id})">⋮</button>`:`<button class="skip-btn" onclick="skipPost(${p.id})">✕</button>`}
-   <div class="post-head">
-    <div class="ava"></div>
-    <div><b>${p.username||'Anonim'}</b><div style="font-size:12px;opacity:.7">${new Date(p.created_at).toLocaleString('id-ID',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</div></div>
+ const {data,error} = await supa.from('posts').select('*').order('id',{ascending:false});
+ if(error){console.error(error);return}
+ const html = data.filter(p=>!skip.includes(p.id)).map(p=>{
+  const mine = p.user_id===myId;
+  const t = new Date(p.created_at).toLocaleString('id-ID',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+  return `<div class="post" id="p${p.id}">
+   ${mine?`<button class="menu" onclick="location.href='edit-post.html?id=${p.id}'">⋮</button>`:`<button class="skip" onclick="skipPost(${p.id})">✕</button>`}
+   <div class="head"><div class="ava"></div><div class="meta"><b>${p.username||'Anonim'}</b><div class="time">${t}</div></div></div>
+   <div style="margin:8px 0;white-space:pre-wrap">${p.content||''}</div>
+   ${p.image_url?`<img class="img" src="${p.image_url}" loading="lazy">`:''}
+   <div class="actions">
+    <button onclick="like(${p.id})">Suka <span id="l${p.id}">${p.likes_count||0}</span></button>
+    <button onclick="location.href='comment.html?id=${p.id}'">Komentar</button>
+    <button onclick="share(${p.id})">Bagikan <span id="s${p.id}">${p.shares_count||0}</span></button>
    </div>
-   <p style="margin:10px 0">${p.content||''}</p>
-   ${p.image_url?`<img src="${p.image_url}" style="width:100%;border-radius:12px;max-height:400px;object-fit:cover">`:''}
-   <div class="post-actions">
-    <button class="btn-act" onclick="likePost(${p.id},${p.likes_count||0})">Suka<span id="l${p.id}">${p.likes_count||0}</span></button>
-    <button class="btn-act" onclick="location.href='comment.html?id=${p.id}'">Komentar</button>
-    <button class="btn-act" onclick="sharePost(${p.id},${p.shares_count||0})">Bagikan<span id="s${p.id}">${p.shares_count||0}</span></button>
-   </div>`;
-  feed.appendChild(card);
- });
+  </div>`;
+ }).join('');
+ document.getElementById('feed').innerHTML = html || '<p style="text-align:center;opacity:.6;margin-top:40px">Belum ada postingan</p>';
 }
 
-async function likePost(id,now){
- const newVal = now+1;
- document.getElementById('l'+id).textContent = newVal;
- await supa.from('posts').update({likes_count:newVal}).eq('id',id);
+async function like(id){
+ const el = document.getElementById('l'+id); const n = +el.textContent + 1;
+ el.textContent = n;
+ await supa.from('posts').update({likes_count:n}).eq('id',id);
 }
-
-async function sharePost(id,now){
- const newVal = now+1;
- document.getElementById('s'+id).textContent = newVal;
- await supa.from('posts').update({shares_count:newVal}).eq('id',id);
- navigator.clipboard.writeText(location.origin+location.pathname+'#post-'+id);
- alert('Link disalin!');
+async function share(id){
+ const el = document.getElementById('s'+id); const n = +el.textContent + 1;
+ el.textContent = n;
+ await supa.from('posts').update({shares_count:n}).eq('id',id);
+ navigator.clipboard.writeText(location.origin+location.pathname+'#p'+id);
 }
-
 function skipPost(id){
- skipped.push(id); localStorage.setItem('skipped',JSON.stringify(skipped));
- document.getElementById('post-'+id).remove();
-}
-
-async function menuPost(id,txt){
- const act = prompt('⋮ Menu:\n1. Edit\n2. Hapus\nPilih 1/2');
- async function menuPost(id){
- location.href = `edit-post.html?id=${id}`;
-}
- if(act==='2'){ if(confirm('Hapus?')){ await supa.from('posts').delete().eq('id',id); load(); } }
+ skip.push(id); localStorage.setItem('skipped',JSON.stringify(skip));
+ document.getElementById('p'+id)?.remove();
 }
 
 load();
