@@ -1,11 +1,15 @@
-/* patch.css - override doang, jangan edit main.css */
-.user::after,
-.user-main::after{display:none!important}
+/* patch.css - JANGAN EDIT main.css */
+.user::after,.user-main::after{display:none!important}
 
-/* FIX GAMBAR KEPOTONG SAAT SCROLL */
-.all-chat{overflow:visible!important}
-.chat-box{overflow:visible!important;height:auto!important}
+/* biar feed bisa scroll lagi */
+.all-chat{
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  max-height:calc(100vh - 110px)!important;
+}
 
+/* gambar full, gak kepotong */
+.chat-box{overflow:visible!important}
 .post-img{
   width:100%!important;
   height:auto!important;
@@ -15,24 +19,22 @@
   background:#000!important;
   margin-top:8px!important;
   display:block!important;
-  border:none!important;
 }
 
-/* ACTION BAR */
+/* action bar like komen share */
 .action{
-  display:flex;
-  gap:28px;
-  margin-top:10px;
-  padding-top:8px;
-  border-top:1px solid #4a446b;
+  display:flex!important;
+  gap:28px!important;
+  margin-top:10px!important;
+  padding-top:8px!important;
+  border-top:1px solid #4a446b!important;
 }
 .action span{
-  cursor:pointer;
-  color:#b8a9d4;
-  font-size:15px;
-  display:flex;
-  align-items:center;
-  gap:6px;
-  user-select:none;
+  cursor:pointer!important;
+  color:#b8a9d4!important;
+  font-size:15px!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:6px!important;
 }
 .like.liked{color:#ff6b81!important}
