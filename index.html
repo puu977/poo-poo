@@ -53,7 +53,57 @@ async function load(){
     const posts=data.filter(d=>d.type!=='story');
     document.getElementById('posts').innerHTML=posts.map(p=>{
       const t=new Date(p.created_at);const isLiked=!!liked[p.id];
-      return `<div id="post-${p.id}" class="chat-box" style="align-items:flex-start;margin-bottom:14px;background:#3F3B62"><div style="width:40px;height:40px;border-radius:50%;background:#49426E;flex-shrink:0"></div><div class="chat-txt" style="width:100%"><h4 style="display:flex;justify-content:space-between">${p.username}<span style="opacity:.7;font-size:12px">${t.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'})}</span></h4><p style="white-space:pre-wrap;word-break:break-word">${(p.text||'').replace(/</g,'&lt;')}</p>${p.media_url?`<img src="${p.media_url}" class="post-img" ondblclick="toggleLike(${p.id},this.parentNode.querySelector('.like'))">`:''}<div class="action"><span class="like ${isLiked?'liked':''}" data-likes="${p.likes||0}" onclick="toggleLike(${p.id},this)">${isLiked?`❤️ <b>${p.likes||0}</b>`:``}</span><span onclick="location='comment.html?id=${p.id}'">Komentar</span><span onclick="sharePost(${p.id})">Bagikan</span></div></div></div>`;
+      return `<div id="post-${p.id}" class="chat-box" style="align-items:flex-start;margin-bottom:14px;background:#3F3B62"><div style="width:40px;height:40px;border-radius:50%;background:#49426E;flex-shrink:0"></div><div class="chat-txt" style="width:100%"><h4 style="display:flex;justify-content:space-between">${p.username}<span style="opacity:.7;font-size:12px">${t.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'})}</span></h4><p style="white-space:pre-wrap;word-break:break-word">${(p.text||'').replace(/</g,'&lt;')}</p>${p.media_url?`<img src="${p.media_url}" class="post-img" ondblclick="toggleLike(${p.id},this.parentNode.querySelector('.like'))">`:'/* patch.css v4 - FIX POSTINGAN DOANG */
+.user::after,.user-main::after{display:none!important}
+
+/* 1. Bikin feed tingginya bener */
+.all-chat{
+  height:auto!important;
+  max-height:calc(100vh - 180px)!important;
+  overflow-y:auto!important;
+  padding-bottom:80px!important;
+}
+
+/* 2. Postingan full width, gak dibatesin 60% */
+.chat-section .chat-box,
+#posts .chat-box{
+  width:100%!important;
+  max-width:100%!important;
+  height:auto!important;
+  max-height:none!important;
+  overflow:visible!important;
+}
+
+/* 3. INI PALING PENTING - bunuh max-height 600px di main.css */
+.chat-section .chat-box img.post-img,
+#posts .chat-box img{
+  width:100%!important;
+  height:auto!important;
+  max-height:none!important; /* <-- lawan yang 600px */
+  object-fit:contain!important;
+  border-radius:12px!important;
+  display:block!important;
+  margin:8px 0!important;
+  background:#000!important;
+  border:none!important;
+}
+
+/* 4. Avatar tetep bulet */
+.chat-box > img:first-child,
+.chat-box > div:first-child{
+  width:40px!important;
+  height:40px!important;
+  border-radius:50%!important;
+  flex-shrink:0!important;
+}
+
+/* 5. Action bar */
+.action{display:flex!important;gap:24px!important;margin-top:10px!important;padding-top:8px!important;border-top:1px solid #4a446b!important}
+.action span{color:#b8a9d4!important;cursor:pointer!important}
+.like.liked{color:#ff6b81!important}
+
+/* 6. Story tetep bulet */
+#stories img{width:62px!important;height:62px!important;border-radius:50%!important;object-fit:cover!important}'}<div class="action"><span class="like ${isLiked?'liked':''}" data-likes="${p.likes||0}" onclick="toggleLike(${p.id},this)">${isLiked?`❤️ <b>${p.likes||0}</b>`:``}</span><span onclick="location='comment.html?id=${p.id}'">Komentar</span><span onclick="sharePost(${p.id})">Bagikan</span></div></div></div>`;
     }).join('');
   }catch(e){console.log(e)}
 }
