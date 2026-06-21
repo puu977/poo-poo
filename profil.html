@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Profil - Puu</title>
+<link rel="stylesheet" href="assets/css/main.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/supabase-client.js"></script>
+<style>
+body{padding:0!important;background:#332F54!important}
+.profile-wrap{max-width:500px;margin:0 auto;min-height:100vh;background:#332F54}
+.banner{width:100%;height:180px;background:#49426E;position:relative;overflow:hidden}
+.banner img{width:100%;height:100%;object-fit:cover}
+.avatar-box{position:absolute;bottom:-50px;left:16px}
+.avatar-box img{width:100px;height:100px;border-radius:50%;border:4px solid #332F54;background:#49426E}
+.info{padding:60px 16px 16px;color:#E2D3F4}
+.info h2{margin:0;color:#EEC291}
+.info p{opacity:.7;margin:4px 0 12px}
+.btn-row{display:flex;gap:10px;margin:16px 0}
+.btn{flex:1;background:#49426E;border:2px solid #544F7E;color:#E2D3F4;padding:10px;border-radius:12px;text-align:center;text-decoration:none}
+.btn.primary{background:#EEC291;color:#332F54;border:none;font-weight:600}
+.posts{padding:0 16px}
+</style>
+</head>
+<body>
+<div class="profile-wrap">
+  <div class="banner" id="banner"><img id="bannerImg" src="assets/banner-default.jpg"></div>
+  <div style="position:relative">
+    <div class="avatar-box"><img id="avatarImg" src="assets/avatar.png"></div>
+  </div>
+  <div class="info">
+    <h2 id="name">Anonim</h2>
+    <p id="bio">Belum ada bio</p>
+    <div class="btn-row">
+      <a href="profil-settings.html" class="btn primary">Edit Profil</a>
+      <a href="index.html" class="btn">Kembali</a>
+    </div>
+  <div class="posts" id="myPosts"></div>
+</div>
+
+<script>
+async function load(){
+  const { data:user } = await supa.from('profiles').select('*').eq('id','anon').single();
+  if(user){
+    document.getElementById('name').textContent = user.username||'Anonim';
+    document.getElementById('bio').textContent = user.bio||'Belum ada bio';
+    if(user.avatar_url) avatarImg.src = user.avatar_url;
+    if(user.banner_url) bannerImg.src = user.banner_url;
+  }
+  const { data:posts } = await supa.from('posts').select('*').eq('username','Anonim').order('created_at',{ascending:false});
+  myPosts.innerHTML = posts.map(p=>`<div style="background:#49426E;padding:12px;border-radius:12px;margin-bottom:10px;color:#DDD9D0">${p.content||''}</div>`).join('');
+}
+load();
+</script>
+</body>
+</html>
