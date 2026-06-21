@@ -1,13 +1,13 @@
 <!DOCTYPE html><html lang="id"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Puu Chat</title>
+<title>Puu puu</title>
 <link rel="stylesheet" href="./assets/css/main.css">
 <style>
 .user::after,.user-main::after{display:none!important}
-.post-img{width:100%;height:auto;max-height:none!important;border-radius:12px;background:#000;margin-top:8px;display:block}
-.action{display:flex;gap:24px;margin-top:10px;padding-top:8px;border-top:1px solid #4a446b}
-.action span{cursor:pointer;color:#b8a9d4;font-size:14px;display:flex;align-items:center;gap:6px}
-.action.liked{color:#ff6b81}
+.post-img{width:100%!important;height:auto!important;max-height:600px!important;object-fit:contain!important;border-radius:12px!important;background:#000;margin-top:8px;display:block!important;border:none!important}
+.action{display:flex;gap:28px;margin-top:10px;padding-top:8px;border-top:1px solid #4a446b}
+.action span{cursor:pointer;color:#b8a9d4;font-size:14px;display:flex;align-items:center;gap:6px;user-select:none}
+.like.liked{color:#ff6b81}
 </style></head><body>
 <div class="main-container">
   <div class="navbar"><div class="nav-left"><button class="toggle-btn" id="menu">☰</button><h2 style="color:#E2D3F4;margin:0">Puu Chat</h2></div><div class="nav-right"><div class="user" id="av"></div></div></div>
@@ -25,17 +25,20 @@
 <script>
 if(!localStorage.puu_id)localStorage.puu_id='u_'+Math.random().toString(36).slice(2,9);
 if(!localStorage.puu_name)localStorage.puu_name='Anonim';
-const myId=localStorage.puu_id; const liked=JSON.parse(localStorage.liked||'{}');
+const liked=JSON.parse(localStorage.liked||'{}');
 document.getElementById('menu').onclick=()=>document.getElementById('side').classList.toggle('active');
 
 async function toggleLike(id,el){
-  const isLiked = liked[id];
-  const newCount = (parseInt(el.dataset.likes)||0) + (isLiked?-1:1);
-  await sb.from('posts').update({likes:newCount}).eq('id',id);
+  const isLiked =!!liked[id];
+  const current = parseInt(el.dataset.likes)||0;
+  const newCount = current + (isLiked? -1 : 1);
+  el.dataset.likes = newCount;
   liked[id]=!isLiked; localStorage.liked=JSON.stringify(liked);
-  el.classList.toggle('liked',!isLiked); el.querySelector('b').textContent=newCount;
+  el.classList.toggle('liked',!isLiked);
+  el.innerHTML = `${!isLiked?'❤️':'🤍'} <b>${newCount}</b>`;
+  await sb.from('posts').update({likes:newCount}).eq('id',id);
 }
-function sharePost(id,text){ const url=location.origin+location.pathname+'#post-'+id; if(navigator.share){navigator.share({title:'Puu Chat',text,url})}else{ navigator.clipboard.writeText(url); alert('Link disalin!')} }
+function sharePost(id){ const url=location.origin+location.pathname+'#post-'+id; if(navigator.share){navigator.share({title:'Puu Chat',url})}else{navigator.clipboard.writeText(url);alert('Link disalin!')} }
 
 async function load(){
   const now=new Date().toISOString();
@@ -45,17 +48,17 @@ async function load(){
 
   const posts=data.filter(d=>d.type!=='story');
   document.getElementById('posts').innerHTML=posts.map(p=>{
-    const t=new Date(p.created_at); const isLiked=liked[p.id];
+    const t=new Date(p.created_at); const isLiked=!!liked[p.id];
     return `<div id="post-${p.id}" class="chat-box" style="align-items:flex-start;margin-bottom:14px;background:#3F3B62">
       <div style="width:40px;height:40px;border-radius:50%;background:#49426E;flex-shrink:0"></div>
       <div class="chat-txt" style="width:100%">
         <h4 style="display:flex;justify-content:space-between">${p.username}<span style="opacity:.7;font-size:12px">${t.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'})}</span></h4>
         <p style="white-space:pre-wrap;word-break:break-word">${(p.text||'').replace(/</g,'&lt;')}</p>
-        ${p.media_url?`<img src="${p.media_url}" class="post-img" ondblclick="toggleLike(${p.id},this.nextElementSibling.querySelector('.like'))">`:''}
+        ${p.media_url?`<img src="${p.media_url}" class="post-img" ondblclick="toggleLike(${p.id},this.parentNode.querySelector('.like'))">`:''}
         <div class="action">
           <span class="like ${isLiked?'liked':''}" data-likes="${p.likes||0}" onclick="toggleLike(${p.id},this)">${isLiked?'❤️':'🤍'} <b>${p.likes||0}</b></span>
           <span onclick="location='comment.html?id=${p.id}'">💬 Komentar</span>
-          <span onclick="sharePost(${p.id},'${(p.text||'').slice(0,30)}')">↗️ Bagikan</span>
+          <span onclick="sharePost(${p.id})">↗️ Bagikan</span>
         </div>
       </div>
     </div>`;
