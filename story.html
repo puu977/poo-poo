@@ -1,15 +1,97 @@
-<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Story</title>
-<style>body{margin:0;background:#000;color:#fff;font-family:system-ui;height:100dvh;display:flex;flex-direction:column;justify-content:center;align-items:center} video,img{max-width:100%;max-height:70vh;object-fit:contain}.top{position:absolute;top:0;left:0;right:0;padding:14px;display:flex;justify-content:space-between} a{color:#fff;font-size:28px;text-decoration:none} button{position:absolute;bottom:30px;background:#EEC291;color:#000;border:none;padding:12px 30px;border-radius:30px;font-weight:700}</style></head><body>
-<div class="top"><a href="index.html">×</a><span>Story (24 jam)</span></div>
-<input type="file" id="f" accept="image/*,video/*" capture="environment" hidden>
-<div id="p" onclick="f.click()" style="text-align:center;color:#888">Tap untuk pilih foto/video</div>
-<button id="k" style="display:none">BAGIKAN</button>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Story - Puu Chat</title>
+<link rel="stylesheet" href="assets/css/main.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="./assets/js/supabase-client.js"></script>
+<script src="assets/js/supabase-client.js"></script>
+<style>
+body{padding:0!important;background:#000!important}
+.story-view{width:100vw;height:100vh;background:#000;display:flex;align-items:center;justify-content:center;position:relative}
+.story-view img,.story-view video{max-width:100%;max-height:100%;object-fit:contain}
+.story-top{position:absolute;top:0;left:0;right:0;padding:16px;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(#0008,transparent)}
+.story-top.user{display:flex;gap:10px;align-items:center;color:#fff}
+.story-top img{width:36px;height:36px;border-radius:50%;border:2px solid #EEC291}
+.progress{position:absolute;top:8px;left:8px;right:8px;height:3px;background:#fff3;display:flex;gap:4px}
+.progress span{flex:1;background:#fff;height:100%;border-radius:2px;opacity:.3}
+.progress span.active{opacity:1;animation:fill 15s linear}
+@keyframes fill{from{width:0}to{width:100%}}
+.close{color:#fff;font-size:28px;background:none;border:none;cursor:pointer}
+.upload-box{width:100%;max-width:420px;margin:40px auto;padding:20px;color:#E2D3F4;text-align:center}
+.upload-box input{display:none}
+.btn{background:#EEC291;color:#332F54;padding:12px 24px;border-radius:12px;font-weight:600;border:none;cursor:pointer;margin-top:16px}
+</style>
+</head>
+<body>
+
+<div id="viewer" class="story-view" style="display:none">
+  <div class="progress" id="prog"></div>
+  <div class="story-top">
+    <div class="user"><img id="sAvatar" src="assets/avatar.png"><b id="sUser">Anonim</b> • <span id="sTime"></span></div>
+    <button class="close" onclick="location='index.html'">✕</button>
+  </div>
+  <div id="sMedia"></div>
+</div>
+
+<div id="uploader" class="upload-box" style="display:none">
+  <h2>Buat Story 24 Jam</h2>
+  <p style="opacity:.7;margin:12px 0">Foto/video akan hilang otomatis setelah 24 jam</p>
+  <input type="file" id="file" accept="image/*,video/*">
+  <button class="btn" onclick="file.click()">Pilih Media</button>
+  <div id="preview" style="margin-top:20px"></div>
+  <button class="btn" id="postBtn" style="display:none" onclick="upload()">Posting Story</button>
+</div>
+
 <script>
-const id=localStorage.puu_id, name=localStorage.puu_name||'Anonim';
-const f=document.getElementById('f'),p=document.getElementById('p'),k=document.getElementById('k'); let file;
-f.onchange=e=>{file=e.target.files[0]; const u=URL.createObjectURL(file); p.innerHTML=file.type.startsWith('video')?`<video src="${u}" autoplay muted loop></video>`:`<img src="${u}">`; k.style.display='block'};
-k.onclick=async()=>{k.disabled=true; const pa=`stories/${Date.now()}_${file.name}`; await sb.storage.from('posts').upload(pa,file); const url=sb.storage.from('posts').getPublicUrl(pa).data.publicUrl; const exp=new Date(Date.now()+24*60*60*1000).toISOString(); await sb.from('posts').insert({user_id:id,username:name,media_url:url,type:'story',expires_at:exp}); location='index.html'};
-f.click();
-</script></body></html>
+const params = new URLSearchParams(location.search);
+const storyId = params.get('id');
+const viewer = document.getElementById('viewer');
+const uploader = document.getElementById('uploader');
+
+if(storyId){ // MODE LIHAT STORY
+  viewer.style.display='flex';
+  loadStory(storyId);
+} else { // MODE UPLOAD
+  uploader.style.display='block';
+}
+
+async function loadStory(id){
+  const { data } = await supa.from('stories').select('*').eq('id',id).single();
+  if(!data) return location='index.html';
+
+  // cek expired 24 jam
+  if(new Date() - new Date(data.created_at) > 24*60*60*1000){
+    await supa.from('stories').delete().eq('id',id);
+    return location='index.html';
+  }
+
+  document.getElementById('sUser').textContent = data.username||'Anonim';
+  document.getElementById('sTime').textContent = new Date(data.created_at).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+  const media = data.media_url;
+  document.getElementById('sMedia').innerHTML = media.match(/\.mp4|webm/)? `<video src="${media}" autoplay></video>` : `<img src="${media}">`;
+
+  // progress bar & auto close 15 detik
+  document.getElementById('prog').innerHTML = '<span class="active"></span>';
+  setTimeout(()=>location='index.html',15000);
+}
+
+const file = document.getElementById('file');
+file.onchange = e=>{
+  const f = e.target.files[0]; if(!f) return;
+  const url = URL.createObjectURL(f);
+  document.getElementById('preview').innerHTML = f.type.startsWith('video')? `<video src="${url}" style="max-width:100%;border-radius:12px" controls></video>` : `<img src="${url}" style="max-width:100%;border-radius:12px">`;
+  document.getElementById('postBtn').style.display='inline-block';
+};
+
+async function upload(){
+  const f = file.files[0]; if(!f) return;
+  const name = 'story-'+Date.now()+'-'+f.name;
+  await supa.storage.from('stories').upload(name, f);
+  const url = supa.storage.from('stories').getPublicUrl(name).data.publicUrl;
+  await supa.from('stories').insert({username:'Anonim',media_url:url});
+  location='index.html';
+}
+</script>
+</body>
+</html>
