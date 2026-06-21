@@ -41,9 +41,9 @@ async function load(){
    <p style="margin:10px 0">${p.content||''}</p>
    ${p.image_url?`<img src="${p.image_url}" style="width:100%;border-radius:12px;max-height:400px;object-fit:cover">`:''}
    <div class="post-actions">
-    <button class="btn-act" onclick="likePost(${p.id},${p.likes_count||0})">❤️ <span id="l${p.id}">${p.likes_count||0}</span></button>
-    <button class="btn-act" onclick="location.href='comment.html?id=${p.id}'">💬</button>
-    <button class="btn-act" onclick="sharePost(${p.id},${p.shares_count||0})">↗️ <span id="s${p.id}">${p.shares_count||0}</span></button>
+    <button class="btn-act" onclick="likePost(${p.id},${p.likes_count||0})">Suka<span id="l${p.id}">${p.likes_count||0}</span></button>
+    <button class="btn-act" onclick="location.href='comment.html?id=${p.id}'">Komentar</button>
+    <button class="btn-act" onclick="sharePost(${p.id},${p.shares_count||0})">Bagikan<span id="s${p.id}">${p.shares_count||0}</span></button>
    </div>`;
   feed.appendChild(card);
  });
