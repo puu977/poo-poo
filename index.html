@@ -4,62 +4,37 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/js/supabase-client.js"></script>
 <link rel="stylesheet" href="assets/css/main.css">
-<style>
-:root{--bg:#2d2650;--card:#4a4175;--top:#332F54;--txt:#E2D3F4}
-body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui}
-.top{position:fixed;top:0;left:0;right:0;height:56px;background:var(--top);display:flex;align-items:center;gap:12px;padding:0 14px;z-index:30}
-.hamb{width:26px;height:26px;cursor:pointer}.sidebar{position:fixed;top:0;left:-260px;width:240px;height:100%;background:#1f1b3a;transition:.3s;z-index:40;padding:70px 0}
-.sidebar.open{left:0}.sidebar a{display:flex;gap:14px;padding:14px 20px;color:var(--txt);text-decoration:none}.sidebar a img{width:22px}
-.overlay{display:none;position:fixed;inset:0;background:#0008;z-index:35}.overlay.show{display:block}
-.wrap{max-width:720px;margin:0 auto;padding:70px 0 20px}
-.stories{display:flex;gap:12px;overflow-x:auto;padding:12px 12px}
-.story{flex:0 0 68px;text-align:center}.ava{width:60px;height:60px;border-radius:50%;background:#5a5180;border:3px solid #EEC291;background-size:cover;background-position:center;margin:auto}
-.story.add .ava{display:flex;align-items:center;justify-content:center;font-size:26px;border-style:dashed;background:#4a4175}
-.post{background:var(--card);margin:12px;border-radius:16px;padding:12px;position:relative}
-.head{display:flex;gap:10px}.ava-sm{width:40px;height:40px;border-radius:50%;background:#5a5180}.time{font-size:12px;opacity:.7}
-.menu{position:absolute;top:8px;right:10px;background:none;border:0;color:var(--txt);font-size:22px}
-.img{width:100%;border-radius:12px;margin-top:8px;max-height:520px;object-fit:cover}
-.actions{display:flex;gap:24px;margin-top:10px;padding-top:8px;border-top:1px solid #5a5180}
-.actions button{background:none;border:0;color:var(--txt)}
-</style>
-</head><body>
-<div class="top"><img src="assets/icons/menu.png" class="hamb" onclick="toggleNav()"><b>Puu Puu</b></div>
-<div class="sidebar" id="nav"><a href="index.html"><img src="assets/icons/home.png">Feed</a><a href="chat.html"><img src="assets/icons/chat.png">Chat</a><a href="group.html"><img src="assets/icons/group.png">Group</a><a href="server.html"><img src="assets/icons/server.png">Server</a><a href="setting.html"><img src="assets/icons/setting.png">Setting</a></div>
-<div class="overlay" id="ov" onclick="toggleNav()"></div>
-<div class="wrap"><div class="stories" id="stories"></div><div id="feed"></div></div>
+</head><body style="margin:0;background:#2d2650;color:#E2D3F4;font-family:system-ui">
+<div style="position:fixed;top:0;left:0;right:0;height:56px;background:#332F54;display:flex;align-items:center;gap:12px;padding:0 14px;z-index:99">
+ <img src="assets/icons/menu.png" onclick="nav.classList.toggle('o');ov.classList.toggle('s')" style="width:26px">
+ <b>Puu Puu</b>
+</div>
+<div id="nav" style="position:fixed;top:0;left:-250px;width:230px;height:100%;background:#1f1b3a;transition:.3s;z-index:100;padding-top:60px"><a href="index.html" style="display:block;padding:14px;color:#E2D3F4;text-decoration:none">🏠 Feed</a><a href="#" style="display:block;padding:14px;color:#E2D3F4;text-decoration:none">💬 Chat</a></div>
+<div id="ov" onclick="nav.classList.remove('o');ov.classList.remove('s')" style="display:none;position:fixed;inset:0;background:#0006;z-index:98"></div>
+<style>#nav.o{left:0}#ov.s{display:block}</style>
+
+<div style="padding-top:70px;max-width:700px;margin:auto">
+ <div id="stories" style="display:flex;gap:10px;overflow:auto;padding:10px"></div>
+ <div id="feed"></div>
+</div>
+
 <script>
-const myId = localStorage.puu_id || (localStorage.puu_id='u_'+Math.random().toString(36).slice(2,9));
-function toggleNav(){nav.classList.toggle('open');ov.classList.toggle('show')}
-
+const myId=localStorage.puu_id||(localStorage.puu_id='u_'+Math.random().toString(36).slice(2,9));
 async function load(){
- const {data:posts} = await supa.from('posts').select('*').order('id',{ascending:false});
- const {data:likes} = await supa.from('post_likes').select('post_id').eq('user_id',myId);
- const likedSet = new Set(likes.map(l=>l.post_id));
-
- stories.innerHTML = `<div class="story add" onclick="location.href='create-post.html'"><div class="ava">+</div><span>Kamu</span></div>` + posts.filter(p=>p.image_url).slice(0,12).map(p=>`<div class="story"><div class="ava" style="background-image:url('${p.image_url}')"></div><span>${p.username||'Anon'}</span></div>`).join('');
-
- feed.innerHTML = posts.map(p=>{
-  const t = new Date(p.created_at).toLocaleString('id-ID',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
-  const isLiked = likedSet.has(p.id);
-  return `<div class="post"><button class="menu" onclick="location.href='edit-post.html?id=${p.id}'" style="display:${p.user_id===myId?'block':'none'}">⋮</button>
-  <div class="head"><div class="ava-sm"></div><div><b style="color:#EEC291">${p.username||'Anonim'}</b><div class="time">${t}</div></div></div>
-  <div style="margin:8px 0;white-space:pre-wrap">${p.content||''}</div>${p.image_url?`<img class="img" src="${p.image_url}">`:''}
-  <div class="actions">
-   <button onclick="like(${p.id},this)" style="color:${isLiked?'#ff6b81':'#E2D3F4'}">Suka <span>${p.likes_count||0}</span></button>
-   <button onclick="location.href='comment.html?id=${p.id}'">Komentar</button>
-   <button onclick="share(${p.id},this)">Bagikan <span>${p.shares_count||0}</span></button>
-  </div></div>`;
- }).join('');
+ const {data:p}=await supa.from('posts').select('*').order('id',{ascending:false});
+ const {data:l}=await supa.from('post_likes').select('post_id').eq('user_id',myId);
+ const liked=new Set(l.map(x=>x.post_id));
+ stories.innerHTML='<div onclick="location.href=\'create-post.html\'" style="text-align:center"><div style="width:62px;height:62px;border-radius:50%;border:2px dashed #EEC291;display:flex;align-items:center;justify-content:center;font-size:24px">+</div><div style="font-size:12px">Kamu</div></div>'+p.filter(x=>x.image_url).slice(0,10).map(x=>`<div style="text-align:center"><img src="${x.image_url}" style="width:62px;height:62px;border-radius:50%;border:3px solid #EEC291;object-fit:cover"><div style="font-size:12px">${x.username||'Anon'}</div></div>`).join('');
+ feed.innerHTML=p.map(x=>`<div style="background:#4a4175;margin:12px;border-radius:14px;padding:12px">
+  <div style="display:flex;gap:8px;align-items:center"><div style="width:36px;height:36px;border-radius:50%;background:#5a5180"></div><div><b style="color:#EEC291">${x.username||'Anonim'}</b><div style="font-size:12px;opacity:.7">${new Date(x.created_at).toLocaleString('id-ID',{day:'2-digit',month:'short'})}</div></div></div>
+  <div style="margin:8px 0">${x.content||''}</div>${x.image_url?`<img src="${x.image_url}" style="width:100%;border-radius:10px;max-height:500px;object-fit:cover">`:''}
+  <div style="display:flex;gap:20px;margin-top:8px;border-top:1px solid #5a5180;padding-top:6px">
+   <span onclick="like(${x.id},this)" style="color:${liked.has(x.id)?'#ff6b81':'#E2D3F4';cursor:pointer}">Suka ${x.likes_count||0}</span>
+   <span onclick="location.href='comment.html?id=${x.id}'" style="cursor:pointer">Komentar</span>
+   <span onclick="share(${x.id},this)" style="cursor:pointer">Bagikan ${x.shares_count||0}</span>
+  </div></div>`).join('');
 }
-async function like(id,btn){
- const span=btn.querySelector('span'); let n=+span.textContent;
- const {data} = await supa.from('post_likes').select().eq('post_id',id).eq('user_id',myId).maybeSingle();
- if(data){ await supa.from('post_likes').delete().eq('post_id',id).eq('user_id',myId); n=Math.max(0,n-1); btn.style.color='#E2D3F4'; }
- else { await supa.from('post_likes').insert({post_id:id,user_id:myId}); n++; btn.style.color='#ff6b81'; }
- span.textContent=n; await supa.from('posts').update({likes_count:n}).eq('id',id);
-}
-async function share(id,btn){
- try{ await navigator.share({title:'Puu Puu',url:location.href+'#p'+id}); const s=btn.querySelector('span'); const n=+s.textContent+1; s.textContent=n; await supa.from('posts').update({shares_count:n}).eq('id',id);}catch(e){}
-}
+async function like(id,el){const n=parseInt(el.textContent.split(' ')[1]);const {data}=await supa.from('post_likes').select().eq('post_id',id).eq('user_id',myId).maybeSingle();if(data){await supa.from('post_likes').delete().eq('post_id',id).eq('user_id',myId);el.style.color='#E2D3F4';el.textContent='Suka '+(n-1);await supa.from('posts').update({likes_count:n-1}).eq('id',id)}else{await supa.from('post_likes').insert({post_id:id,user_id:myId});el.style.color='#ff6b81';el.textContent='Suka '+(n+1);await supa.from('posts').update({likes_count:n+1}).eq('id',id)}}
+async function share(id,el){try{await navigator.share({url:location.href});const n=parseInt(el.textContent.split(' ')[1])+1;el.textContent='Bagikan '+n;await supa.from('posts').update({shares_count:n}).eq('id',id)}catch(e){}}
 load();
 </script></body></html>
