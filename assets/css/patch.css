@@ -1,0 +1,38 @@
+/* patch.css - override doang, jangan edit main.css */
+.user::after,
+.user-main::after{display:none!important}
+
+/* FIX GAMBAR KEPOTONG SAAT SCROLL */
+.all-chat{overflow:visible!important}
+.chat-box{overflow:visible!important;height:auto!important}
+
+.post-img{
+  width:100%!important;
+  height:auto!important;
+  max-height:none!important;
+  object-fit:contain!important;
+  border-radius:12px!important;
+  background:#000!important;
+  margin-top:8px!important;
+  display:block!important;
+  border:none!important;
+}
+
+/* ACTION BAR */
+.action{
+  display:flex;
+  gap:28px;
+  margin-top:10px;
+  padding-top:8px;
+  border-top:1px solid #4a446b;
+}
+.action span{
+  cursor:pointer;
+  color:#b8a9d4;
+  font-size:15px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  user-select:none;
+}
+.like.liked{color:#ff6b81!important}
