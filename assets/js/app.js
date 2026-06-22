@@ -16,3 +16,7 @@ async function loadFeed(){
 
   feed.innerHTML = JSON.stringify(posts);
 }
+function toggleNav() {
+  document.getElementById('nav')?.classList.toggle('open');
+  document.getElementById('ov')?.classList.toggle('show');
+}
