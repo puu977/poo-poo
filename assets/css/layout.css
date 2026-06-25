@@ -1,9 +1,10 @@
 .app-body{
-display:flex;
-height:calc(100vh - var(--topbar-height));
+  display:flex;
+  height:calc(100vh - 70px);
 }
 
-main{
-flex:1;
-overflow:auto;
+#main-content{
+  flex:1;
+  overflow:auto;
+  padding:20px;
 }
