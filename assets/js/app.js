@@ -12,7 +12,11 @@ renderTopbar();
 renderSidebar();
 
 renderHome();
+
 renderChat();
+
 renderGroup();
+
 renderServer();
+
 renderSettings();
