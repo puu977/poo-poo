@@ -1,63 +1,18 @@
-<!DOCTYPE html><html lang="id"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Puu Puu</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="assets/js/supabase-client.js"></script>
-<script src="assets/js/app.js" defer></script>
-  <script>
-window.onerror = function(m, s, l){ document.body.innerHTML = '<pre style="color:#fff;padding:20px">ERROR: '+m+'\n'+s+':'+l+'</pre>' };
-  </script>
-<link rel="stylesheet" href="assets/css/main.css">
-<style>
-:root{--bg:#2d2650;--card:#4a4175;--top:#332F54;--txt:#E2D3F4;--gold:#EEC291}
-body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI}
-.top{position:fixed;top:0;left:0;right:0;height:56px;background:var(--top);display:flex;align-items:center;gap:12px;padding:0 14px;z-index:40;box-shadow:0 2px 6px #0003}
-.hamb{width:26px;height:26px;cursor:pointer;object-fit:contain}
-.sidebar{position:fixed;top:0;left:-260px;width:250px;height:100%;background:#1f1b3a;transition:.25s;z-index:50;padding-top:60px}
-.sidebar.open{left:0}
-.sidebar a{display:flex;align-items:center;gap:14px;padding:14px 22px;color:var(--txt);text-decoration:none;font-size:15px;border-left:3px solid transparent}
-.sidebar a:hover{background:#2a234d;border-left-color:var(--gold)}
-.sidebar a img{width:22px;height:22px;object-fit:contain;opacity:.9}
-.overlay{display:none;position:fixed;inset:0;background:#0006;z-index:45}
-.overlay.show{display:block}
-.wrap{max-width:720px;margin:auto;padding-top:68px}
-.stories{display:flex;gap:12px;overflow:auto;padding:12px;scrollbar-width:none}
-.stories::-webkit-scrollbar{display:none}
-.story{flex:0 0 72px;text-align:center;cursor:pointer}
-.story .ava{width:64px;height:64px;border-radius:50%;background:#5a5180;border:3px solid var(--gold);background-size:cover;background-position:center;margin:auto}
-.story.add .ava{display:flex;align-items:center;justify-content:center;font-size:26px;border-style:dashed;background:#4a4175;border-color:#8a7fb0}
-.story span{font-size:12px;display:block;margin-top:5px;opacity:.9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.post{background:var(--card);margin:12px;border-radius:16px;padding:14px;position:relative;box-shadow:0 4px 10px #0002}
-.head{display:flex;gap:10px;align-items:center}
-.ava-sm{width:40px;height:40px;border-radius:50%;background:#5a5180;flex-shrink:0}
-.name{color:var(--gold);font-weight:600}
-.time{font-size:12px;opacity:.7}
-.menu{position:absolute;top:8px;right:10px;background:none;border:0;color:var(--txt);font-size:22px;cursor:pointer;padding:4px}
-.content{margin:8px 0;white-space:pre-wrap;line-height:1.45}
-.img{width:100%;border-radius:12px;margin-top:8px;max-height:520px;object-fit:cover;display:block}
-.actions{display:flex;gap:24px;margin-top:10px;padding-top:8px;border-top:1px solid #5a518055}
-.actions button{background:none;border:0;color:var(--txt);cursor:pointer;display:flex;align-items:center;gap:6px;font-size:14px}
-.actions button.liked{color:#ff6b81}
-.actions button b{font-weight:500}
-</style>
-</head><body>
-<div class="top">
-  <img src="assets/icons/menu.png" class="hamb" onclick="toggleNav()" alt="menu">
-  <b style="font-size:18px">Puu Puu</b>
-</div>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Puu Chat</title>
 
-<div class="sidebar" id="nav">
-  <a href="index.html"><img src="assets/icons/home.png" alt=""> Feed</a>
-  <a href="chat.html"><img src="assets/icons/chat.png" alt=""> Chat</a>
-  <a href="group.html"><img src="assets/icons/group.png" alt=""> Group</a>
-  <a href="server.html"><img src="assets/icons/server.png" alt=""> Server</a>
-  <a href="setting.html"><img src="assets/icons/setting.png" alt=""> Setting</a>
-  <div style="position:absolute;bottom:18px;left:22px;right:22px;font-size:12px;opacity:.5">© 2025 Puu Puu</div>
-</div>
-<div class="overlay" id="ov" onclick="toggleNav()"></div>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-<div class="wrap">
-  <div class="stories" id="stories"></div>
-  <div id="feed"></div>
-</div>
-</body></html>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+
+</body>
+</html>
