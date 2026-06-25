@@ -1,5 +1,6 @@
 #topbar{
   height:70px;
+  background:#443C69;
   border-bottom:1px solid rgba(255,255,255,.1);
 }
 
@@ -8,7 +9,12 @@
   display:flex;
   align-items:center;
   gap:15px;
-  padding:0 20px;
+  padding:0 15px;
+}
+
+.logo{
+  font-size:20px;
+  font-weight:700;
 }
 
 .search-box{
@@ -17,4 +23,12 @@
 
 .search-box input{
   width:100%;
+  padding:10px;
+  border:none;
+  border-radius:10px;
+}
+
+.topbar-actions{
+  display:flex;
+  gap:10px;
 }
