@@ -1,10 +1,19 @@
+#sidebar{
+  width:240px;
+  background:#443C69;
+  border-right:1px solid rgba(255,255,255,.1);
+}
+
 .sidebar-nav{
   display:flex;
   flex-direction:column;
-  gap:10px;
   padding:15px;
+  gap:10px;
 }
 
 .nav-btn{
-  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  cursor:pointer;
 }
