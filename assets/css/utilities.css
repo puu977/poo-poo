@@ -1,0 +1,21 @@
+.card{...}
+.btn{...}
+.tag{...}
+.input{...}
+.textarea{...}
+
+.toast{...}
+
+.flex{display:flex}
+.between{justify-content:space-between}
+.items-center{align-items:center}
+
+.hidden{
+  display:none !important;
+}
+
+/* Scrollbar */
+*{
+  scrollbar-width:thin;
+  scrollbar-color:#5a4678 transparent;
+}
