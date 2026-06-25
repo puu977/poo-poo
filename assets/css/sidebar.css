@@ -42,3 +42,34 @@
   height:24px;
   object-fit:contain;
 }
+#sidebar{
+  width:240px;
+  background:#443C69;
+}
+
+.sidebar-nav{
+  display:flex;
+  flex-direction:column;
+  padding:15px;
+  gap:10px;
+}
+
+.nav-btn{
+  display:flex;
+  align-items:center;
+  gap:10px;
+
+  width:100%;
+
+  padding:12px;
+
+  border:none;
+
+  border-radius:12px;
+
+  background:#554b83;
+
+  color:white;
+
+  font-size:16px;
+}
