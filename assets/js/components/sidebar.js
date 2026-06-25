@@ -1,34 +1,51 @@
-export function renderSidebar() {
+import { navigate } from '../core/router.js';
+
+export function renderSidebar(){
+
   const sidebar = document.getElementById('sidebar');
 
   sidebar.innerHTML = `
-    <aside class="sidebar">
 
-      <button class="nav-item active" data-view="home">
-        <img src="assets/icons/home.png" alt="home">
+    <nav class="sidebar-nav">
+
+      <button class="nav-btn" data-view="home">
+        <img src="assets/img/icons/home.png">
         <span>Home</span>
       </button>
 
-      <button class="nav-item" data-view="chat">
-        <img src="assets/icons/chat.png" alt="chat">
+      <button class="nav-btn" data-view="chat">
+        <img src="assets/img/icons/chat.png">
         <span>Chat</span>
       </button>
 
-      <button class="nav-item" data-view="group">
-        <img src="assets/icons/group.png" alt="group">
+      <button class="nav-btn" data-view="group">
+        <img src="assets/img/icons/group.png">
         <span>Group</span>
       </button>
 
-      <button class="nav-item" data-view="server">
-        <img src="assets/icons/server.png" alt="server">
+      <button class="nav-btn" data-view="server">
+        <img src="assets/img/icons/server.png">
         <span>Server</span>
       </button>
 
-      <button class="nav-item" data-view="settings">
-        <img src="assets/icons/settings.png" alt="settings">
+      <button class="nav-btn" data-view="settings">
+        <img src="assets/img/icons/settings.png">
         <span>Settings</span>
       </button>
 
-    </aside>
+    </nav>
+
   `;
+
+  sidebar.querySelectorAll('.nav-btn')
+    .forEach(btn=>{
+
+      btn.addEventListener('click',()=>{
+
+        navigate(btn.dataset.view);
+
+      });
+
+    });
+
 }
