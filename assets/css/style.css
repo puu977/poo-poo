@@ -64,6 +64,7 @@ button,input {
 
 .main-logo {
     width: 120px;
+    height: auto;
 }
 
 .search-bar {
@@ -71,7 +72,7 @@ button,input {
     display: flex;
     justify-content: space-between;
     flex-direction: row;
-    align-items: flex-start;
+    align-items: center;
     background: #E2D3F4;
     padding: 8px 8px 8px 13px;
     border-radius: 8px;
@@ -80,6 +81,7 @@ button,input {
 .search-bar img {
     width: 22px;
     height: 22px;
+    flex-shrink: 0;
 }
 
 .search-bar input {
@@ -92,6 +94,16 @@ button,input {
 
 .setting {
     width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.setting img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
 }
 
 .user {
@@ -100,8 +112,10 @@ button,input {
 
 .user img {
     width: 40px;
+    height: 40px;
     border-radius: 50%;
     border: 3px solid #EEC291;
+    object-fit: cover;
 }
 
 .user::after {
@@ -158,6 +172,8 @@ button,input {
 
 .side-menu ul li img {
     width: 25px;
+    height: 25px;
+    object-fit: contain;
 }
 
 .side-menu ul li a {
@@ -191,8 +207,10 @@ button,input {
 }
 .chat img {
     width: 35px;
+    height: 35px;
     border-radius: 50%;
     border: 3px solid #EEC291;
+    object-fit: cover;
 }
 
 .chat p {
@@ -238,8 +256,10 @@ button,input {
 
 .user-header .user-main img {
     width: 50px;
+    height: 50px;
     border-radius: 50%;
     border: 3px solid #EEC291;
+    object-fit: cover;
 }
 
 .user-main {
@@ -265,6 +285,8 @@ button,input {
 
 .threedot {
     width: 40px;
+    height: 40px;
+    object-fit: contain;
 }
 
 .chat-type {
@@ -284,6 +306,8 @@ button,input {
 
 .chat-type img {
     width: 25px;
+    height: 25px;
+    object-fit: contain;
 }
 
 .message-type {
@@ -336,8 +360,10 @@ button,input {
 
 .chat-box img {
     width: 40px;
+    height: 40px;
     border-radius: 50%;
     border: 3px solid #EEC291;
+    object-fit: cover;
 }
 
 .chat-txt h4 {
@@ -365,6 +391,8 @@ button,input {
 
 .toggle-btn img {
    width: 27px;
+   height: 27px;
+   object-fit: contain;
 }
 
 .side-menu .search-bar {
@@ -410,7 +438,7 @@ button,input {
     }
     .side-menu img {
         width: 20px;
-        height: 20px
+        height: 20px;
     }
 
     .side-menu ul li a {
@@ -426,6 +454,7 @@ button,input {
     }
     .chat img {
         width: 30px;
+        height: 30px;
         border: 2px solid #EEC291;
     }
     .chat p {
@@ -437,7 +466,7 @@ button,input {
     .side-menu .search-bar {
         display: flex;
         width: 100%;
-        padding: 8px 8ppx 8px 10px;
+        padding: 8px 8px 8px 10px;
         margin-bottom: 20px;
     }
     .search-bar img {
@@ -455,8 +484,8 @@ button,input {
         gap: 20px;
     }
     .navbar img {
-        width: 24px
-        height: 24px
+        width: 24px;
+        height: 24px;
         object-fit: contain;
     }
     .main-logo {
@@ -465,10 +494,15 @@ button,input {
     }
     .setting {
         width: 25px;
+        height: 25px;
+    }
+    .setting img {
+        width: 20px;
+        height: 20px;
     }
     .user img {
         width: 32px !important;
-        height: 32px !important 
+        height: 32px !important;
         border-radius: 50%;
     }
     .bottom-sec {
@@ -483,6 +517,7 @@ button,input {
     }
     .user-header .user-main img {
         width: 35px;
+        height: 35px;
         border: 2px solid #EEC291;
     }
     .user-main::after {
@@ -494,6 +529,7 @@ button,input {
     }
     .threedot {
         width: 28px;
+        height: 28px;
     }
     .chat-type {
         height: 65px;
@@ -503,9 +539,11 @@ button,input {
     }
     .chat-type img {
         width: 25px;
+        height: 25px;
     }
     .chat-type .send-icon {
- width: 20px;
+        width: 20px;
+        height: 20px;
     }
     .message-type {
         width: 80%;
@@ -520,6 +558,7 @@ button,input {
 
     .message-type img {
         width: 20px;
+        height: 20px;
     }
     .all-chat {
         height: 76%;
@@ -533,6 +572,7 @@ button,input {
     }
     .chat-box img {
         width: 30px;
+        height: 30px;
         border: 2px solid #EEC291;
     }
     .chat-txt h4 {
