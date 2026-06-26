@@ -1,9 +1,0 @@
-.app-body{
-  display:flex;
-  height:calc(100vh - 70px);
-}
-
-#main-content{
-  flex:1;
-  padding:20px;
-}
