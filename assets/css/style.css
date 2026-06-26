@@ -408,8 +408,9 @@ button,input {
         align-items: center;
         gap: 12px;
     }
-    .side-menu ul li img {
-        width: 22px;
+    .side-menu img {
+        width: 20px;
+        height: 20px
     }
 
     .side-menu ul li a {
@@ -453,15 +454,22 @@ button,input {
     .nav-left,.nav-right {
         gap: 20px;
     }
+    .navbar img {
+        width: 24px
+        height: 24px
+        object-fit: contain;
+    }
     .main-logo {
-        width: 100px;
+        width: 80px !important;
+        height: auto !important;
     }
     .setting {
         width: 25px;
     }
     .user img {
-        width: 30px;
-        border: 2px solid #EEC291;
+        width: 32px !important;
+        height: 32px !important 
+        border-radius: 50%;
     }
     .bottom-sec {
         height: 84vh;
