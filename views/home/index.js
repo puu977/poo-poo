@@ -8,18 +8,14 @@ export async function HomeView(){
         <button class="toggle-btn">
           <img src="assets/icons/menu.svg" alt="menu">
         </button>
-        <img src="assets/img/logo.svg" class="main-logo" alt="Puu Puu">
+        <img src="assets/icons/logo.svg" class="main-logo" alt="Puu Puu">
       </div>
       <div class="nav-right">
-        <div class="search-bar">
-          <img src="assets/icons/search.svg" alt="search">
-          <input type="text" placeholder="Search...">
-        </div>
         <button class="setting">
           <img src="assets/icons/setting.svg" alt="setting">
         </button>
         <div class="user">
-          <img src="${state.user.avatar}" alt="user">
+          <img src="assets/icons/profile.png" alt="user">
         </div>
       </div>
     </div>
@@ -31,18 +27,18 @@ export async function HomeView(){
           <input type="text" placeholder="Search...">
         </div>
         <ul>
-          <li><img src="assets/icons/home.svg"><a href="#/" class="active">Home</a></li>
+          <li><img src="assets/icons/home.png"><a href="#/" class="active">Home</a></li>
         </ul>
       </div>
       
       <div class="chat-section">
         <div class="chat-header">
           <div class="user-header"><h2>Home Feed</h2></div>
-          <button><img src="assets/icons/threedot.svg" class="threedot"></button>
+          <button><img src="assets/icons/threedot.png" class="threedot"></button>
         </div>
         <div class="all-chat">
           <div class="chat-box">
-            <img src="${state.user.avatar}">
+            <img src="assets/icons/profile.png">
             <div class="chat-txt">
               <h4>Anonim <span>now</span></h4>
               <p>Layout udah muncul anjirr</p>
